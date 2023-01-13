@@ -1,5 +1,4 @@
-import {makeStyles} from "@material-ui/core";
-import LoginButton from "../../components/Buttons/loginButton";
+import {Button, makeStyles} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import "@fontsource/raleway";
 
@@ -17,6 +16,15 @@ const useStyles = makeStyles({
         position: 'absolute',
         bottom: '5%',
         width: '100%',
+    },
+    button: {
+        marginTop: '20px',
+        backgroundColor: '#ffac4b',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
     }
 })
 
@@ -31,7 +39,7 @@ function HomePage() {
             </div>
 
             <div className={classes.footer}>
-                <Link to={"/login"} className={classes.link} ><LoginButton/></Link>
+                <Link to={"/login"}> <Button className={classes.button} variant={"contained"} size={"large"} ><b>Login</b></Button></Link>
                 <Link to={"/register"} className={classes.link} ><p>Not a User? Register Here....</p></Link>
             </div>
         </div>

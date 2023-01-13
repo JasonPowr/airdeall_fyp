@@ -1,5 +1,4 @@
 import {makeStyles} from "@material-ui/core";
-import LoginButton from "../../components/Buttons/loginButton";
 import {Link} from "react-router-dom";
 import "@fontsource/raleway";
 import LoginForm from "../../components/Forms/loginForm";
@@ -29,10 +28,8 @@ function LoginPage() {
                 <img src={require("../../assets/airdeall.png")} alt={""}/>
             </div>
 
-            <LoginForm />
-
             <div className={classes.footer}>
-                <Link className={classes.link}  to={""}><LoginButton/></Link>
+                <LoginForm />
                 <Link className={classes.link}  to={""}><p>Forgot Password?</p></Link>
             </div>
         </div>

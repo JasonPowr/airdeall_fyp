@@ -4,6 +4,9 @@ import LoginPage from "./pages/Login/loginPage";
 import RegistrationPage from "./pages/Register/registrationPage";
 import "./App.css"
 import {makeStyles} from "@material-ui/core";
+import AlertsPage from "./pages/Alerts/alertPage";
+import {AuthContextProvider} from "./contexts/authContext";
+import ProtectedRoutes from "./components/ProtectedRoute/ProtectedRoutes";
 
 const useStyles = makeStyles({
     app: {
@@ -20,15 +23,18 @@ const useStyles = makeStyles({
 function App() {
     const classes = useStyles();
     return (
+        <AuthContextProvider>
         <Router>
             <div className={classes.app}>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegistrationPage />} />
+                    <Route path="/alerts" element={<ProtectedRoutes> <AlertsPage /></ProtectedRoutes>} />
                 </Routes>
             </div>
         </Router>
+        </AuthContextProvider>
     );
 }
 
