@@ -6,6 +6,10 @@ function AlertsPage() {
     const navigate = useNavigate()
     const [error, setError] = useState("");
 
+    if(user != null){
+        console.log(user)
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault()
         setError('')
@@ -19,7 +23,7 @@ function AlertsPage() {
     }
     return (
         <div>
-            <p>Hello user: {user && user.email}</p>
+            <p>Hello user: {user && user.displayName}</p>
             <button onClick={handleSubmit}>Sign Out</button>
         </div>
     );

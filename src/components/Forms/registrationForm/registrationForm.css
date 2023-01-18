@@ -1,0 +1,15 @@
+
+.textField{
+    width: 80%;
+    max-width: 400px;
+}
+
+.button{
+    margin-top: 20px;
+    background-color: #ffac4b;
+    color: black;
+    font-family: Raleway, serif;
+    font-size: 15px;
+    width: 222px;
+    text-align: center;
+}

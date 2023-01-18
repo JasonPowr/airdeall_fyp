@@ -1,7 +1,7 @@
 import {makeStyles} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import "@fontsource/raleway";
-import LoginForm from "../../components/Forms/loginForm";
+import LoginForm from "../../components/Forms/loginForm/loginForm";
 
 const useStyles = makeStyles({
     container: {
@@ -31,6 +31,7 @@ function LoginPage() {
             <div className={classes.footer}>
                 <LoginForm />
                 <Link className={classes.link}  to={""}><p>Forgot Password?</p></Link>
+                <Link to={"/register"} className={classes.link} ><p>Not a User? Register Here....</p></Link>
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import {makeStyles} from "@material-ui/core";
 import "@fontsource/raleway";
-import RegistrationForm from "../../components/Forms/registrationForm";
+import RegistrationForm from "../../components/Forms/registrationForm/registrationForm";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles({
     container: {
@@ -24,8 +25,8 @@ function RegistrationPage() {
             <div>
                 <img src={require("../../assets/airdeall.png")} alt={""}/>
             </div>
-
             <RegistrationForm />
+            <Link to={"/login"} className={classes.link} ><p>Already a user ? Login here</p></Link>
         </div>
     );
 }
