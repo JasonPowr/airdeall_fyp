@@ -1,6 +1,7 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import {createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithEmailAndPassword, updateProfile,updatePhoneNumber} from 'firebase/auth';
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
+import { doc, setDoc } from "firebase/firestore";
 
 const UserContext = createContext();
 
@@ -9,16 +10,22 @@ export const AuthContextProvider = ({children}) =>{
     const createUser = (email, password, firstName, lastName) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
+
                 updateProfile(auth.currentUser, {
                     displayName: firstName.toString() + " " + lastName.toString(),
-                    }).then(() => {
-                        // Profile updated!
-                        // ...
-                    }).catch((error) => {
+                    }).then(async () => {
+
+                    // Add a new document in collection "cities"
+                    await setDoc(doc(db, "users", auth.currentUser.uid), {
+                        displayName: auth.currentUser.displayName,
+                    });
+
+                }).catch((error) => {
                         // An error occurred
                         // ...
                     });
             })
+
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;

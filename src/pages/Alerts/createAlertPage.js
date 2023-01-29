@@ -1,33 +1,62 @@
-import {UserAuth} from "../../contexts/authContext";
-import {useState} from "react";
 import {Button, TextField} from "@material-ui/core";
 import {Link} from "react-router-dom";
-function CreateAlertPage() {
-    // const { user, logOut } = UserAuth()
-    // const navigate = useNavigate()
-    // const [error, setError] = useState("");
+import {useFormik} from "formik";
+import {createAlertValidationSchema} from "../../Helpers/Validation/CreateAlertValidation";
+import firebase, {auth, db} from "../../firebase";
+import {doc, setDoc} from "firebase/firestore";
 
-    // if(user != null){
-    //     console.log(user)
-    // }
+export default function CreateAlertPage() {
 
-    return (
+    let alertTitle;
+    const alert = { alertTitle }
+    const onSubmit = async () => {
+        alert.alertTitle = values.title
+
+        const alertsDocRef = doc(db,'users',`${auth.currentUser.uid}`);
+        setDoc(alertsDocRef, {
+            Alerts : {
+                 [`${values.title}`]: alert
+            }
+        }, { merge: true });
+
+        console.log("Alert created with title: " + alert.alertTitle)
+    }
+
+    const { handleSubmit, values, handleChange, handleBlur, errors, touched } = useFormik({
+        initialValues: {
+            title: "",
+        },
+        validationSchema: createAlertValidationSchema,
+        onSubmit,
+    })
+
+    return(
         <div>
-            <p>Create Alert</p>
-
             <div>
-                <TextField
-                    variant="filled"
-                    className={"textField"}
-                    id={"alertName"}
-                    type={"email"}
-                    placeholder={"Name of Alert"}/>
+                <p>Create Alert</p>
             </div>
 
-            <Button>Create</Button>
-            <Link to={"/alerts"}><Button>Cancel</Button></Link>
+            <form onSubmit={handleSubmit} autoComplete={"off"}>
+
+                <div>
+                    <TextField
+                        error={!!(errors.title && touched.title)}
+                        label={errors.title && touched.title ? "Invalid Name" : "Alert Name"}
+                        helperText={errors.title && touched.title ? errors.title : " "}
+                        value={values.title}
+                        variant="filled"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={"textField"}
+                        id={"title"}
+                        placeholder={"Alert Title"}
+                        InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
+                </div>
+
+                 <Button type={"submit"}> Create </Button>
+                 <Link to={"/alerts"}><Button> Cancel </Button></Link>
+
+            </form>
         </div>
     );
 }
-
-export default CreateAlertPage;
