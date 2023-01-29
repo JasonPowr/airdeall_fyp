@@ -1,6 +1,7 @@
 import {UserAuth} from "../../contexts/authContext";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
+import {Button} from "@material-ui/core";
 function AlertsPage() {
     const { user, logOut } = UserAuth()
     const navigate = useNavigate()
@@ -24,7 +25,8 @@ function AlertsPage() {
     return (
         <div>
             <p>Hello user: {user && user.displayName}</p>
-            <button onClick={handleSubmit}>Sign Out</button>
+            <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
+            <Button onClick={handleSubmit}>Sign Out</Button>
         </div>
     );
 }

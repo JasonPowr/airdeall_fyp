@@ -7,6 +7,7 @@ import {makeStyles} from "@material-ui/core";
 import AlertsPage from "./pages/Alerts/alertPage";
 import {AuthContextProvider} from "./contexts/authContext";
 import ProtectedRoutes from "./components/ProtectedRoute/ProtectedRoutes";
+import CreateAlertPage from "./pages/Alerts/createAlertPage";
 
 const useStyles = makeStyles({
     app: {
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegistrationPage />} />
                     <Route path="/alerts" element={<ProtectedRoutes> <AlertsPage /></ProtectedRoutes>} />
+                    <Route path="/create_alert" element={<ProtectedRoutes> <CreateAlertPage /></ProtectedRoutes>} />
                 </Routes>
             </div>
         </Router>
