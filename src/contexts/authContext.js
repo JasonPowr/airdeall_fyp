@@ -4,7 +4,6 @@ import {auth, db} from '../firebase';
 import { doc, setDoc } from "firebase/firestore";
 
 const UserContext = createContext();
-
 export const AuthContextProvider = ({children}) =>{
     const [user, setUser] = useState({})
     const createUser = (email, password, firstName, lastName) => {
@@ -15,8 +14,7 @@ export const AuthContextProvider = ({children}) =>{
                     displayName: firstName.toString() + " " + lastName.toString(),
                     }).then(async () => {
 
-                    // Add a new document in collection "cities"
-                    await setDoc(doc(db, "users", auth.currentUser.uid), {
+                    await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
                         displayName: auth.currentUser.displayName,
                     });
 
@@ -50,9 +48,12 @@ export const AuthContextProvider = ({children}) =>{
     }
 
     useEffect(() => {
-        return onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser)
-        })
+        onAuthStateChanged(auth, (currentUser) => {
+            if (user) {
+                setUser(currentUser)
+            } else {
+            }
+        });
     }, [])
 
     return (

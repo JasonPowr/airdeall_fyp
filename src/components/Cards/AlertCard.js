@@ -1,9 +1,10 @@
 
-export default function AlertCard({ alert }) {
+export default function AlertCard(alert) {
 
     return (
-        <div className="card">
-            {/*<p className="card-header">{alert.title}</p>*/}
+        <div>
+            <h2>{alert.title}</h2>
+            <p>{alert.description}</p>
         </div>
     );
 }

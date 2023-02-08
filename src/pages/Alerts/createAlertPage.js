@@ -1,30 +1,28 @@
 import {Button, TextField} from "@material-ui/core";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
 import {createAlertValidationSchema} from "../../Helpers/Validation/CreateAlertValidation";
-import firebase, {auth, db} from "../../firebase";
-import {doc, setDoc} from "firebase/firestore";
+import {auth, db} from "../../firebase";
+import {doc, setDoc, collection, addDoc} from "firebase/firestore";
 
 export default function CreateAlertPage() {
+    const navigate = useNavigate()
 
-    let alertTitle;
-    const alert = { alertTitle }
     const onSubmit = async () => {
-        alert.alertTitle = values.title
+        const alert = {
+            title: values.title,
+            desc: values.alertDesc
+        }
+        const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
+        await setDoc(alertRef, {alert}, {merge: true});
 
-        const alertsDocRef = doc(db,'users',`${auth.currentUser.uid}`);
-        setDoc(alertsDocRef, {
-            Alerts : {
-                 [`${values.title}`]: alert
-            }
-        }, { merge: true });
-
-        console.log("Alert created with title: " + alert.alertTitle)
+        navigate('/alerts')
     }
 
     const { handleSubmit, values, handleChange, handleBlur, errors, touched } = useFormik({
         initialValues: {
             title: "",
+            alertDesc: "",
         },
         validationSchema: createAlertValidationSchema,
         onSubmit,
@@ -53,9 +51,23 @@ export default function CreateAlertPage() {
                         InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
                 </div>
 
+                <div>
+                    <TextField
+                        error={!!(errors.alertDesc && touched.alertDesc)}
+                        label={errors.alertDesc && touched.alertDesc ? "Invalid Desc" : "Alert Desc"}
+                        helperText={errors.alertDesc && touched.alertDesc ? errors.alertDesc : " "}
+                        value={values.alertDesc}
+                        variant="filled"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={"textField"}
+                        id={"alertDesc"}
+                        placeholder={"Alert Description"}
+                        InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
+                </div>
+
                  <Button type={"submit"}> Create </Button>
                  <Link to={"/alerts"}><Button> Cancel </Button></Link>
-
             </form>
         </div>
     );

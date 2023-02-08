@@ -1,16 +1,32 @@
 import {UserAuth} from "../../contexts/authContext";
 import {Link, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Button} from "@material-ui/core";
 import AlertCard from "../../components/Cards/AlertCard";
+import {auth, db} from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
+
 function AlertsPage() {
     const { user, logOut } = UserAuth()
     const navigate = useNavigate()
     const [error, setError] = useState("");
+    const [cards, setCards] = useState([]);
 
-    if(user != null){
-        console.log(user)
-    }
+    useEffect(  () => {
+        getAlertData().then(r => {})
+        async function getAlertData() {
+            const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts"));
+            const cardsData = [];
+            querySnapshot.forEach((doc) => {
+                cardsData.push({
+                    id: doc.id,
+                    title: doc.data().alert.title,
+                    description: doc.data().alert.desc
+                });
+                setCards(cardsData)
+            });
+        }
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -23,10 +39,16 @@ function AlertsPage() {
             console.log(e.message)
         }
     }
+
     return (
         <div>
             <p>Hello user: {user && user.displayName}</p>
-            <AlertCard/>
+
+            <div className={"alertContainer"}>
+                {cards.map((alert) =>
+                    <AlertCard key={alert.id} title={alert.title} description={alert.description}/>)}
+            </div>
+
             <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
             <Button onClick={handleSubmit}>Sign Out</Button>
         </div>
