@@ -1,10 +1,11 @@
-import {UserAuth} from "../../contexts/authContext";
+import {UserAuth} from "../../../contexts/authContext";
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Button} from "@material-ui/core";
-import AlertCard from "../../components/Cards/AlertCard";
-import {auth, db} from "../../firebase";
+import AlertCard from "../../../components/Cards/AlertCard";
+import {auth, db} from "../../../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import "./alertPage.css"
 
 function AlertsPage() {
     const { user, logOut } = UserAuth()
@@ -41,7 +42,7 @@ function AlertsPage() {
     }
 
     return (
-        <div>
+        <div className={"createAlertPage"}>
             <p>Hello user: {user && user.displayName}</p>
 
             <div className={"alertContainer"}>

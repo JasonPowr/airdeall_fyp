@@ -1,8 +1,8 @@
 import {Button, TextField} from "@material-ui/core";
 import {Link, useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
-import {createAlertValidationSchema} from "../../Helpers/Validation/CreateAlertValidation";
-import {auth, db} from "../../firebase";
+import {createAlertValidationSchema} from "../../../Helpers/Validation/CreateAlertValidation";
+import {auth, db} from "../../../firebase";
 import {doc, setDoc, collection, addDoc} from "firebase/firestore";
 
 export default function CreateAlertPage() {

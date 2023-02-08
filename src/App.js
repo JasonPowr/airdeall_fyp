@@ -4,10 +4,10 @@ import LoginPage from "./pages/Login/loginPage";
 import RegistrationPage from "./pages/Register/registrationPage";
 import "./App.css"
 import {makeStyles} from "@material-ui/core";
-import AlertsPage from "./pages/Alerts/alertPage";
+import AlertsPage from "./pages/Alerts/alertpage/alertPage";
 import {AuthContextProvider} from "./contexts/authContext";
 import ProtectedRoutes from "./components/ProtectedRoute/ProtectedRoutes";
-import CreateAlertPage from "./pages/Alerts/createAlertPage";
+import CreateAlertPage from "./pages/Alerts/createAlertPage/createAlertPage";
 
 const useStyles = makeStyles({
     app: {
