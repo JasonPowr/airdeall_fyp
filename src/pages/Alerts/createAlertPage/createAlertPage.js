@@ -17,6 +17,7 @@ export default function CreateAlertPage() {
             desc: values.alertDesc,
             sms: values.smsMessage,
             alarm: values.alarm,
+            flashlight: values.flashlight,
         }
 
         const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
@@ -31,6 +32,7 @@ export default function CreateAlertPage() {
             alertDesc: "",
             smsMessage: false,
             alarm: false,
+            flashlight: false,
         },
         validationSchema: createAlertValidationSchema,
         onSubmit,
@@ -90,6 +92,16 @@ export default function CreateAlertPage() {
                         onChange={handleChange}
                         id={"alarm"}
                     />
+                </div>
+
+                <div>
+                    <p>Trigger Flashlight</p>
+
+                    <Switch
+                        onChange={handleChange}
+                        id={"flashlight"}
+                    />
+
                 </div>
 
                  <Button type={"submit"}> Create </Button>

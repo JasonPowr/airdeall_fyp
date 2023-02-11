@@ -25,6 +25,7 @@ function AlertsPage() {
                     description: doc.data().alert.desc,
                     sms: doc.data().alert.sms,
                     alarm: doc.data().alert.alarm,
+                    flashlight: doc.data().alert.flashlight,
                 });
                 setAlerts(alertsData)
             });

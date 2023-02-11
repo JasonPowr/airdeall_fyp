@@ -8,6 +8,7 @@ import AlertsPage from "./pages/Alerts/alertpage/alertPage";
 import {AuthContextProvider} from "./contexts/authContext";
 import ProtectedRoutes from "./components/ProtectedRoute/ProtectedRoutes";
 import CreateAlertPage from "./pages/Alerts/createAlertPage/createAlertPage";
+import {requestCameraAccess} from "./Helpers/Camera/cameraBehaviour";
 
 const useStyles = makeStyles({
     app: {
@@ -23,6 +24,8 @@ const useStyles = makeStyles({
 
 function App() {
     const classes = useStyles();
+    requestCameraAccess()
+
     return (
         <AuthContextProvider>
         <Router>

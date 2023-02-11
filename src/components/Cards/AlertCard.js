@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import {CardContent, CardHeader} from "@mui/material";
 import "./AlertCard.css"
 import {CancelAlert, FireAlert} from "../../pages/Alerts/alertBehaviour/activateAlert";
+import {toggleFlashlightOff} from "../../Helpers/Camera/cameraBehaviour";
 
 export default function AlertCard( {alert} ) {
     let counter;
@@ -20,7 +21,6 @@ export default function AlertCard( {alert} ) {
                timeCard.innerHTML = "Alert Firing.....";
            }
         }, 1000);
-
     }
 
     function handleCancelClick() {
@@ -37,9 +37,11 @@ export default function AlertCard( {alert} ) {
                 title={alert.title}
                 subheader={alert.description}
             />
+
             <CardContent>
                 <p id={"timeLeftCard"}></p>
             </CardContent>
+
             <CardContent>
                 <Button type={"button"} onClick={handleActivateClick} size="Medium">Activate</Button>
                 <Button type={"button"} onClick={handleCancelClick} size="Medium">Cancel</Button>
