@@ -2,12 +2,16 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import {CardContent, CardHeader} from "@mui/material";
 import "./AlertCard.css"
-import {FireAlert} from "../../pages/Alerts/alertBehaviour/activateAlert";
+import {CancelAlert, FireAlert} from "../../pages/Alerts/alertBehaviour/activateAlert";
 
 export default function AlertCard( {alert} ) {
 
     function handleActivateClick() {
         FireAlert({alert})
+    }
+
+    function handleCancelClick() {
+        CancelAlert()
     }
 
     return (
@@ -18,6 +22,7 @@ export default function AlertCard( {alert} ) {
             />
             <CardContent>
                 <Button type={"button"} onClick={handleActivateClick} size="Medium">Activate</Button>
+                <Button type={"button"} onClick={handleCancelClick} size="Medium">Cancel</Button>
             </CardContent>
         </Card>
     )

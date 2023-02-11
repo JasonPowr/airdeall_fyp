@@ -1,14 +1,17 @@
 
 
+let alertCountdown;
+let counter;
+
 export const FireAlert = ({ alert }) => {
 
     const end = Date.now() + 30000;
-    const counter = setInterval(function () {
+     counter = setInterval(function () {
         const timeLeft = Math.floor((end - Date.now()) / 1000);
         console.log(timeLeft + " seconds left");
     }, 1000);
 
-    const alertCountdown = setTimeout(function () {
+     alertCountdown = setTimeout(function () {
 
         console.log(alert.title)
 
@@ -27,10 +30,16 @@ export const FireAlert = ({ alert }) => {
     }, 30000);
 };
 
-export const sendSMS = () => {
+export const CancelAlert = () => {
+    clearTimeout(alertCountdown);
+    clearInterval(counter);
+    console.log("Alert Cancelled")
+}
+
+const sendSMS = () => {
     console.log("Alert with SMS triggered")
 }
 
-export const soundAlarm = () => {
+const soundAlarm = () => {
     console.log("Alert with alarm triggered")
 }
