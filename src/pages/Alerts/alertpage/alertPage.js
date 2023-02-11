@@ -11,20 +11,22 @@ function AlertsPage() {
     const { user, logOut } = UserAuth()
     const navigate = useNavigate()
     const [error, setError] = useState("");
-    const [cards, setCards] = useState([]);
+    const [alerts, setAlerts] = useState([]);
 
     useEffect(  () => {
         getAlertData().then(r => {})
         async function getAlertData() {
             const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts"));
-            const cardsData = [];
+            const alertsData = [];
             querySnapshot.forEach((doc) => {
-                cardsData.push({
+                alertsData.push({
                     id: doc.id,
                     title: doc.data().alert.title,
-                    description: doc.data().alert.desc
+                    description: doc.data().alert.desc,
+                    sms: doc.data().alert.sms,
+                    alarm: doc.data().alert.alarm,
                 });
-                setCards(cardsData)
+                setAlerts(alertsData)
             });
         }
     }, []);
@@ -37,7 +39,6 @@ function AlertsPage() {
             navigate('/')
         }catch (e) {
             setError(e.message)
-            console.log(e.message)
         }
     }
 
@@ -46,8 +47,8 @@ function AlertsPage() {
             <p>Hello user: {user && user.displayName}</p>
 
             <div className={"alertContainer"}>
-                {cards.map((alert) =>
-                    <AlertCard key={alert.id} title={alert.title} description={alert.description}/>)}
+                {alerts.map((alert) =>
+                    <AlertCard alert={alert}/>)}
             </div>
 
             <Link to={"/create_alert"}><Button>Create Alert</Button></Link>

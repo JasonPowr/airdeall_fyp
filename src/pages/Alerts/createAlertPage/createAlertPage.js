@@ -4,15 +4,21 @@ import {useFormik} from "formik";
 import {createAlertValidationSchema} from "../../../Helpers/Validation/CreateAlertValidation";
 import {auth, db} from "../../../firebase";
 import {doc, setDoc, collection, addDoc} from "firebase/firestore";
+import {Switch} from "@mui/material";
+import {useState} from "react";
 
 export default function CreateAlertPage() {
     const navigate = useNavigate()
 
     const onSubmit = async () => {
+
         const alert = {
             title: values.title,
-            desc: values.alertDesc
+            desc: values.alertDesc,
+            sms: values.smsMessage,
+            alarm: values.alarm,
         }
+
         const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
         await setDoc(alertRef, {alert}, {merge: true});
 
@@ -23,6 +29,8 @@ export default function CreateAlertPage() {
         initialValues: {
             title: "",
             alertDesc: "",
+            smsMessage: false,
+            alarm: false,
         },
         validationSchema: createAlertValidationSchema,
         onSubmit,
@@ -64,6 +72,24 @@ export default function CreateAlertPage() {
                         id={"alertDesc"}
                         placeholder={"Alert Description"}
                         InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
+                </div>
+
+                <div>
+                    <p>SMS message</p>
+
+                    <Switch
+                        onChange={handleChange}
+                        id={"smsMessage"}
+                        />
+                </div>
+
+                <div>
+                    <p>Sound Alarm</p>
+
+                    <Switch
+                        onChange={handleChange}
+                        id={"alarm"}
+                    />
                 </div>
 
                  <Button type={"submit"}> Create </Button>
