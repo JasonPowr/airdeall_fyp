@@ -11,7 +11,7 @@ export default function AlertCard( {alert} ) {
     }
 
     function handleCancelClick() {
-        CancelAlert()
+        CancelAlert( {alert} )
     }
 
     return (

@@ -1,7 +1,8 @@
-
+import sound from "../../../assets/alarm1.mp3"
 
 let alertCountdown;
 let counter;
+const audio = new Audio(sound)
 
 export const FireAlert = ({ alert }) => {
 
@@ -28,11 +29,17 @@ export const FireAlert = ({ alert }) => {
 
         console.log("Alert Fired.......")
     }, 30000);
+
 };
 
-export const CancelAlert = () => {
+export const CancelAlert = ({ alert }) => {
     clearTimeout(alertCountdown);
     clearInterval(counter);
+
+    if(alert.alarm){
+        audio.pause()
+    }
+
     console.log("Alert Cancelled")
 }
 
@@ -42,4 +49,5 @@ const sendSMS = () => {
 
 const soundAlarm = () => {
     console.log("Alert with alarm triggered")
+    audio.play().then(r => {})
 }
