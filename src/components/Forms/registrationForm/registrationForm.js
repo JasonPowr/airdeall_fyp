@@ -3,7 +3,7 @@ import {UserAuth} from "../../../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import {useFormik} from "formik";
 import {registrationSchema} from "../../../Helpers/Validation/RegistrationValidation";
-import MuiPhoneNumber from "material-ui-phone-number";
+import "./registrationForm.css"
 
 export default function RegistrationForm() {
     const { createUser } = UserAuth()
@@ -21,7 +21,7 @@ export default function RegistrationForm() {
             email: "",
             password: "",
             confirmPassword: "",
-            // phoneNumber: "",
+            phoneNumber: "",
         },
         validationSchema: registrationSchema,
         onSubmit,
@@ -94,7 +94,7 @@ export default function RegistrationForm() {
         <div>
             <TextField
                 error={!!(errors.confirmPassword && touched.confirmPassword)}
-                label={errors.confirmPassword && touched.confirmPassword ? "Invalid Password Confirmation" : "Confirm Password"}
+                label={errors.confirmPassword && touched.confirmPassword ? "Passwords dont match" : "Confirm Password"}
                 helperText={errors.confirmPassword && touched.confirmPassword ? errors.confirmPassword : " "}
                 value={values.confirmPassword}
                 variant="filled"
@@ -107,25 +107,24 @@ export default function RegistrationForm() {
                 InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
         </div>
 
-        {/*<div>*/}
-        {/*    <MuiPhoneNumber*/}
-        {/*        defaultCountry={"ie"}*/}
-        {/*        error={!!(errors.phoneNumber && touched.phoneNumber)}*/}
-        {/*        label={errors.phoneNumber && touched.phoneNumber ? "Invalid PhoneNumber " : "PhoneNumber"}*/}
-        {/*        helperText={errors.phoneNumber && touched.phoneNumber ? errors.phoneNumber : " "}*/}
-        {/*        value={values.phoneNumber}*/}
-        {/*        variant="filled"*/}
-        {/*        onChange={handleChange}*/}
-        {/*        autoFormat={true}*/}
-        {/*        disableDropdown={true}*/}
-        {/*        onBlur={handleBlur}*/}
-        {/*        type={""}*/}
-        {/*        className={"textField"}*/}
-        {/*        id={"phoneNumber"}*/}
-        {/*        placeholder={"Phone Number"}*/}
-        {/*        InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />*/}
-        {/*</div>*/}
+        <div>
+            <TextField
+                error={!!(errors.phoneNumber && touched.phoneNumber)}
+                label={errors.phoneNumber && touched.phoneNumber ? "Invalid Phone Number" : "Phone Number"}
+                helperText={errors.phoneNumber && touched.phoneNumber ? errors.phoneNumber : " "}
+                value={values.phoneNumber}
+                variant="filled"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                type={"number"}
+                className={"textField"}
+                id={"phoneNumber"}
+                placeholder={"Phone Number"}
+                InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
+        </div>
+
             <Button  className={"button"} type={"submit"}  variant={"contained"} size={"large"} ><b>Register</b></Button>
+
         </form>
     );
 }

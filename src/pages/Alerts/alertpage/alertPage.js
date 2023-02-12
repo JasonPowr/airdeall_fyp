@@ -4,17 +4,19 @@ import {useEffect, useState} from "react";
 import {Button} from "@material-ui/core";
 import AlertCard from "../../../components/Cards/AlertCard";
 import {auth, db} from "../../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import {collection, getDocs} from "firebase/firestore";
 import "./alertPage.css"
 
 function AlertsPage() {
-    const { user, logOut } = UserAuth()
+    const {user, logOut} = UserAuth()
     const navigate = useNavigate()
     const [error, setError] = useState("");
     const [alerts, setAlerts] = useState([]);
 
-    useEffect(  () => {
-        getAlertData().then(r => {})
+    useEffect(() => {
+        getAlertData().then(r => {
+        })
+
         async function getAlertData() {
             const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts"));
             const alertsData = [];
@@ -23,7 +25,18 @@ function AlertsPage() {
                     id: doc.id,
                     title: doc.data().alert.title,
                     description: doc.data().alert.desc,
-                    sms: doc.data().alert.sms,
+                    sms: doc.data().alert.sms.sendSMS,
+                    messageBody: doc.data().alert.sms.message.body,
+                    contacts: doc.data().alert.sms.contacts,
+                    contact_1: doc.data().alert.sms.contacts.contact_1,
+                    contact_1_name: doc.data().alert.sms.contacts.contact_1.name,
+                    contact_1_phone: doc.data().alert.sms.contacts.contact_1.phone,
+                    contact_2: doc.data().alert.sms.contacts.contact_2,
+                    contact_2_name: doc.data().alert.sms.contacts.contact_2.name,
+                    contact_2_phone: doc.data().alert.sms.contacts.contact_2.phone,
+                    contact_3: doc.data().alert.sms.contacts.contact_3,
+                    contact_3_name: doc.data().alert.sms.contacts.contact_3.name,
+                    contact_3_phone: doc.data().alert.sms.contacts.contact_3.phone,
                     alarm: doc.data().alert.alarm,
                     flashlight: doc.data().alert.flashlight,
                 });
@@ -38,7 +51,7 @@ function AlertsPage() {
         try {
             logOut()
             navigate('/')
-        }catch (e) {
+        } catch (e) {
             setError(e.message)
         }
     }

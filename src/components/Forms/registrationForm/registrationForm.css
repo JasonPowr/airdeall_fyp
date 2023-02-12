@@ -5,11 +5,23 @@
 }
 
 .button{
-    margin-top: 20px;
     background-color: #ffac4b;
     color: black;
     font-family: Raleway, serif;
     font-size: 15px;
     width: 222px;
     text-align: center;
+}
+
+.contactsButton{
+    background-color: #ffac4b;
+    color: black;
+    font-family: Raleway, serif;
+    font-size: 15px;
+    width: 250px;
+    text-align: center;
+}
+
+.btnContainer{
+    margin-bottom: 20px;
 }
