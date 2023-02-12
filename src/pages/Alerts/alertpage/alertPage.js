@@ -14,8 +14,16 @@ function AlertsPage() {
     const [alerts, setAlerts] = useState([]);
 
     useEffect(() => {
-        getAlertData().then(r => {
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                getAlertData().then(r => {
+                })
+            } else {
+                // User is signed out.
+            }
         })
+
 
         async function getAlertData() {
             const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts"));
@@ -43,6 +51,7 @@ function AlertsPage() {
                 setAlerts(alertsData)
             });
         }
+
     }, []);
 
     const handleSubmit = (e) => {

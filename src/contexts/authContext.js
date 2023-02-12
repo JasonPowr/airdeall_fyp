@@ -1,27 +1,31 @@
-import {createContext, useContext, useEffect, useState} from 'react';
-import {createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithEmailAndPassword, updateProfile,updatePhoneNumber} from 'firebase/auth';
+import {createContext, useContext, useState} from 'react';
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile
+} from 'firebase/auth';
 import {auth, db} from '../firebase';
-import { doc, setDoc } from "firebase/firestore";
+import {doc, setDoc} from "firebase/firestore";
 
 const UserContext = createContext();
-export const AuthContextProvider = ({children}) =>{
+export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({})
     const createUser = (email, password, firstName, lastName) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
-
                 updateProfile(auth.currentUser, {
                     displayName: firstName.toString() + " " + lastName.toString(),
-                    }).then(async () => {
+                }).then(async () => {
 
                     await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
                         displayName: auth.currentUser.displayName,
                     });
-
                 }).catch((error) => {
-                        // An error occurred
-                        // ...
-                    });
+                    // An error occurred
+                    // ...
+                });
             })
 
             .catch((error) => {
@@ -47,17 +51,16 @@ export const AuthContextProvider = ({children}) =>{
             });
     }
 
-    useEffect(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            if (user) {
-                setUser(currentUser)
-            } else {
-            }
-        });
-    }, [])
+
+    onAuthStateChanged(auth, (currentUser) => {
+        if (user) {
+            setUser(currentUser)
+        } else {
+        }
+    });
 
     return (
-        <UserContext.Provider value={{ createUser, user, logOut, logIn }}>
+        <UserContext.Provider value={{createUser, user, logOut, logIn}}>
             {children}
         </UserContext.Provider>
     );
