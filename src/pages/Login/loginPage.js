@@ -9,11 +9,11 @@ const useStyles = makeStyles({
         display: 'block',
         fontFamily: "Raleway",
     },
-    link:{
+    link: {
         textDecoration: 'none',
         color: 'white'
     },
-    footer :{
+    footer: {
         position: 'absolute',
         bottom: '5%',
         width: '100%',
@@ -25,13 +25,13 @@ function LoginPage() {
     return (
         <div className={classes.container}>
             <div>
-                <img src={require("../../assets/airdeall.png")} alt={""}/>
+                <img src={require("../../assets/images/airdeall.png")} alt={""}/>
             </div>
 
             <div className={classes.footer}>
-                <LoginForm />
-                <Link className={classes.link}  to={""}><p>Forgot Password?</p></Link>
-                <Link to={"/register"} className={classes.link} ><p>Not a User? Register Here....</p></Link>
+                <LoginForm/>
+                <Link className={classes.link} to={""}><p>Forgot Password?</p></Link>
+                <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
             </div>
         </div>
     );

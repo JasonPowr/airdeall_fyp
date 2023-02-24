@@ -1,4 +1,4 @@
-import {UserAuth} from "../../../contexts/authContext";
+import {UserAuth} from "../../../contexts/Auth/authContext";
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Button} from "@material-ui/core";
@@ -6,12 +6,14 @@ import AlertCard from "../../../components/Cards/AlertCard";
 import {auth, db} from "../../../firebase";
 import {collection, getDocs} from "firebase/firestore";
 import "./alertPage.css"
+import BottomNav from "../../../components/bottomNav/bottomNav";
 
 function AlertsPage() {
     const {user, logOut} = UserAuth()
     const navigate = useNavigate()
     const [error, setError] = useState("");
     const [alerts, setAlerts] = useState([]);
+    const [tab, setTab] = useState(0)
 
     useEffect(() => {
 
@@ -71,11 +73,12 @@ function AlertsPage() {
 
             <div className={"alertContainer"}>
                 {alerts.map((alert) =>
-                    <AlertCard alert={alert}/>)}
+                    <AlertCard key={alert.id} alert={alert}/>)}
             </div>
 
             <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
             <Button onClick={handleSubmit}>Sign Out</Button>
+            <BottomNav value={tab} onChange={setTab}/>
         </div>
     );
 }

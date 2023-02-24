@@ -1,5 +1,5 @@
-import sound from "../../../assets/alarm1.mp3"
-import {toggleFlashlightOff, toggleFlashlightOn} from "../../../Helpers/Camera/cameraBehaviour";
+import sound from "../../assets/sounds/alarm1.mp3"
+import {toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
 
 let alertCountdown;
 const audio = new Audio(sound)
@@ -27,7 +27,8 @@ export const FireAlert = ({alert}) => {
 
         console.log("Alert Fired.......")
     }, 30000);
-
+// btn to start sraight away
+    //collision detection
 };
 
 export const CancelAlert = ({alert}) => {

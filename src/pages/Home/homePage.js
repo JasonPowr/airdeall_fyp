@@ -8,11 +8,11 @@ const useStyles = makeStyles({
         display: 'block',
         fontFamily: "Raleway",
     },
-    link:{
+    link: {
         textDecoration: 'none',
         color: 'white'
     },
-    footer :{
+    footer: {
         position: 'absolute',
         bottom: '5%',
         width: '100%',
@@ -33,14 +33,15 @@ function HomePage() {
     return (
         <div className={classes.container}>
             <div>
-                <img src={require("../../assets/airdeall.png")} alt={""}/>
-                <p style={{fontSize: '30px'}}> <b> Welcome! </b></p>
+                <img src={require("../../assets/images/airdeall.png")} alt={""}/>
+                <p style={{fontSize: '30px'}}><b> Welcome! </b></p>
                 <p>Please login or register</p>
             </div>
 
             <div className={classes.footer}>
-                <Link to={"/login"}> <Button className={classes.button} variant={"contained"} size={"large"} ><b>Login</b></Button></Link>
-                <Link to={"/register"} className={classes.link} ><p>Not a User? Register Here....</p></Link>
+                <Link to={"/login"}> <Button className={classes.button} variant={"contained"}
+                                             size={"large"}><b>Login</b></Button></Link>
+                <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
             </div>
         </div>
     );

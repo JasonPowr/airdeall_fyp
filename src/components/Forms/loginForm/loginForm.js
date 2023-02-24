@@ -1,12 +1,12 @@
 import {Button, TextField} from "@material-ui/core";
-import {UserAuth} from "../../../contexts/authContext";
-import { useNavigate } from "react-router-dom";
+import {UserAuth} from "../../../contexts/Auth/authContext";
+import {useNavigate} from "react-router-dom";
 import {loginSchema} from "../../../Helpers/Validation/LoginValidation";
 import {useFormik} from "formik";
 import "./loginForm.css"
 
 export default function LoginForm() {
-    const { logIn } = UserAuth()
+    const {logIn} = UserAuth()
     const navigate = useNavigate()
 
     const onSubmit = () => {
@@ -14,7 +14,7 @@ export default function LoginForm() {
         navigate('/alerts')
     }
 
-    const { handleSubmit, values, handleChange, handleBlur, errors, touched } = useFormik({
+    const {handleSubmit, values, handleChange, handleBlur, errors, touched} = useFormik({
         initialValues: {
             email: "",
             password: "",
@@ -23,7 +23,7 @@ export default function LoginForm() {
         onSubmit,
     })
 
-    return(
+    return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
 
             <div>
@@ -39,7 +39,10 @@ export default function LoginForm() {
                     id={"email"}
                     type={"email"}
                     placeholder={"Email"}
-                    InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
+                    InputProps={{
+                        disableUnderline: true,
+                        inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
+                    }}/>
             </div>
 
             <div>
@@ -55,10 +58,13 @@ export default function LoginForm() {
                     id={"password"}
                     type={"password"}
                     placeholder={"Password"}
-                    InputProps={{disableUnderline: true, inputProps: { style: {backgroundColor: 'white', borderRadius: '10px' }}}} />
+                    InputProps={{
+                        disableUnderline: true,
+                        inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
+                    }}/>
             </div>
 
-            <Button  className={"button"} type={"submit"} variant={"contained"} size={"large"} ><b>Login</b></Button>
+            <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}><b>Login</b></Button>
 
         </form>
     );

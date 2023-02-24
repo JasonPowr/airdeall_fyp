@@ -5,10 +5,12 @@ import RegistrationPage from "./pages/Register/registrationPage";
 import "./App.css"
 import {makeStyles} from "@material-ui/core";
 import AlertsPage from "./pages/Alerts/alertpage/alertPage";
-import {AuthContextProvider} from "./contexts/authContext";
-import ProtectedRoutes from "./components/ProtectedRoute/ProtectedRoutes";
+import {AuthContextProvider} from "./contexts/Auth/authContext";
+import ProtectedRoutes from "./ProtectedRoutes";
 import CreateAlertPage from "./pages/Alerts/createAlertPage/createAlertPage";
-import {requestCameraAccess} from "./Helpers/Camera/cameraBehaviour";
+import {requestCameraAccess} from "./Helpers/Camera/camera";
+import MapsPage from "./pages/Maps/mapsPage";
+import ProfilePage from "./pages/Profile/profilePage";
 
 const useStyles = makeStyles({
     app: {
@@ -28,17 +30,19 @@ function App() {
 
     return (
         <AuthContextProvider>
-        <Router>
-            <div className={classes.app}>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegistrationPage />} />
-                    <Route path="/alerts" element={<ProtectedRoutes> <AlertsPage /></ProtectedRoutes>} />
-                    <Route path="/create_alert" element={<ProtectedRoutes> <CreateAlertPage /></ProtectedRoutes>} />
-                </Routes>
-            </div>
-        </Router>
+            <Router>
+                <div className={classes.app}>
+                    <Routes>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
+                        <Route path="/register" element={<RegistrationPage/>}/>
+                        <Route path="/alerts" element={<ProtectedRoutes> <AlertsPage/></ProtectedRoutes>}/>
+                        <Route path="/create_alert" element={<ProtectedRoutes> <CreateAlertPage/></ProtectedRoutes>}/>
+                        <Route path="/maps" element={<ProtectedRoutes> <MapsPage/></ProtectedRoutes>}/>
+                        <Route path="/profile" element={<ProtectedRoutes> <ProfilePage/></ProtectedRoutes>}/>
+                    </Routes>
+                </div>
+            </Router>
         </AuthContextProvider>
     );
 }

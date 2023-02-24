@@ -12,7 +12,7 @@ const useStyles = makeStyles({
         height: '100%',
         overflow: 'auto',
     },
-    link:{
+    link: {
         textDecoration: 'none',
         color: 'white'
     },
@@ -23,10 +23,10 @@ function RegistrationPage() {
     return (
         <div className={classes.container}>
             <div>
-                <img src={require("../../assets/airdeall.png")} alt={""}/>
+                <img src={require("../../assets/images/airdeall.png")} alt={""}/>
             </div>
-            <RegistrationForm />
-            <Link to={"/login"} className={classes.link} ><p>Already a user ? Login here</p></Link>
+            <RegistrationForm/>
+            <Link to={"/login"} className={classes.link}><p>Already a user ? Login here</p></Link>
         </div>
     );
 }
