@@ -1,5 +1,6 @@
 import sound from "../../assets/sounds/alarm1.mp3"
 import {toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
+import {getLocation} from "../Maps/maps";
 
 let alertCountdown;
 const audio = new Audio(sound)
@@ -12,7 +13,7 @@ export const FireAlert = ({alert}) => {
         console.log(alert.title)
 
         if (alert.sms) {
-            sendSMS(alert.messageBody, alert.contact_1_phone, alert.contact_2_phone, alert.contact_3_phone)
+            sendSMS(alert.messageBody, alert.contact_1_phone, alert.contact_2_phone, alert.contact_3_phone, alert.locationInfo, alert.recurringLocationInfo)
         }
 
         if (alert.alarm) {
@@ -27,8 +28,6 @@ export const FireAlert = ({alert}) => {
 
         console.log("Alert Fired.......")
     }, 30000);
-// btn to start sraight away
-    //collision detection
 };
 
 export const CancelAlert = ({alert}) => {
@@ -53,13 +52,34 @@ const validateNumber = (phoneNumber) => {
     }
     return validatedPhoneNumber
 }
-const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone) => {
-    const contact1 = await validateNumber(contact_1_phone);
-    const contact2 = await validateNumber(contact_2_phone);
-    const contact3 = await validateNumber(contact_3_phone);
+const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone, locationInfo, reccuringLocationInfo) => {
 
-    fetch(process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS + `${messageBody}&variable2=${contact1}&variable3=${contact2}&variable4=${contact3}`)
-        .catch(err => console.error(err))
+    if (messageBody === "") {
+        messageBody = "Default Alert Message"
+    }
+
+    if (locationInfo) {
+        const location = await getLocation()
+        messageBody = messageBody + ` Alert Fired at this location: https://maps.google.com/?q=${location.lat},${location.lng}`
+    }
+
+    if (contact_1_phone !== "") {
+        const contact1 = await validateNumber(contact_1_phone);
+        fetch(process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`)
+            .catch(err => console.error(err))
+    }
+
+    if (contact_2_phone !== "") {
+        const contact2 = await validateNumber(contact_2_phone);
+        fetch(process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`)
+            .catch(err => console.error(err))
+    }
+
+    if (contact_3_phone !== "") {
+        const contact3 = await validateNumber(contact_3_phone);
+        fetch(process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`)
+            .catch(err => console.error(err))
+    }
 }
 
 const soundAlarm = () => {

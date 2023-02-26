@@ -36,6 +36,8 @@ function AlertsPage() {
                     title: doc.data().alert.title,
                     description: doc.data().alert.desc,
                     sms: doc.data().alert.sms.sendSMS,
+                    locationInfo: doc.data().alert.sms.locationInfo,
+                    recurringLocationInfo: doc.data().alert.sms.recurringLocationInfo,
                     messageBody: doc.data().alert.sms.message.body,
                     contacts: doc.data().alert.sms.contacts,
                     contact_1: doc.data().alert.sms.contacts.contact_1,

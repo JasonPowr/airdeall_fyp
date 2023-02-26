@@ -20,6 +20,8 @@ export default function CreateAlertPage() {
 
             sms: {
                 sendSMS: values.smsMessage,
+                locationInfo: values.locationInfo,
+                recurringLocationInfo: values.recurringLocationInfo,
                 message: {
                     body: values.messageBody,
                 },
@@ -54,6 +56,8 @@ export default function CreateAlertPage() {
             title: "",
             alertDesc: "",
             smsMessage: false,
+            locationInfo: false,
+            recurringLocationInfo: false,
             messageBody: "",
             contacts: {
                 contact_1: {
@@ -81,23 +85,29 @@ export default function CreateAlertPage() {
         trustedContacts = await TrustedContactPicker();
 
         let html = "";
-        if (trustedContacts.length === 3) {
+        if (trustedContacts.length <= 3) {
             for (let i = 0; i < trustedContacts.length; i++) {
                 html += `<p>Name: ${trustedContacts[i].name} Phone: ${trustedContacts[i].tel[0]}</p>`;
             }
             document.getElementById("contact-list").innerHTML = html;
 
-            values.contacts.contact_1.name = trustedContacts[0].name
-            values.contacts.contact_1.phone = trustedContacts[0].tel[0]
+            if (trustedContacts[0].name != null) {
+                values.contacts.contact_1.name = trustedContacts[0].name
+                values.contacts.contact_1.phone = trustedContacts[0].tel[0]
+            }
 
-            values.contacts.contact_2.name = trustedContacts[1].name
-            values.contacts.contact_2.phone = trustedContacts[1].tel[0]
+            if (trustedContacts[1].name != null) {
+                values.contacts.contact_2.name = trustedContacts[1].name
+                values.contacts.contact_2.phone = trustedContacts[1].tel[0]
+            }
 
-            values.contacts.contact_3.name = trustedContacts[2].name
-            values.contacts.contact_3.phone = trustedContacts[2].tel[0]
+            if (trustedContacts[2].name != null) {
+                values.contacts.contact_3.name = trustedContacts[2].name
+                values.contacts.contact_3.phone = trustedContacts[2].tel[0]
+            }
 
         } else {
-            alert("Please select three contacts")
+            alert("You can only select up to three Contacts")
             trustedContacts = null
         }
 
@@ -176,6 +186,22 @@ export default function CreateAlertPage() {
                                 }}/>
 
                             <p id={"contact-list"}></p>
+
+                            <div>
+                                <p>locationInfo</p>
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"locationInfo"}
+                                />
+                            </div>
+
+                            <div>
+                                <p>recurringLocationInfo</p>
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"recurringLocationInfo"}
+                                />
+                            </div>
 
                         </div>
                     )}
