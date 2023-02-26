@@ -6,7 +6,7 @@ let alertCountdown;
 const audio = new Audio(sound)
 let flashlightTrigger;
 
-export const FireAlert = ({alert}) => {
+export const FireAlertWithCountdown = ({alert}) => {
 
     alertCountdown = setTimeout(function () {
 
@@ -28,6 +28,22 @@ export const FireAlert = ({alert}) => {
 
         console.log("Alert Fired.......")
     }, 30000);
+};
+
+export const FireAlertWithoutCountdown = ({alert}) => {
+
+    if (alert.sms) {
+        sendSMS(alert.messageBody, alert.contact_1_phone, alert.contact_2_phone, alert.contact_3_phone, alert.locationInfo, alert.recurringLocationInfo)
+    }
+
+    if (alert.alarm) {
+        soundAlarm()
+    }
+
+    if (alert.flashlight) {
+        triggerFlashlight()
+    }
+
 };
 
 export const CancelAlert = ({alert}) => {

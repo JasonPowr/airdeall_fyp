@@ -2,13 +2,13 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import {CardContent, CardHeader} from "@mui/material";
 import "./AlertCard.css"
-import {CancelAlert, FireAlert} from "../../Helpers/Alerts/activateAlert";
+import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../../Helpers/Alerts/activateAlert";
 
 export default function AlertCard({alert}) {
     let counter;
 
     function handleActivateClick() {
-        FireAlert({alert})
+        FireAlertWithCountdown({alert})
 
         const end = Date.now() + 30000;
         counter = setInterval(function () {
@@ -31,6 +31,10 @@ export default function AlertCard({alert}) {
         timeCard.innerHTML = " ";
     }
 
+    function handleActivateNowClick() {
+        FireAlertWithoutCountdown({alert})
+    }
+
     return (
         <Card className={"cards"}>
             <CardHeader
@@ -43,6 +47,7 @@ export default function AlertCard({alert}) {
             </CardContent>
 
             <CardContent>
+                <Button type={"button"} onClick={handleActivateNowClick} size="Medium">Activate Now</Button>
                 <Button type={"button"} onClick={handleActivateClick} size="Medium">Activate</Button>
                 <Button type={"button"} onClick={handleCancelClick} size="Medium">Cancel</Button>
             </CardContent>
