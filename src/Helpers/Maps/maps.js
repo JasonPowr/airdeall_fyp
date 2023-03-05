@@ -1,5 +1,8 @@
-import React, {Component} from "react"
-import {GoogleApiWrapper, Map, Marker} from 'google-maps-react';
+import React, {useEffect, useState} from "react"
+import "./map.css"
+import {GoogleMap, Marker} from "@react-google-maps/api";
+import {collection, getDocs} from "firebase/firestore";
+import {db} from "../../firebase";
 
 export function requestLocationPermission() {
     if (navigator.geolocation) {
@@ -28,61 +31,62 @@ export function getLocation() {
     });
 }
 
-//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-
-class MapContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            lat: null,
-            lng: null
-        };
-    }
-
-    componentDidMount() {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                this.setState({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                });
-            },
-            error => {
-                console.error(error);
-            }
-        );
-    }
-
-    render() {
-        const style = {
-            width: '100%',
-            height: '100%'
-        };
-        const {lat, lng} = this.state;
-        return (
-            <Map
-                google={this.props.google}
-                style={style}
-                initialCenter={{
-                    lat: lat,
-                    lng: lng
-                }}
-                center={{
-                    lat: lat,
-                    lng: lng
-                }}
-                zoom={15}
-                disableDefaultUI={true}
-            >
-                {lat && lng && <Marker position={{lat, lng}}/>}
-            </Map>
-        );
-    }
+async function getAlerts() {
+    const querySnapshot = await getDocs(collection(db, "activeAlerts"));
+    const activeAlerts = [];
+    querySnapshot.forEach((doc) => {
+        activeAlerts.push({
+            lat: doc.data().location.alertLocation._lat,
+            lng: doc.data().location.alertLocation._long
+        })
+    });
+    return activeAlerts
 }
 
-export default GoogleApiWrapper({
-    apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
-})(MapContainer);
+export default function Map() {
+    const [userLocation, setUserLocation] = useState(null);
+    const [alerts, setAlert] = useState(null);
 
-//https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
-//https://www.npmjs.com/package/google-maps-react
+    useEffect(() => {
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            const location = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+            setUserLocation(location);
+        });
+
+        getAlerts().then(alert => {
+            setAlert(alert)
+        })
+    }, []);
+
+    const mapOptions = {
+        disableDefaultUI: true,
+        center: userLocation,
+    };
+
+    return (
+        <div className={"container"}>
+            <div className={"map"}>
+                <GoogleMap
+                    zoom={18}
+                    options={mapOptions}
+                    mapContainerClassName={"map-container"}
+                    onLoad={getAlerts}>
+
+                    {userLocation && <Marker position={userLocation}/>}
+
+                    {alerts && (
+                        <div>
+                            {alerts.map((alert) =>
+                                <Marker position={alert}/>)}
+                        </div>
+                    )}
+
+                </GoogleMap>
+            </div>
+        </div>
+    )
+}

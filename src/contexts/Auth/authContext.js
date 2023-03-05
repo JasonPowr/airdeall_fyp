@@ -12,15 +12,15 @@ import {doc, setDoc} from "firebase/firestore";
 const UserContext = createContext();
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({})
-    const createUser = (email, password, firstName, lastName) => {
+    const createUser = (email, password, firstName, lastName, phoneNumber) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
-                updateProfile(auth.currentUser, {
-                    displayName: firstName.toString() + " " + lastName.toString(),
-                }).then(async () => {
-
+                updateProfile(auth.currentUser, {}).then(async () => {
                     await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
-                        displayName: auth.currentUser.displayName,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        phoneNumber: phoneNumber,
                     });
                 }).catch((error) => {
                     // An error occurred

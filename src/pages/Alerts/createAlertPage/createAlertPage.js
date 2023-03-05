@@ -17,7 +17,6 @@ export default function CreateAlertPage() {
         const alert = {
             title: values.title,
             desc: values.alertDesc,
-
             sms: {
                 sendSMS: values.smsMessage,
                 locationInfo: values.locationInfo,
@@ -40,9 +39,10 @@ export default function CreateAlertPage() {
                     }
                 },
             },
-
             alarm: values.alarm,
             flashlight: values.flashlight,
+            includeOnPublicMap: values.includeOnPublicMap,
+            proximitySMS: values.proximitySMS,
         }
 
         const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
@@ -73,6 +73,8 @@ export default function CreateAlertPage() {
                     phone: "",
                 }
             },
+            includeOnPublicMap: false,
+            proximitySMS: false,
             alarm: false,
             flashlight: false,
         },
@@ -207,6 +209,27 @@ export default function CreateAlertPage() {
                     )}
 
                 </div>
+
+                <div>
+                    <p>Include On Public map</p>
+
+                    <Switch
+                        onChange={handleChange}
+                        id={"includeOnPublicMap"}
+                    />
+
+                    {values.includeOnPublicMap && (
+                        <div>
+                            <p>Proximity Alert</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"proximitySMS"}
+                            />
+                        </div>
+                    )}
+                </div>
+
 
                 <div>
                     <p>Sound Alarm</p>

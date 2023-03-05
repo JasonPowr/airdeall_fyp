@@ -1,6 +1,8 @@
 import sound from "../../assets/sounds/alarm1.mp3"
 import {toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
 import {getLocation} from "../Maps/maps";
+import {auth, db} from "../../firebase";
+import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
 
 let alertCountdown;
 let flashlightTrigger;
@@ -25,6 +27,10 @@ export const FireAlertWithCountdown = ({alert}) => {
             triggerFlashlight()
         }
 
+        if (alert.includeOnPublicMap) {
+            includeOnPublicMap(alert.proximitySMS)
+        }
+
         clearTimeout(alertCountdown);
 
         console.log("Alert Fired.......")
@@ -44,6 +50,9 @@ export const FireAlertWithoutCountdown = ({alert}) => {
     if (alert.flashlight) {
         triggerFlashlight()
     }
+    if (alert.includeOnPublicMap) {
+        includeOnPublicMap(alert.proximitySMS)
+    }
 
 };
 
@@ -58,6 +67,10 @@ export const CancelAlert = ({alert}) => {
 
     if (alert.alarm) {
         audio.pause()
+    }
+
+    if (alert.includeOnPublicMap) {
+        deleteDoc(doc(db, "activeAlerts", auth.currentUser.uid));
     }
 
     console.log("Alert Cancelled")
@@ -138,4 +151,20 @@ export const triggerFlashlight = () => {
         toggleFlashlightOn();
         setTimeout(toggleFlashlightOff, 250);
     }, 1000);
+}
+
+const includeOnPublicMap = async (proximitySMS) => {
+    const userLocation = await getLocation()
+
+    const location = {
+        alertUID: auth.currentUser.uid,
+        alertLocation: new GeoPoint(userLocation.lat, userLocation.lng)
+    };
+
+    const alertRef = doc(db, "activeAlerts", auth.currentUser.uid);
+    await setDoc(alertRef, {location}, {merge: true});
+
+    if (proximitySMS) {
+        console.log("Alert with proximity Alerts activated")
+    }
 }

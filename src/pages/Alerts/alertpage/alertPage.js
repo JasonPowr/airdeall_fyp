@@ -49,6 +49,8 @@ function AlertsPage() {
                     contact_3: doc.data().alert.sms.contacts.contact_3,
                     contact_3_name: doc.data().alert.sms.contacts.contact_3.name,
                     contact_3_phone: doc.data().alert.sms.contacts.contact_3.phone,
+                    includeOnPublicMap: doc.data().alert.proximitySMS,
+                    proximitySMS: doc.data().alert.includeOnPublicMap,
                     alarm: doc.data().alert.alarm,
                     flashlight: doc.data().alert.flashlight,
                 });

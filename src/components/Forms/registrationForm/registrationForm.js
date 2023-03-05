@@ -10,7 +10,7 @@ export default function RegistrationForm() {
     const navigate = useNavigate()
 
     const onSubmit = (e) => {
-        createUser(values.email, values.password, values.firstName, values.lastName)
+        createUser(values.email, values.password, values.firstName, values.lastName, values.phoneNumber)
         navigate('/alerts')
     }
 
