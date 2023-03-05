@@ -17,6 +17,7 @@ export const AuthContextProvider = ({children}) => {
             .then(() => {
                 updateProfile(auth.currentUser, {}).then(async () => {
                     await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
+                        uid: auth.currentUser.uid,
                         firstName: firstName,
                         lastName: lastName,
                         email: email,

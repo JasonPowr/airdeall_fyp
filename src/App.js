@@ -9,10 +9,8 @@ import AlertsPage from "./pages/Alerts/alertpage/alertPage";
 import {AuthContextProvider} from "./contexts/Auth/authContext";
 import ProtectedRoutes from "./ProtectedRoutes";
 import CreateAlertPage from "./pages/Alerts/createAlertPage/createAlertPage";
-import {requestCameraAccess} from "./Helpers/Camera/camera";
 import MapsPage from "./pages/Maps/mapsPage";
 import ProfilePage from "./pages/Profile/profilePage";
-import {requestLocationPermission} from "./Helpers/Maps/maps";
 
 const useStyles = makeStyles({
     app: {
@@ -28,9 +26,6 @@ const useStyles = makeStyles({
 
 function App() {
     const classes = useStyles();
-    requestCameraAccess()
-    requestLocationPermission()
-
     return (
         <AuthContextProvider>
             <Router>

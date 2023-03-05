@@ -155,16 +155,23 @@ export const triggerFlashlight = () => {
 
 const includeOnPublicMap = async (proximitySMS) => {
     const userLocation = await getLocation()
+    const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
 
     const location = {
         alertUID: auth.currentUser.uid,
-        alertLocation: new GeoPoint(userLocation.lat, userLocation.lng)
+        alertLocation: userLocationGeoPoint
     };
 
     const alertRef = doc(db, "activeAlerts", auth.currentUser.uid);
     await setDoc(alertRef, {location}, {merge: true});
 
     if (proximitySMS) {
-        console.log("Alert with proximity Alerts activated")
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT + `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
+        const requestOptions = {
+            method: 'GET',
+            mode: 'no-cors'
+        };
+        fetch(url, requestOptions)
+            .catch(error => console.error(error));
     }
 }

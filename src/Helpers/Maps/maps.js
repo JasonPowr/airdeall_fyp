@@ -1,12 +1,19 @@
 import React, {useEffect, useState} from "react"
 import "./map.css"
-import {GoogleMap, Marker} from "@react-google-maps/api";
-import {collection, getDocs} from "firebase/firestore";
-import {db} from "../../firebase";
+import {Circle, GoogleMap, Marker} from "@react-google-maps/api";
+import {collection, doc, GeoPoint, getDocs, updateDoc} from "firebase/firestore";
+import {auth, db} from "../../firebase";
 
 export function requestLocationPermission() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    updateLocationInDb(position.coords.latitude, position.coords.longitude)
+                } else {
+                    // User is signed out.
+                }
+            })
         }, () => {
         });
     } else {
@@ -23,11 +30,19 @@ export function getLocation() {
                     lng: position.coords.longitude,
                 };
                 resolve(location);
+                updateLocationInDb(position.coords.latitude, position.coords.longitude)
             },
             error => {
                 reject(error);
             }
         );
+    });
+}
+
+async function updateLocationInDb(lat, lng) {
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+        location: new GeoPoint(lat, lng)
     });
 }
 
@@ -54,6 +69,7 @@ export default function Map() {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
             };
+            updateLocationInDb(position.coords.latitude, position.coords.longitude)
             setUserLocation(location);
         });
 
@@ -67,24 +83,32 @@ export default function Map() {
         center: userLocation,
     };
 
+    const circleOptions = {
+        visible: true,
+        clickable: false,
+        editable: false,
+        draggable: false,
+        strokeWeight: 2,
+        strokeOpacity: 0.5
+    }
+
     return (
         <div className={"container"}>
             <div className={"map"}>
                 <GoogleMap
-                    zoom={18}
+                    zoom={13}
                     options={mapOptions}
                     mapContainerClassName={"map-container"}
                     onLoad={getAlerts}>
 
                     {userLocation && <Marker position={userLocation}/>}
-
+                    {userLocation && <Circle center={userLocation} radius={2000} options={circleOptions}/>}
                     {alerts && (
                         <div>
                             {alerts.map((alert) =>
                                 <Marker position={alert}/>)}
                         </div>
                     )}
-
                 </GoogleMap>
             </div>
         </div>
