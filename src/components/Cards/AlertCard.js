@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import {CardContent, CardHeader} from "@mui/material";
 import "./AlertCard.css"
-import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../../Helpers/Alerts/activateAlert";
+import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../Alerts/activateAlert";
 
 export default function AlertCard({alert}) {
     let counter;

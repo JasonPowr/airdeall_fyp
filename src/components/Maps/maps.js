@@ -9,9 +9,8 @@ export function requestLocationPermission() {
         navigator.geolocation.getCurrentPosition(position => {
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    updateLocationInDb(position.coords.latitude, position.coords.longitude)
-                } else {
-                    // User is signed out.
+                    updateLocationInDb(position.coords.latitude,
+                        position.coords.longitude)
                 }
             })
         }, () => {
@@ -26,7 +25,7 @@ export function getLocation() {
         navigator.geolocation.getCurrentPosition(
             position => {
                 const location = {
-                    lat: position.coords.latitude,
+                    lat: position.coords.latitude,  //change this
                     lng: position.coords.longitude,
                 };
                 resolve(location);
@@ -63,7 +62,6 @@ export default function Map() {
     const [alerts, setAlert] = useState(null);
 
     useEffect(() => {
-
         navigator.geolocation.getCurrentPosition((position) => {
             const location = {
                 lat: position.coords.latitude,
@@ -76,6 +74,7 @@ export default function Map() {
         getAlerts().then(alert => {
             setAlert(alert)
         })
+
     }, []);
 
     const mapOptions = {
@@ -102,13 +101,16 @@ export default function Map() {
                     onLoad={getAlerts}>
 
                     {userLocation && <Marker position={userLocation}/>}
-                    {userLocation && <Circle center={userLocation} radius={2000} options={circleOptions}/>}
+                    {userLocation && <Circle center={userLocation} radius={2000}
+                                             options={circleOptions}/>}
+
                     {alerts && (
                         <div>
                             {alerts.map((alert) =>
                                 <Marker position={alert}/>)}
                         </div>
                     )}
+
                 </GoogleMap>
             </div>
         </div>

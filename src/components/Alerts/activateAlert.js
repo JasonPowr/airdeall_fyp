@@ -1,5 +1,5 @@
 import sound from "../../assets/sounds/alarm1.mp3"
-import {toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
+import {startRecording, stopRecording, toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
 import {getLocation} from "../Maps/maps";
 import {auth, db} from "../../firebase";
 import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
@@ -9,6 +9,7 @@ let flashlightTrigger;
 let locationUpdates;
 const audio = new Audio(sound)
 
+
 export const FireAlertWithCountdown = ({alert}) => {
 
     alertCountdown = setTimeout(function () {
@@ -16,7 +17,9 @@ export const FireAlertWithCountdown = ({alert}) => {
         console.log(alert.title)
 
         if (alert.sms) {
-            configureSMS(alert.messageBody, alert.contact_1_phone, alert.contact_2_phone, alert.contact_3_phone, alert.locationInfo, alert.recurringLocationInfo)
+            configureSMS(alert.messageBody, alert.contact_1_phone,
+                alert.contact_2_phone, alert.contact_3_phone,
+                alert.locationInfo, alert.recurringLocationInfo)
         }
 
         if (alert.alarm) {
@@ -31,6 +34,10 @@ export const FireAlertWithCountdown = ({alert}) => {
             includeOnPublicMap(alert.proximitySMS)
         }
 
+        if (alert.automaticRecordings) {
+            recordAlert()
+        }
+
         clearTimeout(alertCountdown);
 
         console.log("Alert Fired.......")
@@ -38,22 +45,21 @@ export const FireAlertWithCountdown = ({alert}) => {
 };
 
 export const FireAlertWithoutCountdown = ({alert}) => {
-
     if (alert.sms) {
         configureSMS(alert.messageBody, alert.contact_1_phone, alert.contact_2_phone, alert.contact_3_phone, alert.locationInfo, alert.recurringLocationInfo)
     }
-
     if (alert.alarm) {
         soundAlarm()
     }
-
     if (alert.flashlight) {
         triggerFlashlight()
     }
     if (alert.includeOnPublicMap) {
         includeOnPublicMap(alert.proximitySMS)
     }
-
+    if (alert.automaticRecordings) {
+        recordAlert()
+    }
 };
 
 export const CancelAlert = ({alert}) => {
@@ -71,6 +77,10 @@ export const CancelAlert = ({alert}) => {
 
     if (alert.includeOnPublicMap) {
         deleteDoc(doc(db, "activeAlerts", auth.currentUser.uid));
+    }
+
+    if (alert.automaticRecordings) {
+        stopRecording()
     }
 
     console.log("Alert Cancelled")
@@ -129,7 +139,8 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
         messageBody = messageBody + ` Alert Fired at this location: https://maps.google.com/?q=${location.lat},${location.lng}`
     }
 
-    await sendSMS(messageBody, contact_1_phone, contact_2_phone, contact_3_phone)
+    await sendSMS(messageBody, contact_1_phone,
+        contact_2_phone, contact_3_phone)
 
     if (recurringLocationInfo) {
         locationUpdates = setInterval(async function () {
@@ -141,7 +152,6 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
 }
 
 const soundAlarm = () => {
-    console.log("Alert with alarm triggered")
     audio.play().then(r => {
     })
 }
@@ -166,7 +176,8 @@ const includeOnPublicMap = async (proximitySMS) => {
     await setDoc(alertRef, {location}, {merge: true});
 
     if (proximitySMS) {
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT + `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
+            `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
         const requestOptions = {
             method: 'GET',
             mode: 'no-cors'
@@ -174,4 +185,8 @@ const includeOnPublicMap = async (proximitySMS) => {
         fetch(url, requestOptions)
             .catch(error => console.error(error));
     }
+}
+
+function recordAlert() {
+    startRecording()
 }

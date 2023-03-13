@@ -2,7 +2,7 @@ import "./mapsPage.css"
 import BottomNav from "../../components/bottomNav/bottomNav";
 import React, {useState} from "react";
 import {useLoadScript} from "@react-google-maps/api"
-import Map from "../../Helpers/Maps/maps"
+import Map from "../../components/Maps/maps"
 
 
 function MapsPage() {
@@ -23,5 +23,3 @@ function MapsPage() {
 
 
 export default MapsPage;
-
-///https://www.npmjs.com/package/google-map-react

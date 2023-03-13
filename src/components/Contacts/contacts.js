@@ -8,11 +8,10 @@ export default async function TrustedContactPicker() {
         let contact;
         let foundContacts = []
 
-        if(contacts.length > 0) {
+        if (contacts.length > 0) {
             for (let i = 0; i < contacts.length; i++) {
                 contact = contacts[i];
                 foundContacts.push(contact)
-                //alert(`Name: ${foundContacts[0].name}, Phone: ${foundContacts[0].tel[0]}`)
             }
             return foundContacts
         }

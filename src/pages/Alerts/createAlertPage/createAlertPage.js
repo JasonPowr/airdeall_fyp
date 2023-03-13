@@ -5,7 +5,7 @@ import {createAlertValidationSchema} from "../../../Helpers/Validation/CreateAle
 import {auth, db} from "../../../firebase";
 import {doc, setDoc} from "firebase/firestore";
 import {Switch} from "@mui/material";
-import TrustedContactPicker from "../../../Helpers/Contacts/contacts";
+import TrustedContactPicker from "../../../components/Contacts/contacts";
 import "./createAlertPage.css"
 
 
@@ -43,6 +43,7 @@ export default function CreateAlertPage() {
             flashlight: values.flashlight,
             includeOnPublicMap: values.includeOnPublicMap,
             proximitySMS: values.proximitySMS,
+            automaticRecordings: values.automaticRecordings,
         }
 
         const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
@@ -77,6 +78,7 @@ export default function CreateAlertPage() {
             proximitySMS: false,
             alarm: false,
             flashlight: false,
+            automaticRecordings: false,
         },
         validationSchema: createAlertValidationSchema,
         onSubmit,
@@ -246,6 +248,15 @@ export default function CreateAlertPage() {
                     <Switch
                         onChange={handleChange}
                         id={"flashlight"}
+                    />
+                </div>
+
+                <div>
+                    <p>Automatic recording</p>
+
+                    <Switch
+                        onChange={handleChange}
+                        id={"automaticRecordings"}
                     />
                 </div>
 

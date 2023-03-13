@@ -7,8 +7,8 @@ import {auth, db} from "../../../firebase";
 import {collection, getDocs} from "firebase/firestore";
 import "./alertPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
-import {requestCameraAccess} from "../../../Helpers/Camera/camera";
-import {requestLocationPermission} from "../../../Helpers/Maps/maps";
+import {requestCameraAccess} from "../../../components/Camera/camera";
+import {requestLocationPermission} from "../../../components/Maps/maps";
 
 function AlertsPage() {
     const {user, logOut} = UserAuth()
@@ -16,6 +16,7 @@ function AlertsPage() {
     const [error, setError] = useState("");
     const [alerts, setAlerts] = useState([]);
     const [tab, setTab] = useState(0)
+
     requestCameraAccess()
     requestLocationPermission()
 
@@ -57,6 +58,7 @@ function AlertsPage() {
                     proximitySMS: doc.data().alert.includeOnPublicMap,
                     alarm: doc.data().alert.alarm,
                     flashlight: doc.data().alert.flashlight,
+                    automaticRecordings: doc.data().alert.automaticRecordings,
                 });
                 setAlerts(alertsData)
             });
