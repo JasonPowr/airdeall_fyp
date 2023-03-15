@@ -7,6 +7,7 @@ import {doc, setDoc} from "firebase/firestore";
 import {Switch} from "@mui/material";
 import TrustedContactPicker from "../../../components/Contacts/contacts";
 import "./createAlertPage.css"
+import {facebookIsLinked, loginWithFacebook} from "../../../components/Socials/facebook/facebook";
 
 
 export default function CreateAlertPage() {
@@ -44,6 +45,14 @@ export default function CreateAlertPage() {
             includeOnPublicMap: values.includeOnPublicMap,
             proximitySMS: values.proximitySMS,
             automaticRecordings: values.automaticRecordings,
+            socialMediaIntegration: {
+                isEnabled: values.socialMediaIntegration.isEnabled,
+                facebook: {
+                    isEnabled: values.socialMediaIntegration.facebook.isEnabled,
+                    isLinked: values.socialMediaIntegration.facebook.isLinked,
+                    isPostEnabled: values.socialMediaIntegration.facebook.isPostEnabled,
+                }
+            }
         }
 
         const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
@@ -79,6 +88,16 @@ export default function CreateAlertPage() {
             alarm: false,
             flashlight: false,
             automaticRecordings: false,
+            socialMediaIntegration: {
+                isEnabled: false,
+                facebook: {
+                    isEnabled: false,
+                    isLinked: false,
+                    isPostEnabled: false,
+                }
+            }
+            //twitter: false,
+
         },
         validationSchema: createAlertValidationSchema,
         onSubmit,
@@ -115,6 +134,11 @@ export default function CreateAlertPage() {
             trustedContacts = null
         }
 
+    }
+
+    const handleFacebookLink = () => {
+        loginWithFacebook()
+        values.socialMediaIntegration.facebook.isLinked = facebookIsLinked
     }
 
 
@@ -260,9 +284,64 @@ export default function CreateAlertPage() {
                     />
                 </div>
 
+                <div>
+                    <p>Social Media Integration</p>
+
+                    <Switch
+                        onChange={handleChange}
+                        id={"socialMediaIntegration.isEnabled"}
+                    />
+
+                    {values.socialMediaIntegration.isEnabled && (
+                        <div>
+                            <p>Facebook</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"socialMediaIntegration.facebook.isEnabled"}
+                            />
+                            {values.socialMediaIntegration.facebook.isEnabled && (
+                                <div>
+                                    <Button onClick={handleFacebookLink}>Link Facebook</Button>
+
+                                    {values.socialMediaIntegration.facebook.isLinked && (
+                                        <div>
+                                            <div>
+                                                <p>Post to facebook</p>
+
+                                                <Switch
+                                                    onChange={handleChange}
+                                                    id={"socialMediaIntegration.facebook.isPostEnabled"}
+                                                />
+
+                                            </div>
+
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/*<p>Twitter</p>*/}
+
+                            {/*<Switch*/}
+                            {/*    onChange={handleChange}*/}
+                            {/*    id={"twitter"}*/}
+                            {/*/>*/}
+                            {/*{values.twitter && (*/}
+                            {/*    <div>*/}
+                            {/*        <p>Link Twitter</p>*/}
+                            {/*        <p>Post to Twitter</p>*/}
+                            {/*    </div>*/}
+                            {/*)}*/}
+                        </div>
+                    )}
+                </div>
+
                 <Button type={"submit"}> Create </Button>
                 <Link to={"/alerts"}><Button> Cancel </Button></Link>
             </form>
         </div>
     );
 }
+
+//https://github.com/draftbit/twitter-lite

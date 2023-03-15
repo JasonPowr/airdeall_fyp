@@ -1,8 +1,9 @@
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
-import {CardContent, CardHeader} from "@mui/material";
+import {CardContent, CardHeader, IconButton} from "@mui/material";
 import "./AlertCard.css"
 import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../Alerts/activateAlert";
+import {Settings} from "@material-ui/icons";
 
 export default function AlertCard({alert}) {
     let counter;
@@ -35,11 +36,20 @@ export default function AlertCard({alert}) {
         FireAlertWithoutCountdown({alert})
     }
 
+    function handleInfoClickButton() {
+        console.log("Hello")
+    }
+
     return (
         <Card className={"cards"}>
             <CardHeader
                 title={alert.title}
                 subheader={alert.description}
+                action={
+                    <IconButton onClick={handleInfoClickButton}>
+                        <Settings/>
+                    </IconButton>
+                }
             />
 
             <CardContent>

@@ -3,6 +3,7 @@ import {startRecording, stopRecording, toggleFlashlightOff, toggleFlashlightOn} 
 import {getLocation} from "../Maps/maps";
 import {auth, db} from "../../firebase";
 import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
+import {createPost} from "../Socials/facebook/facebook";
 
 let alertCountdown;
 let flashlightTrigger;
@@ -38,6 +39,10 @@ export const FireAlertWithCountdown = ({alert}) => {
             recordAlert()
         }
 
+        if (alert.socialMediaIntegration) {
+            configureSocialMediaIntegration()
+        }
+
         clearTimeout(alertCountdown);
 
         console.log("Alert Fired.......")
@@ -59,6 +64,9 @@ export const FireAlertWithoutCountdown = ({alert}) => {
     }
     if (alert.automaticRecordings) {
         recordAlert()
+    }
+    if (alert.socialMediaIntegration) {
+        configureSocialMediaIntegration(alert.facebookIsEnabled, alert.facebookIsLinked, alert.facebookIsPostEnabled)
     }
 };
 
@@ -189,4 +197,12 @@ const includeOnPublicMap = async (proximitySMS) => {
 
 function recordAlert() {
     startRecording()
+}
+
+function configureSocialMediaIntegration(facebookIsEnabled, facebookIsLinked, facebookIsPostEnabled) {
+    if (facebookIsLinked && facebookIsEnabled) {
+        if (facebookIsPostEnabled) {
+            createPost()
+        }
+    }
 }

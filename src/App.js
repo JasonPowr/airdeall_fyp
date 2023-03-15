@@ -11,6 +11,7 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import CreateAlertPage from "./pages/Alerts/createAlertPage/createAlertPage";
 import MapsPage from "./pages/Maps/mapsPage";
 import ProfilePage from "./pages/Profile/profilePage";
+import {initializeFacebookSDK} from "./components/Socials/facebook/facebook";
 
 const useStyles = makeStyles({
     app: {
@@ -26,6 +27,7 @@ const useStyles = makeStyles({
 
 function App() {
     const classes = useStyles();
+    initializeFacebookSDK()
     return (
         <AuthContextProvider>
             <Router>

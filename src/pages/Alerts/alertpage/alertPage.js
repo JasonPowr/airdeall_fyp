@@ -59,6 +59,10 @@ function AlertsPage() {
                     alarm: doc.data().alert.alarm,
                     flashlight: doc.data().alert.flashlight,
                     automaticRecordings: doc.data().alert.automaticRecordings,
+                    socialMediaIntegration: doc.data().alert.socialMediaIntegration.isEnabled,
+                    facebookIsEnabled: doc.data().alert.socialMediaIntegration.facebook.isEnabled,
+                    facebookIsLinked: doc.data().alert.socialMediaIntegration.facebook.isLinked,
+                    facebookIsPostEnabled: doc.data().alert.socialMediaIntegration.facebook.isPostEnabled,
                 });
                 setAlerts(alertsData)
             });
