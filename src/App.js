@@ -12,6 +12,7 @@ import CreateAlertPage from "./pages/Alerts/createAlertPage/createAlertPage";
 import MapsPage from "./pages/Maps/mapsPage";
 import ProfilePage from "./pages/Profile/profilePage";
 import {initializeFacebookSDK} from "./components/Socials/facebook/facebook";
+import AlertViewPage from "./pages/Alerts/alertViewPage/alertViewPage";
 
 const useStyles = makeStyles({
     app: {
@@ -40,6 +41,7 @@ function App() {
                         <Route path="/create_alert" element={<ProtectedRoutes> <CreateAlertPage/></ProtectedRoutes>}/>
                         <Route path="/maps" element={<ProtectedRoutes> <MapsPage/></ProtectedRoutes>}/>
                         <Route path="/profile" element={<ProtectedRoutes> <ProfilePage/></ProtectedRoutes>}/>
+                        <Route path="/:id/alert_view" element={<ProtectedRoutes> <AlertViewPage/></ProtectedRoutes>}/>
                     </Routes>
                 </div>
             </Router>

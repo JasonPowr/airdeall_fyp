@@ -4,9 +4,11 @@ import {CardContent, CardHeader, IconButton} from "@mui/material";
 import "./AlertCard.css"
 import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../Alerts/activateAlert";
 import {Settings} from "@material-ui/icons";
+import {useNavigate} from "react-router-dom";
 
 export default function AlertCard({alert}) {
     let counter;
+    const navigate = useNavigate()
 
     function handleActivateClick() {
         FireAlertWithCountdown({alert})
@@ -37,14 +39,13 @@ export default function AlertCard({alert}) {
     }
 
     function handleInfoClickButton() {
-        console.log("Hello")
+        navigate(`/${alert.id}/alert_view`, {state: {alertId: alert.id}});
     }
 
     return (
         <Card className={"cards"}>
             <CardHeader
                 title={alert.title}
-                subheader={alert.description}
                 action={
                     <IconButton onClick={handleInfoClickButton}>
                         <Settings/>

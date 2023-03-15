@@ -1,14 +1,14 @@
 import {UserAuth} from "../../../contexts/Auth/authContext";
 import {Link, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button} from "@material-ui/core";
-import AlertCard from "../../../components/Cards/AlertCard";
-import {auth, db} from "../../../firebase";
-import {collection, getDocs} from "firebase/firestore";
+import {auth} from "../../../firebase";
 import "./alertPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
 import {requestCameraAccess} from "../../../components/Camera/camera";
 import {requestLocationPermission} from "../../../components/Maps/maps";
+import {getUserAlertsFromDB} from "../../../model/db/DB";
+import AlertCard from "../../../components/Cards/AlertCard";
 
 function AlertsPage() {
     const {user, logOut} = UserAuth()
@@ -21,53 +21,15 @@ function AlertsPage() {
     requestLocationPermission()
 
     useEffect(() => {
-
         auth.onAuthStateChanged(user => {
             if (user) {
-                getAlertData().then(r => {
+                getUserAlertsFromDB().then(alerts => {
+                    setAlerts(alerts)
                 })
             } else {
                 // User is signed out.
             }
         })
-
-
-        async function getAlertData() {
-            const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts"));
-            const alertsData = [];
-            querySnapshot.forEach((doc) => {
-                alertsData.push({
-                    id: doc.id,
-                    title: doc.data().alert.title,
-                    description: doc.data().alert.desc,
-                    sms: doc.data().alert.sms.sendSMS,
-                    locationInfo: doc.data().alert.sms.locationInfo,
-                    recurringLocationInfo: doc.data().alert.sms.recurringLocationInfo,
-                    messageBody: doc.data().alert.sms.message.body,
-                    contacts: doc.data().alert.sms.contacts,
-                    contact_1: doc.data().alert.sms.contacts.contact_1,
-                    contact_1_name: doc.data().alert.sms.contacts.contact_1.name,
-                    contact_1_phone: doc.data().alert.sms.contacts.contact_1.phone,
-                    contact_2: doc.data().alert.sms.contacts.contact_2,
-                    contact_2_name: doc.data().alert.sms.contacts.contact_2.name,
-                    contact_2_phone: doc.data().alert.sms.contacts.contact_2.phone,
-                    contact_3: doc.data().alert.sms.contacts.contact_3,
-                    contact_3_name: doc.data().alert.sms.contacts.contact_3.name,
-                    contact_3_phone: doc.data().alert.sms.contacts.contact_3.phone,
-                    includeOnPublicMap: doc.data().alert.proximitySMS,
-                    proximitySMS: doc.data().alert.includeOnPublicMap,
-                    alarm: doc.data().alert.alarm,
-                    flashlight: doc.data().alert.flashlight,
-                    automaticRecordings: doc.data().alert.automaticRecordings,
-                    socialMediaIntegration: doc.data().alert.socialMediaIntegration.isEnabled,
-                    facebookIsEnabled: doc.data().alert.socialMediaIntegration.facebook.isEnabled,
-                    facebookIsLinked: doc.data().alert.socialMediaIntegration.facebook.isLinked,
-                    facebookIsPostEnabled: doc.data().alert.socialMediaIntegration.facebook.isPostEnabled,
-                });
-                setAlerts(alertsData)
-            });
-        }
-
     }, []);
 
     const handleSubmit = (e) => {
@@ -81,13 +43,19 @@ function AlertsPage() {
         }
     }
 
+    if (alerts.length === 0) return <div>
+        <div>No alerts found</div>
+        <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
+        <Button onClick={handleSubmit}>Sign Out</Button>
+        <div><BottomNav/></div>
+    </div>
     return (
         <div className={"createAlertPage"}>
-            <p>Hello user: {user && user.displayName}</p>
+            <p></p>
 
             <div className={"alertContainer"}>
-                {alerts.map((alert) =>
-                    <AlertCard key={alert.id} alert={alert}/>)}
+                {alerts.map((index) =>
+                    <AlertCard key={index.alert.id} alert={index.alert}/>)}
             </div>
 
             <Link to={"/create_alert"}><Button>Create Alert</Button></Link>

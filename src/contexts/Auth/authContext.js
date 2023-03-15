@@ -24,11 +24,9 @@ export const AuthContextProvider = ({children}) => {
                         phoneNumber: phoneNumber,
                     });
                 }).catch((error) => {
-                    // An error occurred
-                    // ...
+                    console.log(error)
                 });
             })
-
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;

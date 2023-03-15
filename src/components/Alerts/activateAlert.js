@@ -14,13 +14,8 @@ const audio = new Audio(sound)
 export const FireAlertWithCountdown = ({alert}) => {
 
     alertCountdown = setTimeout(function () {
-
-        console.log(alert.title)
-
         if (alert.sms) {
-            configureSMS(alert.messageBody, alert.contact_1_phone,
-                alert.contact_2_phone, alert.contact_3_phone,
-                alert.locationInfo, alert.recurringLocationInfo)
+            configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
         }
 
         if (alert.alarm) {
@@ -44,14 +39,13 @@ export const FireAlertWithCountdown = ({alert}) => {
         }
 
         clearTimeout(alertCountdown);
-
-        console.log("Alert Fired.......")
     }, 30000);
 };
 
 export const FireAlertWithoutCountdown = ({alert}) => {
+    console.log(alert)
     if (alert.sms) {
-        configureSMS(alert.messageBody, alert.contact_1_phone, alert.contact_2_phone, alert.contact_3_phone, alert.locationInfo, alert.recurringLocationInfo)
+        configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
     }
     if (alert.alarm) {
         soundAlarm()
@@ -66,7 +60,7 @@ export const FireAlertWithoutCountdown = ({alert}) => {
         recordAlert()
     }
     if (alert.socialMediaIntegration) {
-        configureSocialMediaIntegration(alert.facebookIsEnabled, alert.facebookIsLinked, alert.facebookIsPostEnabled)
+        configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isLinked, alert.socialMediaIntegration.facebook.isPostEnabled)
     }
 };
 

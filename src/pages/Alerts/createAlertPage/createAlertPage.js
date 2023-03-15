@@ -8,14 +8,14 @@ import {Switch} from "@mui/material";
 import TrustedContactPicker from "../../../components/Contacts/contacts";
 import "./createAlertPage.css"
 import {facebookIsLinked, loginWithFacebook} from "../../../components/Socials/facebook/facebook";
-
+import {v4 as uuidv4} from 'uuid';
 
 export default function CreateAlertPage() {
     const navigate = useNavigate()
 
-    const onSubmit = async () => {
-
+    const onSubmit = async () => { //https://dev.to/rahmanfadhil/how-to-generate-unique-id-in-javascript-1b13
         const alert = {
+            id: uuidv4(),
             title: values.title,
             desc: values.alertDesc,
             sms: {
@@ -55,7 +55,7 @@ export default function CreateAlertPage() {
             }
         }
 
-        const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.title}`);
+        const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.id}`);
         await setDoc(alertRef, {alert}, {merge: true});
 
         navigate('/alerts')
