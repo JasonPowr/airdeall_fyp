@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import {CardContent, CardHeader, IconButton} from "@mui/material";
 import "./AlertCard.css"
-import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../Alerts/activateAlert";
+import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../../Alerts/activateAlert";
 import {Settings} from "@material-ui/icons";
 import {useNavigate} from "react-router-dom";
 

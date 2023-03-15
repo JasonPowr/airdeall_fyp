@@ -1,5 +1,10 @@
-import {collection, deleteDoc, doc, getDoc, getDocs} from "firebase/firestore";
+import {collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
 import {auth, db} from "../../firebase";
+
+export async function createAlert(alert) {
+    const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.id}`);
+    await setDoc(alertRef, {alert}, {merge: true});
+}
 
 export async function getUserAlertsFromDB() {
     const userAlertData = [];
@@ -18,6 +23,11 @@ export async function getAlertById(alertId) {
     const foundDoc = await getDoc(docRef);
     foundAlert = foundDoc.data().alert
     return foundAlert
+}
+
+export async function updateAlert(alert) {
+    const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.id}`);
+    await setDoc(alertRef, {alert}, {merge: false});
 }
 
 export async function deleteAlert(alertId) {

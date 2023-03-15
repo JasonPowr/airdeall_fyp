@@ -18,8 +18,6 @@ function AlertViewPage() {
                 getAlertById(alertId).then(foundAlert => {
                     setAlert(foundAlert)
                 })
-            } else {
-                // User is signed out.
             }
         })
     }, []);
@@ -29,14 +27,14 @@ function AlertViewPage() {
         navigate(`/alerts`)
     }
 
+    function handleEdit() {
+        navigate(`/${alert.id}/edit_alert`, {state: {alertId: alert.id}});
+    }
+
     if (alert == null) return <div>
         <div>Loading...</div>
         <div><BottomNav/></div>
     </div>
-
-    function handleEdit() {
-        console.log("edit")
-    }
 
     return (
         <div>
