@@ -2,7 +2,12 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import {CardContent, CardHeader, IconButton} from "@mui/material";
 import "./AlertCard.css"
-import {CancelAlert, FireAlertWithCountdown, FireAlertWithoutCountdown} from "../../Alerts/activateAlert";
+import {
+    CancelAlert,
+    FireAlertWithCountdown,
+    FireAlertWithoutCountdown,
+    isAlertActive
+} from "../../Alerts/activateAlert";
 import {Settings} from "@material-ui/icons";
 import {useNavigate} from "react-router-dom";
 
@@ -11,31 +16,43 @@ export default function AlertCard({alert}) {
     const navigate = useNavigate()
 
     function handleActivateClick() {
-        FireAlertWithCountdown({alert})
+        if (!isAlertActive) {
+            FireAlertWithCountdown({alert})
 
-        const end = Date.now() + 30000;
-        counter = setInterval(function () {
-            const timeLeft = Math.floor((end - Date.now()) / 1000);
-            const timeCard = document.getElementById('timeLeftCard');
+            const end = Date.now() + 30000;
+            counter = setInterval(function () {
+                const timeLeft = Math.floor((end - Date.now()) / 1000);
+                const timeCard = document.getElementById('timeLeftCard');
 
-            if (timeLeft >= 0) {
-                timeCard.innerHTML = `${timeLeft}`;
-            } else {
-                timeCard.innerHTML = "Alert Firing.....";
-            }
-        }, 1000);
+                if (timeLeft >= 0) {
+                    timeCard.innerHTML = `${timeLeft}`;
+                } else {
+                    timeCard.innerHTML = "Alert Firing.....";
+                }
+            }, 1000);
+        } else {
+            console.log("Alert is already Active")
+        }
     }
 
     function handleCancelClick() {
-        CancelAlert({alert})
-        clearInterval(counter);
+        if (isAlertActive) {
+            CancelAlert({alert})
+            clearInterval(counter);
 
-        const timeCard = document.getElementById('timeLeftCard');
-        timeCard.innerHTML = " ";
+            const timeCard = document.getElementById('timeLeftCard');
+            timeCard.innerHTML = " ";
+        } else {
+            console.log("Alert is not active")
+        }
     }
 
     function handleActivateNowClick() {
-        FireAlertWithoutCountdown({alert})
+        if (!isAlertActive) {
+            FireAlertWithoutCountdown({alert})
+        } else {
+            console.log("Alert is already Active")
+        }
     }
 
     function handleInfoClickButton() {

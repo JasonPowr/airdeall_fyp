@@ -34,3 +34,16 @@ export async function deleteAlert(alertId) {
     await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId));
 }
 
+export async function addAlertHistory(alertId, alertHistory) {
+    const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", `${alertHistory.id}`);
+    await setDoc(alertRef, {alertHistory}, {merge: true});
+}
+
+export async function getAlertHistory(alertId) {
+
+}
+
+export async function deleteAlertHistory(alertId) {
+
+}
+

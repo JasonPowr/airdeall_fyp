@@ -42,7 +42,6 @@ export default function EditAlertPage() {
                     <p>Edit Alert</p>
                 </header>
                 <CreateAlertForm editAlert={alert}></CreateAlertForm>
-                <BottomNav/>
             </div>
         )
     }

@@ -4,16 +4,19 @@ import {getLocation} from "../Maps/maps";
 import {auth, db} from "../../firebase";
 import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
 import {createPost} from "../Socials/facebook/facebook";
+import {addAlertHistory} from "../../model/db/DB";
+import {v4 as uuidv4} from "uuid";
 
 let alertCountdown;
 let flashlightTrigger;
 let locationUpdates;
 const audio = new Audio(sound)
+export let isAlertActive = false
 
 
 export const FireAlertWithCountdown = ({alert}) => {
-
     alertCountdown = setTimeout(function () {
+        isAlertActive = true
         if (alert.sms) {
             configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
         }
@@ -43,7 +46,8 @@ export const FireAlertWithCountdown = ({alert}) => {
 };
 
 export const FireAlertWithoutCountdown = ({alert}) => {
-    console.log(alert)
+    isAlertActive = true
+
     if (alert.sms) {
         configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
     }
@@ -65,6 +69,7 @@ export const FireAlertWithoutCountdown = ({alert}) => {
 };
 
 export const CancelAlert = ({alert}) => {
+    isAlertActive = false
     clearTimeout(alertCountdown);
     clearTimeout(locationUpdates)
     toggleFlashlightOff()
@@ -85,7 +90,8 @@ export const CancelAlert = ({alert}) => {
         stopRecording()
     }
 
-    console.log("Alert Cancelled")
+    addAlertHistory(alert.id, generateAlertHistory(alert)).then(r => {
+    })
 }
 
 const validateNumber = (phoneNumber) => {
@@ -198,5 +204,12 @@ function configureSocialMediaIntegration(facebookIsEnabled, facebookIsLinked, fa
         if (facebookIsPostEnabled) {
             createPost()
         }
+    }
+}
+
+function generateAlertHistory(alert) {
+    return {
+        id: uuidv4(),
+        alert: alert
     }
 }
