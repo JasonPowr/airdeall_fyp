@@ -1,7 +1,7 @@
 import "./alertViewPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
 import {useLocation, useNavigate} from "react-router-dom";
-import {deleteAlert, getAlertById} from "../../../model/db/DB";
+import {deleteAlert, getAlertById, getAlertHistory} from "../../../model/db/DB";
 import React, {useEffect, useState} from "react";
 import {auth} from "../../../firebase";
 import {ArrowBack, Delete, Edit} from "@material-ui/icons";
@@ -11,6 +11,7 @@ function AlertViewPage() {
     const location = useLocation();
     const alertId = location.state?.alertId;
     const [alert, setAlert] = useState(null);
+    const [alertHistory, setAlertHistory] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -19,9 +20,18 @@ function AlertViewPage() {
                 getAlertById(alertId).then(foundAlert => {
                     setAlert(foundAlert)
                 })
+                getAlertHistory(alertId).then(alertHistory => {
+                    setAlertHistory(alertHistory)
+                })
             }
         })
     }, []);
+
+    function updateList(id) {
+        getAlertHistory(alertId).then(alertHistory => {
+            setAlertHistory(alertHistory)
+        })
+    }
 
     function handleDelete() {
         deleteAlert(alertId).then()
@@ -58,11 +68,12 @@ function AlertViewPage() {
 
             <div className={"alertHistory"}>
                 <p>Alert History</p>
-                <AlertHistoryCard/>
+                {alertHistory && (alertHistory.map((index) =>
+                    <AlertHistoryCard key={index.alertHistory.id} alertHistory={index.alertHistory}
+                                      onDelete={updateList}/>))}
             </div>
             <div><BottomNav/></div>
         </div>
-
     );
 }
 

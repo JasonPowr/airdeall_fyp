@@ -40,10 +40,17 @@ export async function addAlertHistory(alertId, alertHistory) {
 }
 
 export async function getAlertHistory(alertId) {
-
+    const alertHistory = [];
+    const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory"));
+    querySnapshot.forEach((doc) => {
+        alertHistory.push({
+            alertHistory: doc.data().alertHistory
+        });
+    });
+    return alertHistory
 }
 
-export async function deleteAlertHistory(alertId) {
-
+export async function deleteAlertHistory(alertId, alertHistoryId) {
+    await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId));
 }
 

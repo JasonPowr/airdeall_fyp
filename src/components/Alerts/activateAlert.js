@@ -47,7 +47,7 @@ export const FireAlertWithCountdown = ({alert}) => {
 
 export const FireAlertWithoutCountdown = ({alert}) => {
     isAlertActive = true
-
+    console.log(isAlertActive)
     if (alert.sms) {
         configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
     }

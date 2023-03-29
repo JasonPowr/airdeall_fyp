@@ -8,6 +8,7 @@ import {requestCameraAccess} from "../../../components/Camera/camera";
 import {requestLocationPermission} from "../../../components/Maps/maps";
 import {getUserAlertsFromDB} from "../../../model/db/DB";
 import AlertCard from "../../../components/Cards/AlertCard/AlertCard";
+import {isAlertActive} from "../../../components/Alerts/activateAlert";
 
 function AlertsPage() {
     const [alerts, setAlerts] = useState([]);
@@ -20,7 +21,6 @@ function AlertsPage() {
     useEffect(() => {
         auth.onAuthStateChanged(user => {
             if (user) {
-
                 getUserAlertsFromDB().then(alerts => {
                     setAlerts(alerts)
                     //setIsloading(false)
@@ -55,6 +55,12 @@ function AlertsPage() {
                     {alerts.map((index) =>
                         <AlertCard key={index.alert.id} alert={index.alert}/>)}
                 </div>
+
+                {isAlertActive && (
+                    <div>
+                        <p>Alert is Active</p>
+                    </div>
+                )}
 
                 <BottomNav value={tab} onChange={setTab}/>
 
