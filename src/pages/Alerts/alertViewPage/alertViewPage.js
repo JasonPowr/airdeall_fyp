@@ -68,9 +68,12 @@ function AlertViewPage() {
 
             <div className={"alertHistory"}>
                 <p>Alert History</p>
-                {alertHistory && (alertHistory.map((index) =>
-                    <AlertHistoryCard key={index.alertHistory.id} alertHistory={index.alertHistory}
-                                      onDelete={updateList}/>))}
+                {alertHistory.length > 0 ? (alertHistory.map((index) =>
+                        <AlertHistoryCard key={index.alertHistory.id} alertHistory={index.alertHistory}
+                                          onDelete={updateList}/>)
+                ) : (
+                    <p>No history found.</p>
+                )}
             </div>
             <div><BottomNav/></div>
         </div>
