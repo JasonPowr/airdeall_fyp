@@ -44,7 +44,7 @@ export function startRecording() {
     mediaRecorder.start()
 }
 
-export function stopRecording() {
+export function stopRecording(alertId) {
     mediaRecorder.stop();
 
     mediaRecorder.ondataavailable = function (e) {
@@ -53,11 +53,9 @@ export function stopRecording() {
 
     mediaRecorder.onstop = function (e) {
         const recording = new Blob(chunks, {'type': 'video/webm'});
-        const date = new Date();
-        const id = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}-${date.getHours()}:${date.getMinutes()}.${date.getSeconds()}`
 
         const storage = getStorage();
-        const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/alert-${id}`);
+        const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertId}`);
 
         uploadBytes(alertRecordingRef, recording).then((snapshot) => {
             console.log('Uploaded a blob or file!');

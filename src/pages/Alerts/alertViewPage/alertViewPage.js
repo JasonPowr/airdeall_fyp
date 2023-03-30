@@ -1,7 +1,7 @@
 import "./alertViewPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
 import {useLocation, useNavigate} from "react-router-dom";
-import {deleteAlert, getAlertById, getAlertHistory} from "../../../model/db/DB";
+import {deleteAlert, getAlertById, getAllAlertHistory} from "../../../model/db/DB";
 import React, {useEffect, useState} from "react";
 import {auth} from "../../../firebase";
 import {ArrowBack, Delete, Edit} from "@material-ui/icons";
@@ -20,7 +20,7 @@ function AlertViewPage() {
                 getAlertById(alertId).then(foundAlert => {
                     setAlert(foundAlert)
                 })
-                getAlertHistory(alertId).then(alertHistory => {
+                getAllAlertHistory(alertId).then(alertHistory => {
                     setAlertHistory(alertHistory)
                 })
             }
@@ -28,7 +28,7 @@ function AlertViewPage() {
     }, []);
 
     function updateList(id) {
-        getAlertHistory(alertId).then(alertHistory => {
+        getAllAlertHistory(alertId).then(alertHistory => {
             setAlertHistory(alertHistory)
         })
     }

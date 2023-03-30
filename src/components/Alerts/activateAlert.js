@@ -73,6 +73,7 @@ export const CancelAlert = ({alert}) => {
     clearTimeout(alertCountdown);
     clearTimeout(locationUpdates)
     toggleFlashlightOff()
+    const alertHistoryId = generateIdFoHistory()
 
     if (alert.flashlight) {
         clearInterval(flashlightTrigger)
@@ -87,10 +88,10 @@ export const CancelAlert = ({alert}) => {
     }
 
     if (alert.automaticRecordings) {
-        stopRecording()
+        stopRecording(alertHistoryId)
     }
 
-    addAlertHistory(alert.id, generateAlertHistory(alert)).then(r => {
+    addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId)).then(r => {
     })
 }
 
@@ -207,9 +208,13 @@ function configureSocialMediaIntegration(facebookIsEnabled, facebookIsLinked, fa
     }
 }
 
-function generateAlertHistory(alert) {
+function generateIdFoHistory() {
+    return uuidv4()
+}
+
+function generateAlertHistory(alert, alertHistoryId) {
     return {
-        id: uuidv4(),
+        id: alertHistoryId,
         alert: alert
     }
 }
