@@ -12,3 +12,15 @@
     width: 100%;
     height: 100%;
 }
+
+.history-map {
+    width: 100%;
+    height: 100vh;
+}
+
+.history-map-container {
+    width: 50%;
+    height: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}

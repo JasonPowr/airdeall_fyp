@@ -12,13 +12,14 @@ let flashlightTrigger;
 let locationUpdates;
 const audio = new Audio(sound)
 export let isAlertActive = false
-
+let history_locationUpdates = []
 
 export const FireAlertWithCountdown = ({alert}) => {
     alertCountdown = setTimeout(function () {
+        history_locationUpdates = []
         isAlertActive = true
         if (alert.sms) {
-            configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
+            configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo)
         }
 
         if (alert.alarm) {
@@ -46,10 +47,11 @@ export const FireAlertWithCountdown = ({alert}) => {
 };
 
 export const FireAlertWithoutCountdown = ({alert}) => {
+    history_locationUpdates = []
     isAlertActive = true
     console.log(isAlertActive)
     if (alert.sms) {
-        configureSMS(alert.messageBody, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.locationInfo, alert.recurringLocationInfo)
+        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo)
     }
     if (alert.alarm) {
         soundAlarm()
@@ -91,8 +93,10 @@ export const CancelAlert = ({alert}) => {
         stopRecording(alertHistoryId)
     }
 
-    addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId)).then(r => {
+    addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId, history_locationUpdates)).then(r => {
+        history_locationUpdates = null
     })
+
 }
 
 const validateNumber = (phoneNumber) => {
@@ -104,38 +108,38 @@ const validateNumber = (phoneNumber) => {
 }
 
 const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone) => {
-    if (contact_1_phone !== "") {
-        const contact1 = await validateNumber(contact_1_phone);
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
-        const requestOptions = {
-            method: 'GET',
-            mode: 'no-cors'
-        };
-        fetch(url, requestOptions)
-            .catch(error => console.error(error));
-    }
-
-    if (contact_2_phone !== "") {
-        const contact2 = await validateNumber(contact_2_phone);
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`;
-        const requestOptions = {
-            method: 'GET',
-            mode: 'no-cors'
-        };
-        fetch(url, requestOptions)
-            .catch(error => console.error(error));
-    }
-
-    if (contact_3_phone !== "") {
-        const contact3 = await validateNumber(contact_3_phone);
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`;
-        const requestOptions = {
-            method: 'GET',
-            mode: 'no-cors'
-        };
-        fetch(url, requestOptions)
-            .catch(error => console.error(error));
-    }
+    // if (contact_1_phone !== "") {
+    //     const contact1 = await validateNumber(contact_1_phone);
+    //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
+    //     const requestOptions = {
+    //         method: 'GET',
+    //         mode: 'no-cors'
+    //     };
+    //     fetch(url, requestOptions)
+    //         .catch(error => console.error(error));
+    // }
+    //
+    // if (contact_2_phone !== "") {
+    //     const contact2 = await validateNumber(contact_2_phone);
+    //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`;
+    //     const requestOptions = {
+    //         method: 'GET',
+    //         mode: 'no-cors'
+    //     };
+    //     fetch(url, requestOptions)
+    //         .catch(error => console.error(error));
+    // }
+    //
+    // if (contact_3_phone !== "") {
+    //     const contact3 = await validateNumber(contact_3_phone);
+    //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`;
+    //     const requestOptions = {
+    //         method: 'GET',
+    //         mode: 'no-cors'
+    //     };
+    //     fetch(url, requestOptions)
+    //         .catch(error => console.error(error));
+    // }
 }
 const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone, locationInfo, recurringLocationInfo) => {
 
@@ -145,6 +149,7 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
 
     if (locationInfo) {
         const location = await getLocation()
+        history_locationUpdates.push(location)
         messageBody = messageBody + ` Alert Fired at this location: https://maps.google.com/?q=${location.lat},${location.lng}`
     }
 
@@ -154,10 +159,12 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
     if (recurringLocationInfo) {
         locationUpdates = setInterval(async function () {
             const location = await getLocation()
-            messageBody = ` Location Update: https://maps.google.com/?q=${location.lat},${location.lng}`
-            await sendSMS(messageBody, contact_1_phone, contact_2_phone, contact_3_phone)
+            history_locationUpdates.push(location)
+            // messageBody = ` Location Update: https://maps.google.com/?q=${location.lat},${location.lng}`
+            // await sendSMS(messageBody, contact_1_phone, contact_2_phone, contact_3_phone)
         }, 30000);
     }
+
 }
 
 const soundAlarm = () => {
@@ -212,9 +219,10 @@ function generateIdFoHistory() {
     return uuidv4()
 }
 
-function generateAlertHistory(alert, alertHistoryId) {
+function generateAlertHistory(alert, alertHistoryId, locationUpdates) {
     return {
         id: alertHistoryId,
-        alert: alert
+        alert: alert,
+        locationInfo: locationUpdates,
     }
 }

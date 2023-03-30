@@ -1,7 +1,8 @@
 import CreateAlertForm from "../../../components/Forms/createForm/createAlertForm";
-import "./createAlertPage.css"
+import "./createAlertPage.module.css"
 import {ArrowBack} from "@material-ui/icons";
 import {useNavigate} from "react-router-dom";
+import styles from './createAlertPage.module.css';
 
 export default function CreateAlertPage() {
     const navigate = useNavigate()
@@ -11,16 +12,12 @@ export default function CreateAlertPage() {
     }
 
     return (
-        <div className={"createAlertPage"}>
-            <header>
-                <ArrowBack onClick={handleBack} fontSize={"large"}/>
-            </header>
-
-            <div>
-                <p>Create An alert</p>
-                <CreateAlertForm/>
-            </div>
-
+        <div className={styles.createAlertPageStyle}>
+            <ArrowBack onClick={handleBack} fontSize={"large"}/>
+            <CreateAlertForm/>
         </div>
     );
 }
+
+
+//https://www.w3schools.com/react/react_css.asp

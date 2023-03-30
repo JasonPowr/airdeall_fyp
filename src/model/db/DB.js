@@ -1,4 +1,4 @@
-import {collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {collection, deleteDoc, doc, GeoPoint, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {auth, db} from "../../firebase";
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref} from "firebase/storage";
 
@@ -41,6 +41,25 @@ export async function deleteAlert(alertId) {
         })
     }
 
+}
+
+export async function getActiveAlerts() {
+    const querySnapshot = await getDocs(collection(db, "activeAlerts"));
+    const activeAlerts = [];
+    querySnapshot.forEach((doc) => {
+        activeAlerts.push({
+            lat: doc.data().location.alertLocation._lat,
+            lng: doc.data().location.alertLocation._long
+        })
+    });
+    return activeAlerts
+}
+
+export async function updateLocationInDb(lat, lng) {
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+        location: new GeoPoint(lat, lng)
+    });
 }
 
 export async function addAlertHistory(alertId, alertHistory) {

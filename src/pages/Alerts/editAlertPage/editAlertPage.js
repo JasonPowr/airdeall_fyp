@@ -5,7 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {auth} from "../../../firebase";
 import {getAlertById} from "../../../model/db/DB";
 import {useEffect, useState} from "react";
-
+import styles from "./editAlertPage.module.css"
 
 export default function EditAlertPage() {
     const location = useLocation();
@@ -36,7 +36,7 @@ export default function EditAlertPage() {
         )
     } else {
         return (
-            <div>
+            <div className={styles.editAlertPageStyle}>
                 <header>
                     <ArrowBack onClick={handleBack} fontSize={"large"}/>
                     <p>Edit Alert</p>

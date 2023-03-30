@@ -7,7 +7,7 @@ import {createAlertValidationSchema} from "../../../Helpers/Validation/CreateAle
 import TrustedContactPicker from "../../Contacts/contacts";
 import {facebookIsLinked, loginWithFacebook} from "../../Socials/facebook/facebook";
 import {createAlert, updateAlert} from "../../../model/db/DB";
-
+import styles from "./createAlertForm.css";
 
 export default function CreateAlertForm({editAlert}) {
     const navigate = useNavigate()
@@ -192,7 +192,7 @@ export default function CreateAlertForm({editAlert}) {
     }
 
     return (
-        <div className={"createAlertPage"}>
+        <div className={styles.createAlertForm}>
             <form autoComplete={"off"}>
                 <div>
                     <TextField
