@@ -31,6 +31,7 @@ const useStyles = makeStyles({
 function App() {
     const classes = useStyles();
     initializeFacebookSDK()
+
     return (
         <AuthContextProvider>
             <Router>
