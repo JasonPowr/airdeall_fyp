@@ -1,12 +1,12 @@
 import {Button, TextField} from "@material-ui/core";
 import UserContext from "../../../contexts/Auth/authContext";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {loginSchema} from "../../../Helpers/Validation/LoginValidation";
 import {useFormik} from "formik";
 import "./loginForm.css"
 import {useContext} from "react";
 
-export default function LoginForm() {
+export default function LoginForm({onClick}) {
     const {logIn} = useContext(UserContext)
     const navigate = useNavigate()
 
@@ -23,6 +23,10 @@ export default function LoginForm() {
         validationSchema: loginSchema,
         onSubmit,
     })
+
+    function handlePasswordResetClick() {
+        onClick(true)
+    }
 
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
@@ -66,7 +70,8 @@ export default function LoginForm() {
             </div>
 
             <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}><b>Login</b></Button>
-
+            <p onClick={handlePasswordResetClick}>Forgot Password ?</p>
+            <Link to={"/register"}><p>Not a User? Register Here....</p></Link>
         </form>
     );
 }

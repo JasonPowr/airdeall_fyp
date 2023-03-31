@@ -1,7 +1,8 @@
 import {makeStyles} from "@material-ui/core";
-import {Link} from "react-router-dom";
 import "@fontsource/raleway";
 import LoginForm from "../../components/Forms/loginForm/loginForm";
+import {useState} from "react";
+import PasswordResetForm from "../../components/Forms/PasswordResetForm/passwordResetForm";
 
 const useStyles = makeStyles({
     container: {
@@ -21,6 +22,12 @@ const useStyles = makeStyles({
 })
 
 function LoginPage() {
+    const [showPasswordReset, setShowPasswordReset] = useState(false);
+
+    function showForm(showForm) {
+        setShowPasswordReset(showForm)
+    }
+
     const classes = useStyles();
     return (
         <div className={classes.container}>
@@ -29,9 +36,17 @@ function LoginPage() {
             </div>
 
             <div className={classes.footer}>
-                <LoginForm/>
-                <Link className={classes.link} to={""}><p>Forgot Password?</p></Link>
-                <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
+
+                {showPasswordReset ? (
+                    <div>
+                        <PasswordResetForm onClick={showForm}/>
+                    </div>
+                ) : (
+                    <div>
+                        <LoginForm onClick={showForm}/>
+                    </div>
+                )}
+
             </div>
         </div>
     );
