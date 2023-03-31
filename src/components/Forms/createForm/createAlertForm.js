@@ -8,9 +8,12 @@ import TrustedContactPicker from "../../Contacts/contacts";
 import {facebookIsLinked, loginWithFacebook} from "../../Socials/facebook/facebook";
 import {createAlert, updateAlert} from "../../../model/db/DB";
 import styles from "./createAlertForm.css";
+import {useState} from "react";
+import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 
 export default function CreateAlertForm({editAlert}) {
     const navigate = useNavigate()
+    const [error, setError] = useState(null);
 
     const {values, handleChange, handleBlur, errors, touched} = useFormik({
         initialValues: {
@@ -92,8 +95,12 @@ export default function CreateAlertForm({editAlert}) {
                 }
             }
         }
-        await createAlert(alert)
-        navigate('/alerts')
+        try {
+            await createAlert(alert)
+            navigate('/alerts')
+        } catch (error) {
+            setError(error.message);
+        }
     }
 
     function handleCancelCreate() {
@@ -191,9 +198,20 @@ export default function CreateAlertForm({editAlert}) {
         values.socialMediaIntegration.facebook.isLinked = facebookIsLinked
     }
 
+    const handleCloseError = () => {
+        setError(null);
+        return false
+    };
+
     return (
         <div className={styles.createAlertForm}>
             <form autoComplete={"off"}>
+
+                <div>
+                    {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
+                </div>
+
+
                 <div>
                     <TextField
                         error={!!(errors.title && touched.title)}

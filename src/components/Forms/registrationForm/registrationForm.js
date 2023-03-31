@@ -5,16 +5,22 @@ import {useFormik} from "formik";
 import {registrationSchema} from "../../../Helpers/Validation/RegistrationValidation";
 import "./registrationForm.css"
 import {updateProfileOnRegister} from "../../../model/db/DB";
-import {useContext} from "react";
+import {useContext, useState} from "react";
+import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 
 export default function RegistrationForm() {
     const {createUser} = useContext(UserContext)
     const navigate = useNavigate()
+    const [error, setError] = useState(null);
 
     const onSubmit = async () => {
-        let response = await createUser(values.email, values.password)
-        await updateProfileOnRegister(response.user.auth, values.firstName, values.lastName, values.email, values.phoneNumber)
-        navigate('/alerts')
+        try {
+            let response = await createUser(values.email, values.password)
+            await updateProfileOnRegister(response.user.auth, values.firstName, values.lastName, values.email, values.phoneNumber)
+            navigate('/alerts')
+        } catch (error) {
+            setError(error.message);
+        }
     }
 
     const {handleSubmit, values, handleChange, handleBlur, errors, touched} = useFormik({
@@ -30,8 +36,17 @@ export default function RegistrationForm() {
         onSubmit,
     })
 
+    const handleCloseError = () => {
+        setError(null);
+        return false
+    };
+
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
+
+            <div>
+                {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
+            </div>
 
             <div>
                 <TextField

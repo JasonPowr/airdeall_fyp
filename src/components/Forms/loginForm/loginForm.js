@@ -4,15 +4,21 @@ import {Link, useNavigate} from "react-router-dom";
 import {loginSchema} from "../../../Helpers/Validation/LoginValidation";
 import {useFormik} from "formik";
 import "./loginForm.css"
-import {useContext} from "react";
+import {useContext, useState} from "react";
+import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 
 export default function LoginForm({onClick}) {
     const {logIn} = useContext(UserContext)
     const navigate = useNavigate()
+    const [error, setError] = useState(null);
 
     const onSubmit = async () => {
-        await logIn(values.email, values.password)
-        navigate('/alerts')
+        try {
+            await logIn(values.email, values.password)
+            navigate('/alerts')
+        } catch (error) {
+            setError(error.message);
+        }
     }
 
     const {handleSubmit, values, handleChange, handleBlur, errors, touched} = useFormik({
@@ -28,8 +34,17 @@ export default function LoginForm({onClick}) {
         onClick(true)
     }
 
+    const handleCloseError = () => {
+        setError(null);
+        return false
+    };
+
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
+
+            <div>
+                {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
+            </div>
 
             <div>
                 <TextField
