@@ -1,6 +1,8 @@
 import {Button, makeStyles} from "@material-ui/core";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import "@fontsource/raleway";
+import {useContext, useEffect, useState} from "react";
+import UserContext from "../../contexts/Auth/authContext";
 
 const useStyles = makeStyles({
     container: {
@@ -30,21 +32,48 @@ const useStyles = makeStyles({
 
 function HomePage() {
     const classes = useStyles();
-    return (
-        <div className={classes.container}>
-            <div>
-                <img src={require("../../assets/images/airdeall.png")} alt={""}/>
-                <p style={{fontSize: '30px'}}><b> Welcome! </b></p>
-                <p>Please login or register</p>
-            </div>
+    const {user} = useContext(UserContext);
+    const [isUserLoading, setIsUserLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate()
 
-            <div className={classes.footer}>
-                <Link to={"/login"}> <Button className={classes.button} variant={"contained"}
-                                             size={"large"}><b>Login</b></Button></Link>
-                <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
-            </div>
+    useEffect(() => {
+        if (user === null) {
+            setIsUserLoading(false);
+        } else {
+            setIsUserLoading(false);
+            setIsAuthenticated(true)
+        }
+
+        if (isAuthenticated) {
+            navigate("/alerts")
+        }
+
+    }, [user]);
+
+    return (
+        <div>
+            {isUserLoading ? (
+                <div>Loading ...</div>
+            ) : isAuthenticated ? (
+                <div>Loading ...</div>
+            ) : (
+                <div className={classes.container}>
+                    <div>
+                        <img src={require("../../assets/images/airdeall.png")} alt={""}/>
+                        <p style={{fontSize: '30px'}}><b> Welcome! </b></p>
+                        <p>Please login or register</p>
+                    </div>
+
+                    <div className={classes.footer}>
+                        <Link to={"/login"}> <Button className={classes.button} variant={"contained"}
+                                                     size={"large"}><b>Login</b></Button></Link>
+                        <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
+                    </div>
+                </div>
+            )}
         </div>
-    );
+    )
 }
 
 export default HomePage;

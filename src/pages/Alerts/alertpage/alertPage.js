@@ -1,15 +1,16 @@
 import {Link} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Button} from "@material-ui/core";
-import {auth} from "../../../firebase";
 import "./alertPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
 import {requestCameraAccess} from "../../../components/Camera/camera";
 import {requestLocationPermission} from "../../../components/Maps/maps";
 import {getUserAlertsFromDB} from "../../../model/db/DB";
 import AlertCard from "../../../components/Cards/AlertCard/AlertCard";
+import UserContext from "../../../contexts/Auth/authContext";
 
 function AlertsPage() {
+    const {user} = useContext(UserContext)
     const [alerts, setAlerts] = useState([]);
     const [tab, setTab] = useState(0)
 
@@ -17,13 +18,11 @@ function AlertsPage() {
     requestLocationPermission()
 
     useEffect(() => {
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                getUserAlertsFromDB().then(alerts => {
-                    setAlerts(alerts)
-                })
-            }
-        })
+        if (user) {
+            getUserAlertsFromDB().then(alerts => {
+                setAlerts(alerts)
+            })
+        }
     }, []);
 
     if (alerts.length === 0) {

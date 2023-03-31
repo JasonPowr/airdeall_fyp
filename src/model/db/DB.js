@@ -1,8 +1,14 @@
-import {collection, deleteDoc, doc, GeoPoint, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
-import {auth, db} from "../../firebase";
+import {collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {db} from "../../firebase";
 import {updateProfile} from 'firebase/auth';
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref} from "firebase/storage";
+import UserContext from "../../contexts/Auth/authContext";
+import {useContext} from "react";
 
+function GetUserId() {
+    const {user} = useContext(UserContext)
+    return user.uid
+}
 
 export async function updateProfileOnRegister(auth, firstName, lastName, email, phoneNumber) {
     updateProfile(auth.currentUser, {}).then(async () => {
@@ -19,13 +25,13 @@ export async function updateProfileOnRegister(auth, firstName, lastName, email, 
 }
 
 export async function createAlert(alert) {
-    const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.id}`);
+    const alertRef = doc(db, "users", `${GetUserId}`, "alerts", `${alert.id}`);
     await setDoc(alertRef, {alert}, {merge: true});
 }
 
 export async function getUserAlertsFromDB() {
     const userAlertData = [];
-    const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts"));
+    const querySnapshot = await getDocs(collection(db, "users", `${GetUserId}`, "alerts"));
     querySnapshot.forEach((doc) => {
         userAlertData.push({
             alert: doc.data().alert
@@ -36,19 +42,19 @@ export async function getUserAlertsFromDB() {
 
 export async function getAlertById(alertId) {
     let foundAlert;
-    const docRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId);
+    const docRef = doc(db, "users", `${GetUserId}`, "alerts", alertId);
     const foundDoc = await getDoc(docRef);
     foundAlert = foundDoc.data().alert
     return foundAlert
 }
 
 export async function updateAlert(alert) {
-    const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.id}`);
+    const alertRef = doc(db, "users", `${GetUserId}`, "alerts", `${alert.id}`);
     await setDoc(alertRef, {alert}, {merge: false});
 }
 
 export async function deleteAlert(alertId) {
-    await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId));
+    await deleteDoc(doc(db, "users", `${GetUserId}`, "alerts", alertId));
 
     const alertHistory = await getAllAlertHistory(alertId)
     if (alertHistory.length > 0) {
@@ -71,21 +77,21 @@ export async function getActiveAlerts() {
     return activeAlerts
 }
 
-export async function updateLocationInDb(lat, lng) {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(userRef, {
-        location: new GeoPoint(lat, lng)
-    });
-}
+// export async function updateLocationInDb(lat, lng) {
+//     const userRef = doc(db, "users", `${GetUserId}`);
+//     await updateDoc(userRef, {
+//         location: new GeoPoint(lat, lng)
+//     });
+// }
 
 export async function addAlertHistory(alertId, alertHistory) {
-    const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", `${alertHistory.id}`);
+    const alertRef = doc(db, "users", `${GetUserId}`, "alerts", alertId, "alertHistory", `${alertHistory.id}`);
     await setDoc(alertRef, {alertHistory}, {merge: true});
 }
 
 export async function getAllAlertHistory(alertId) {
     const alertHistory = [];
-    const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory"));
+    const querySnapshot = await getDocs(collection(db, "users", `${GetUserId}`, "alerts", alertId, "alertHistory"));
     querySnapshot.forEach((doc) => {
         alertHistory.push({
             alertHistory: doc.data().alertHistory
@@ -96,14 +102,14 @@ export async function getAllAlertHistory(alertId) {
 
 export async function getAlertHistoryById(alertId, alertHistoryId) {
     let foundAlertHistory;
-    const docRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId);
+    const docRef = doc(db, "users", `${GetUserId}`, "alerts", alertId, "alertHistory", alertHistoryId);
     const foundDoc = await getDoc(docRef);
     foundAlertHistory = foundDoc.data().alertHistory
     return foundAlertHistory
 }
 
 export async function deleteAlertHistory(alertId, alertHistoryId, isRecording) {
-    await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId));
+    await deleteDoc(doc(db, "users", `${GetUserId}`, "alerts", alertId, "alertHistory", alertHistoryId));
 
     if (isRecording) {
         await deleteVideoFromAlert(alertHistoryId)
@@ -112,7 +118,7 @@ export async function deleteAlertHistory(alertId, alertHistoryId, isRecording) {
 
 export async function getAlertVideo(alertHistoryId) {
     const storage = getStorage();
-    const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertHistoryId}`);
+    const alertRecordingRef = ref(storage, `${GetUserId}/alertRecordings/${alertHistoryId}`);
     const foundVideo = []
 
     await getMetadata(alertRecordingRef)
@@ -151,7 +157,7 @@ export async function getAlertVideo(alertHistoryId) {
 export async function deleteVideoFromAlert(alertHistoryId) {
     const storage = getStorage();
 
-    const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertHistoryId}`);
+    const alertRecordingRef = ref(storage, `${GetUserId}/alertRecordings/${alertHistoryId}`);
 
     await deleteObject(alertRecordingRef).then(() => {
         console.log("Video Deleted")

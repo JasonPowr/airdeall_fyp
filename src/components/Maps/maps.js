@@ -1,18 +1,17 @@
 import React, {useEffect, useState} from "react"
 import "./map.css"
 import {Circle, DirectionsRenderer, GoogleMap, Marker} from "@react-google-maps/api";
-import {auth} from "../../firebase";
-import {getActiveAlerts, updateLocationInDb} from "../../model/db/DB";
+import {getActiveAlerts} from "../../model/db/DB";
 
 export function requestLocationPermission() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    updateLocationInDb(position.coords.latitude,
-                        position.coords.longitude)
-                }
-            })
+            // auth.onAuthStateChanged(async user => {
+            //     if (user) {
+            //         await updateLocationInDb(position.coords.latitude,
+            //             position.coords.longitude)
+            //     }
+            // })
         }, () => {
         });
     } else {
@@ -23,13 +22,13 @@ export function requestLocationPermission() {
 export function getLocation() {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
-            position => {
+            async position => {
                 const location = {
                     lat: position.coords.latitude,  //change this
                     lng: position.coords.longitude,
                 };
                 resolve(location);
-                updateLocationInDb(position.coords.latitude, position.coords.longitude)
+                // await updateLocationInDb(position.coords.latitude, position.coords.longitude)
             },
             error => {
                 reject(error);
@@ -127,7 +126,7 @@ export default function Map() {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
             };
-            updateLocationInDb(position.coords.latitude, position.coords.longitude)
+            // updateLocationInDb(position.coords.latitude, position.coords.longitude)
             setUserLocation(location);
         });
 
