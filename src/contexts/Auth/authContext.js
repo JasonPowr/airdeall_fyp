@@ -1,36 +1,13 @@
-import {createContext, useContext, useState} from 'react';
-import {
-    createUserWithEmailAndPassword,
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    signOut,
-    updateProfile,
-} from 'firebase/auth';
-import {auth, db} from '../../firebase';
-import {doc, setDoc} from "firebase/firestore";
+/*@formatter:off*/
+import React, {createContext, useEffect, useState} from 'react';
+import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'firebase/auth';
+import {auth} from "../../firebase";
 
 const UserContext = createContext();
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({})
-    const createUser = (email, password, firstName, lastName, phoneNumber) => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                updateProfile(auth.currentUser, {}).then(async () => {
-                    await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
-                        uid: auth.currentUser.uid,
-                        firstName: firstName,
-                        lastName: lastName,
-                        email: email,
-                        phoneNumber: phoneNumber,
-                    });
-                }).catch((error) => {
-                    console.log(error)
-                });
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-            });
+    const createUser = (email, password) => {
+        return createUserWithEmailAndPassword(auth, email, password)
     };
 
     const logOut = () => {
@@ -38,33 +15,23 @@ export const AuthContextProvider = ({children}) => {
     };
 
     const logIn = (email, password) => {
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in
-                const user = userCredential.user;
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-            });
+        return signInWithEmailAndPassword(auth, email, password)
     }
 
-
-    onAuthStateChanged(auth, (currentUser) => {
-        if (user) {
-            setUser(currentUser)
-        } else {
-        }
-    });
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+        return () => {
+            unsubscribe();
+        };
+    }, []);
 
     return (
-        <UserContext.Provider value={{createUser, user, logOut, logIn}}>
+        <UserContext.Provider value={{ createUser, user, logOut, logIn }}>
             {children}
         </UserContext.Provider>
     );
 };
 
-export const UserAuth = () => {
-    return useContext(UserContext);
-};
+export default UserContext;

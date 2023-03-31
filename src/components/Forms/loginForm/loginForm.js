@@ -1,16 +1,17 @@
 import {Button, TextField} from "@material-ui/core";
-import {UserAuth} from "../../../contexts/Auth/authContext";
+import UserContext from "../../../contexts/Auth/authContext";
 import {useNavigate} from "react-router-dom";
 import {loginSchema} from "../../../Helpers/Validation/LoginValidation";
 import {useFormik} from "formik";
 import "./loginForm.css"
+import {useContext} from "react";
 
 export default function LoginForm() {
-    const {logIn} = UserAuth()
+    const {logIn} = useContext(UserContext)
     const navigate = useNavigate()
 
-    const onSubmit = () => {
-        logIn(values.email, values.password)
+    const onSubmit = async () => {
+        await logIn(values.email, values.password)
         navigate('/alerts')
     }
 

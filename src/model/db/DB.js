@@ -1,6 +1,22 @@
 import {collection, deleteDoc, doc, GeoPoint, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {auth, db} from "../../firebase";
+import {updateProfile} from 'firebase/auth';
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref} from "firebase/storage";
+
+
+export async function updateProfileOnRegister(auth, firstName, lastName, email, phoneNumber) {
+    updateProfile(auth.currentUser, {}).then(async () => {
+        await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
+            uid: auth.currentUser.uid,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phoneNumber: phoneNumber,
+        });
+    }).catch((error) => {
+        console.log(error)
+    });
+}
 
 export async function createAlert(alert) {
     const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", `${alert.id}`);

@@ -1,13 +1,13 @@
 import "./profilePage.css"
 import BottomNav from "../../components/bottomNav/bottomNav";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {Button} from "@material-ui/core";
-import {UserAuth} from "../../contexts/Auth/authContext";
+import UserContext from "../../contexts/Auth/authContext";
 import {useNavigate} from "react-router-dom";
 
 function ProfilePage() {
     const [tab, setTab] = useState(0)
-    const {logOut} = UserAuth()
+    const {logOut} = useContext(UserContext)
     const navigate = useNavigate()
     const [error, setError] = useState("");
 

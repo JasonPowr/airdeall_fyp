@@ -1,16 +1,19 @@
 import {Button, TextField} from "@material-ui/core";
-import {UserAuth} from "../../../contexts/Auth/authContext";
+import UserContext from "../../../contexts/Auth/authContext";
 import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
 import {registrationSchema} from "../../../Helpers/Validation/RegistrationValidation";
 import "./registrationForm.css"
+import {updateProfileOnRegister} from "../../../model/db/DB";
+import {useContext} from "react";
 
 export default function RegistrationForm() {
-    const {createUser} = UserAuth()
+    const {createUser} = useContext(UserContext)
     const navigate = useNavigate()
 
-    const onSubmit = (e) => {
-        createUser(values.email, values.password, values.firstName, values.lastName, values.phoneNumber)
+    const onSubmit = async () => {
+        let response = await createUser(values.email, values.password)
+        await updateProfileOnRegister(response.user.auth, values.firstName, values.lastName, values.email, values.phoneNumber)
         navigate('/alerts')
     }
 
