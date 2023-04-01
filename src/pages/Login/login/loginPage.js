@@ -1,8 +1,8 @@
 import {makeStyles} from "@material-ui/core";
 import "@fontsource/raleway";
-import LoginForm from "../../components/Forms/loginForm/loginForm";
+import LoginForm from "../../../components/Forms/loginForm/loginForm";
 import {useState} from "react";
-import PasswordResetForm from "../../components/Forms/PasswordResetForm/passwordResetForm";
+import PasswordResetForm from "../../../components/Forms/PasswordResetForm/passwordResetForm";
 
 const useStyles = makeStyles({
     container: {
@@ -32,7 +32,7 @@ function LoginPage() {
     return (
         <div className={classes.container}>
             <div>
-                <img src={require("../../assets/images/airdeall.png")} alt={""}/>
+                <img src={require("../../../assets/images/airdeall.png")} alt={""}/>
             </div>
 
             <div className={classes.footer}>

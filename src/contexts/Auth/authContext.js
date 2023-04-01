@@ -1,9 +1,18 @@
-/*@formatter:off*/
 import React, {createContext, useEffect, useState} from 'react';
-import {createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut} from 'firebase/auth';
+import {
+    createUserWithEmailAndPassword,
+    linkWithPhoneNumber,
+    onAuthStateChanged,
+    RecaptchaVerifier,
+    sendEmailVerification,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signOut,
+} from 'firebase/auth';
 import {auth} from "../../firebase";
 
 const UserContext = createContext();
+let confirmCode = null
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({})
     const createUser = (email, password) => {
@@ -18,12 +27,30 @@ export const AuthContextProvider = ({children}) => {
         return signInWithEmailAndPassword(auth, email, password)
     }
 
-    const userId = () => {
-        return auth.currentUser.uid
-    }
-
     const sendResetEmail = (email) => {
         return sendPasswordResetEmail(auth, email)
+    }
+
+    const sendVerifyEmailAddress = () => {
+        return sendEmailVerification(auth.currentUser)
+    }
+
+    const sendVerificationSMS = (phoneNumber, submitButtonId) => {
+        window.recaptchaVerifier = new RecaptchaVerifier(submitButtonId, {
+            'size': 'invisible',
+        }, auth);
+
+        linkWithPhoneNumber(user, phoneNumber, window.recaptchaVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                confirmCode = confirmationResult
+            }).catch((error) => {
+            console.log(error)
+        });
+    }
+
+    const verifyCode = (code) => {
+        return confirmCode.confirm(code)
     }
 
     useEffect(() => {
@@ -36,7 +63,16 @@ export const AuthContextProvider = ({children}) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ createUser, user, logOut, logIn, userId, sendResetEmail }}>
+        <UserContext.Provider value={{
+            createUser,
+            user,
+            logOut,
+            logIn,
+            sendResetEmail,
+            sendVerifyEmailAddress,
+            sendVerificationSMS,
+            verifyCode
+        }}>
             {children}
         </UserContext.Provider>
     );

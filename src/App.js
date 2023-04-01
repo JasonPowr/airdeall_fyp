@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import HomePage from "./pages/Home/homePage";
-import LoginPage from "./pages/Login/loginPage";
+import LoginPage from "./pages/Login/login/loginPage";
 import RegistrationPage from "./pages/Register/registrationPage";
 import "./App.css"
 import {makeStyles} from "@material-ui/core";
@@ -14,6 +14,7 @@ import ProfilePage from "./pages/Profile/profilePage";
 import AlertViewPage from "./pages/Alerts/alertViewPage/alertViewPage";
 import EditAlertPage from "./pages/Alerts/editAlertPage/editAlertPage";
 import AlertHistoryViewPage from "./pages/Alerts/AlertHistoryViewPage/AlertHistoryViewPage";
+import ConfirmPhoneNumberPage from "./pages/Login/ConfirmPhoneNumber/ConfirmPhoneNumberPage";
 
 const useStyles = makeStyles({
     app: {
@@ -45,6 +46,8 @@ function App() {
                         <Route path="/:id/edit_alert" element={<ProtectedRoutes> <EditAlertPage/></ProtectedRoutes>}/>
                         <Route path="/:id/alert_view/:id/history_view"
                                element={<ProtectedRoutes> <AlertHistoryViewPage/></ProtectedRoutes>}/>
+                        <Route path="/confirmNumber"
+                               element={<ProtectedRoutes> <ConfirmPhoneNumberPage/></ProtectedRoutes>}/>
                     </Routes>
                 </div>
             </Router>
