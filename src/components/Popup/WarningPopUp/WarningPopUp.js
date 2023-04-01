@@ -21,7 +21,7 @@ export function WarningPopUp({message, onCloseClick, context}) {
 
         setTimeout(function () {
             setEmailSent(false)
-        }, 3000);
+        }, 2000);
     }
 
     function handlePhoneVerification() {

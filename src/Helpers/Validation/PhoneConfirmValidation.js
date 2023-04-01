@@ -3,5 +3,5 @@ import "yup-phone"; //https://www.npmjs.com/package/yup-phone
 
 export const phoneConfirmValidationSchema = yup.object().shape({
     phoneNumber: yup.string().phone("IE", false, "Invalid Phone Number"),
-    code: yup.number().max(6)
+    code: yup.number().min(6)
 })
