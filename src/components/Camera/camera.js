@@ -53,12 +53,13 @@ export function stopRecording(alertId) {
         chunks.push(e.data);
     }
 
-    mediaRecorder.onstop = async function (e) {
+    mediaRecorder.onstop = function (e) {
         const recording = new Blob(chunks, {'type': 'video/webm'});
 
         const storage = getStorage();
         const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertId}`);
-        await uploadVideo(alertRecordingRef, recording)
+        uploadVideo(alertRecordingRef, recording).then(r => {
+        })
     }
 }
 

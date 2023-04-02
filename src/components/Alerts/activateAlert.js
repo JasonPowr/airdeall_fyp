@@ -167,8 +167,10 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
 }
 
 const soundAlarm = () => {
+    audio.loop = true;
+    audio.volume = 1
     audio.play().then(r => {
-    })
+    });
 }
 
 export const triggerFlashlight = () => {

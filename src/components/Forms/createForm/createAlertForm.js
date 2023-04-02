@@ -214,6 +214,7 @@ export default function CreateAlertForm({editAlert}) {
     const handleFacebookLink = async () => {
         try {
             loginWithFacebook()
+            isFacebookLinked(true)
         } catch (error) {
             console.log(error)
         }
