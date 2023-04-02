@@ -67,7 +67,13 @@ function ConfirmPhoneNumberPage() {
         <div>
             {smsSent ? (
                 <form onSubmit={handleSubmit} autoComplete={"off"}>
-                    <p>Verification Code</p>
+                    <p>Please enter the 6 figure verification code you should have received, if no code has been
+                        received you can try to resend the code.</p>
+
+                    <div>
+                        {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
+                    </div>
+
                     <div>
                         <TextField
                             error={!!(errors.code && touched.code)}
@@ -87,17 +93,12 @@ function ConfirmPhoneNumberPage() {
                             }}/>
                     </div>
 
-                    <div>
-                        {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
-                    </div>
-
                     <Button onClick={sendCode}>Submit</Button>
                     <Button onClick={handleResend}> Resend</Button>
-                    <Button onClick={handleCancel}> Cancel</Button>
                 </form>
             ) : (
                 <form onSubmit={handleSubmit} autoComplete={"off"}>
-                    <p>Confirm Phone Number</p>
+                    <p>Please confirm your phone number, so we can verify it.</p>
                     <div>
                         <TextField
                             error={!!(errors.phoneNumber && touched.phoneNumber)}

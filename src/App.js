@@ -15,6 +15,8 @@ import AlertViewPage from "./pages/Alerts/alertViewPage/alertViewPage";
 import EditAlertPage from "./pages/Alerts/editAlertPage/editAlertPage";
 import AlertHistoryViewPage from "./pages/Alerts/AlertHistoryViewPage/AlertHistoryViewPage";
 import ConfirmPhoneNumberPage from "./pages/Login/ConfirmPhoneNumber/ConfirmPhoneNumberPage";
+import {initializeFacebookSDK} from "./components/Socials/facebook/facebook";
+import AccountExtraDetailsPage from "./pages/Login/AccountExtraDetails/AccountExtraDetailsPage";
 
 const useStyles = makeStyles({
     app: {
@@ -30,6 +32,7 @@ const useStyles = makeStyles({
 
 function App() {
     const classes = useStyles();
+    initializeFacebookSDK()
     return (
         <AuthContextProvider>
             <Router>
@@ -48,6 +51,8 @@ function App() {
                                element={<ProtectedRoutes> <AlertHistoryViewPage/></ProtectedRoutes>}/>
                         <Route path="/confirmNumber"
                                element={<ProtectedRoutes> <ConfirmPhoneNumberPage/></ProtectedRoutes>}/>
+                        <Route path="/extraDetails"
+                               element={<ProtectedRoutes> <AccountExtraDetailsPage/></ProtectedRoutes>}/>
                     </Routes>
                 </div>
             </Router>

@@ -8,7 +8,7 @@ import {useContext, useState} from "react";
 import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 
 export default function LoginForm({onClick}) {
-    const {logIn} = useContext(UserContext)
+    const {logIn, loginWithGoogle} = useContext(UserContext)
     const navigate = useNavigate()
     const [error, setError] = useState(null);
 
@@ -39,12 +39,28 @@ export default function LoginForm({onClick}) {
         return false
     };
 
+    async function handleGoogleAuth() {
+        try {
+            await loginWithGoogle()
+        } catch (error) {
+            setError(error.message)
+        }
+    }
+
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
 
             <div>
                 {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
             </div>
+
+            <p>Continue with </p>
+
+            <div>
+                <Button onClick={handleGoogleAuth}>Google</Button>
+            </div>
+
+            <p> Or </p>
 
             <div>
                 <TextField

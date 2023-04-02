@@ -3,9 +3,9 @@ import {startRecording, stopRecording, toggleFlashlightOff, toggleFlashlightOn} 
 import {getLocation} from "../Maps/maps";
 import {auth, db} from "../../firebase";
 import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
-import {createPost} from "../Socials/facebook/facebook";
 import {addAlertHistory} from "../../model/db/DB";
 import {v4 as uuidv4} from "uuid";
+import {createPost} from "../Socials/facebook/facebook";
 
 let alertCountdown;
 let flashlightTrigger;
@@ -39,7 +39,7 @@ export const FireAlertWithCountdown = ({alert}) => {
         }
 
         if (alert.socialMediaIntegration) {
-            configureSocialMediaIntegration()
+            configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isPostEnabled)
         }
 
         clearTimeout(alertCountdown);
@@ -49,7 +49,6 @@ export const FireAlertWithCountdown = ({alert}) => {
 export const FireAlertWithoutCountdown = ({alert}) => {
     history_locationUpdates = []
     isAlertActive = true
-    console.log(isAlertActive)
     if (alert.sms) {
         configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo)
     }
@@ -66,7 +65,7 @@ export const FireAlertWithoutCountdown = ({alert}) => {
         recordAlert()
     }
     if (alert.socialMediaIntegration) {
-        configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isLinked, alert.socialMediaIntegration.facebook.isPostEnabled)
+        configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isPostEnabled)
     }
 };
 
@@ -207,8 +206,10 @@ function recordAlert() {
     startRecording()
 }
 
-function configureSocialMediaIntegration(facebookIsEnabled, facebookIsLinked, facebookIsPostEnabled) {
-    if (facebookIsLinked && facebookIsEnabled) {
+function configureSocialMediaIntegration(facebookIsEnabled, facebookIsPostEnabled) {
+    if (facebookIsEnabled) {
+        console.log("hello")
+        console.log(facebookIsPostEnabled)
         if (facebookIsPostEnabled) {
             createPost()
         }

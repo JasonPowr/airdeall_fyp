@@ -5,15 +5,33 @@ import {v4 as uuidv4} from "uuid";
 import {useFormik} from "formik";
 import {createAlertValidationSchema} from "../../../Helpers/Validation/CreateAlertValidation";
 import TrustedContactPicker from "../../Contacts/contacts";
-import {facebookIsLinked, loginWithFacebook} from "../../Socials/facebook/facebook";
 import {createAlert, updateAlert} from "../../../model/db/DB";
 import styles from "./createAlertForm.css";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
+import {loginWithFacebook} from "../../Socials/facebook/facebook";
+import {auth} from "../../../firebase";
+import UserContext from "../../../contexts/Auth/authContext";
 
 export default function CreateAlertForm({editAlert}) {
     const navigate = useNavigate()
     const [error, setError] = useState(null);
+    const {user} = useContext(UserContext)
+    const [facebookLinked, isFacebookLinked] = useState(false);
+
+    useEffect(() => {
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                if (user.providerData.length > 1) {
+                    user.providerData.map((index) => {
+                        if (index.providerId === "facebook.com") {
+                            isFacebookLinked(true)
+                        }
+                    })
+                }
+            }
+        })
+    }, [user]);
 
     const {values, handleChange, handleBlur, errors, touched} = useFormik({
         initialValues: {
@@ -193,9 +211,12 @@ export default function CreateAlertForm({editAlert}) {
 
     }
 
-    const handleFacebookLink = () => {
-        loginWithFacebook()
-        values.socialMediaIntegration.facebook.isLinked = facebookIsLinked
+    const handleFacebookLink = async () => {
+        try {
+            loginWithFacebook()
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const handleCloseError = () => {
@@ -376,9 +397,7 @@ export default function CreateAlertForm({editAlert}) {
                             />
                             {values.socialMediaIntegration.facebook.isEnabled && (
                                 <div>
-                                    <Button onClick={handleFacebookLink}>Link Facebook</Button>
-
-                                    {values.socialMediaIntegration.facebook.isLinked && (
+                                    {facebookLinked ? (
                                         <div>
                                             <div>
                                                 <p>Post to facebook</p>
@@ -392,7 +411,7 @@ export default function CreateAlertForm({editAlert}) {
                                             </div>
 
                                         </div>
-                                    )}
+                                    ) : (<Button onClick={handleFacebookLink}>Link Facebook</Button>)}
                                 </div>
                             )}
                         </div>

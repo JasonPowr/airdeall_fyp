@@ -1,18 +1,23 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {
     createUserWithEmailAndPassword,
+    GoogleAuthProvider,
     linkWithPhoneNumber,
+    linkWithRedirect,
     onAuthStateChanged,
     RecaptchaVerifier,
     sendEmailVerification,
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
-    signOut,
+    signInWithRedirect,
+    signOut
 } from 'firebase/auth';
 import {auth} from "../../firebase";
 
 const UserContext = createContext();
+const GoogleProvider = new GoogleAuthProvider();
 let confirmCode = null
+
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({})
     const createUser = (email, password) => {
@@ -36,6 +41,7 @@ export const AuthContextProvider = ({children}) => {
     }
 
     const sendVerificationSMS = (phoneNumber, submitButtonId) => {
+        console.log("help")
         window.recaptchaVerifier = new RecaptchaVerifier(submitButtonId, {
             'size': 'invisible',
         }, auth);
@@ -47,11 +53,21 @@ export const AuthContextProvider = ({children}) => {
             }).catch((error) => {
             console.log(error)
         });
+
     }
 
     const verifyCode = (code) => {
         return confirmCode.confirm(code)
     }
+
+    const loginWithGoogle = async () => {
+        return signInWithRedirect(auth, GoogleProvider);
+    }
+
+    const linkAccountWithGoogle = async () => {
+        return linkWithRedirect(auth, GoogleProvider);
+    }
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -71,7 +87,9 @@ export const AuthContextProvider = ({children}) => {
             sendResetEmail,
             sendVerifyEmailAddress,
             sendVerificationSMS,
-            verifyCode
+            verifyCode,
+            loginWithGoogle,
+            linkAccountWithGoogle,
         }}>
             {children}
         </UserContext.Provider>

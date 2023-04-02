@@ -7,7 +7,7 @@ import {FacebookAuthProvider, getAuth, linkWithCredential} from "firebase/auth";
 
 export let facebookIsLinked = false
 const auth = getAuth();
-const facebookAuthProvider = new FacebookAuthProvider()
+const facebookProvider = new FacebookAuthProvider()
 
 export function initializeFacebookSDK() {
     window.fbAsyncInit = function () {
@@ -33,25 +33,11 @@ export function initializeFacebookSDK() {
 
 export const loginWithFacebook = () => { //https://developers.facebook.com/docs/javascript/examples#login
     window.FB.login(function (response) {
-        if (response.authResponse) {
-            const credentials = FacebookAuthProvider.credential(response.authResponse.accessToken)
-            linkWithCredential(auth.currentUser, credentials).then(r => {
-                facebookIsLinked = true
-            })
-        } else {
-            facebookIsLinked = false
-        }
-    });
-}
-
-export const getFacebookUserAccessToken = () => {
-    let facebookAccessToken;
-    window.FB.getLoginStatus(function (response) {
         if (response.status === 'connected') {
-            facebookAccessToken = response.authResponse.accessToken
+            const credentials = FacebookAuthProvider.credential(response.authResponse.accessToken)
+            linkWithCredential(auth.currentUser, credentials)
         }
-    });
-    return facebookAccessToken
+    }, {scope: 'public_profile,email'});
 }
 
 export const createPost = () => {
@@ -61,7 +47,3 @@ export const createPost = () => {
     }, function (response) {
     });
 }
-
-
-
-

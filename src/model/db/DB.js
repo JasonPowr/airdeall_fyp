@@ -1,6 +1,5 @@
 import {collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
 import {auth, db} from "../../firebase";
-import {updateProfile} from 'firebase/auth';
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref} from "firebase/storage";
 
 export async function getUserPhoneNumberFromDB() {
@@ -15,16 +14,12 @@ export async function getUserPhoneNumberFromDB() {
 }
 
 export async function updateProfileOnRegister(auth, firstName, lastName, email, phoneNumber) {
-    updateProfile(auth.currentUser, {}).then(async () => {
-        await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
-            uid: auth.currentUser.uid,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phoneNumber: phoneNumber,
-        });
-    }).catch((error) => {
-        console.log(error)
+    await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
+        uid: auth.currentUser.uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phoneNumber: phoneNumber,
     });
 }
 
