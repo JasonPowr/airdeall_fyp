@@ -19,7 +19,7 @@ export const FireAlertWithCountdown = ({alert}) => {
         history_locationUpdates = []
         isAlertActive = true
         if (alert.sms) {
-            configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo)
+            configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
         }
 
         if (alert.alarm) {
@@ -31,7 +31,7 @@ export const FireAlertWithCountdown = ({alert}) => {
         }
 
         if (alert.includeOnPublicMap) {
-            includeOnPublicMap(alert.proximitySMS)
+            includeOnPublicMap()
         }
 
         if (alert.automaticRecordings) {
@@ -50,7 +50,7 @@ export const FireAlertWithoutCountdown = ({alert}) => {
     history_locationUpdates = []
     isAlertActive = true
     if (alert.sms) {
-        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo)
+        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
     }
     if (alert.alarm) {
         soundAlarm()
@@ -140,8 +140,9 @@ const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_
     //         .catch(error => console.error(error));
     // }
 }
-const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone, locationInfo, recurringLocationInfo) => {
+const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone, locationInfo, recurringLocationInfo, proximitySMS) => {
 
+    console.log(contact_1_phone)
     if (messageBody === "") {
         messageBody = "Default Alert Message"
     }
@@ -154,6 +155,20 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
 
     await sendSMS(messageBody, contact_1_phone,
         contact_2_phone, contact_3_phone)
+
+    if (proximitySMS) {
+        const userLocation = await getLocation()
+        const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
+
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
+            `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
+        const requestOptions = {
+            method: 'GET',
+            mode: 'no-cors'
+        };
+        fetch(url, requestOptions)
+            .catch(error => console.error(error));
+    }
 
     if (recurringLocationInfo) {
         locationUpdates = setInterval(async function () {
@@ -180,7 +195,7 @@ export const triggerFlashlight = () => {
     }, 1000);
 }
 
-const includeOnPublicMap = async (proximitySMS) => {
+const includeOnPublicMap = async () => {
     const userLocation = await getLocation()
     const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
 
@@ -191,21 +206,11 @@ const includeOnPublicMap = async (proximitySMS) => {
 
     const alertRef = doc(db, "activeAlerts", auth.currentUser.uid);
     await setDoc(alertRef, {location}, {merge: true});
-
-    if (proximitySMS) {
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
-            `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
-        const requestOptions = {
-            method: 'GET',
-            mode: 'no-cors'
-        };
-        fetch(url, requestOptions)
-            .catch(error => console.error(error));
-    }
 }
 
 function recordAlert() {
-    startRecording()
+    startRecording().then(r => {
+    })
 }
 
 function configureSocialMediaIntegration(facebookIsEnabled, facebookIsPostEnabled) {

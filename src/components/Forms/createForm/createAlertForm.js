@@ -318,7 +318,15 @@ export default function CreateAlertForm({editAlert}) {
                                     defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
                                 />
                             </div>
+                            <div>
+                                <p>Proximity Alert</p>
 
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"proximitySMS"}
+                                    defaultChecked={editAlert ? editAlert.proximitySMS : false}
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -334,19 +342,7 @@ export default function CreateAlertForm({editAlert}) {
                         id={"includeOnPublicMap"}
                     />
 
-                    {values.includeOnPublicMap && (
-                        <div>
-                            <p>Proximity Alert</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"proximitySMS"}
-                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
-                            />
-                        </div>
-                    )}
                 </div>
-
 
                 <div>
                     <p>Sound Alarm</p>
