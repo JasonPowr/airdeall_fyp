@@ -40,7 +40,8 @@ export function toggleFlashlightOff() {
     }
 }
 
-export function startRecording() {
+export async function startRecording() {
+    chunks = [];
     mediaRecorder.start()
 }
 
@@ -61,8 +62,8 @@ export function stopRecording(alertId) {
             console.log('Uploaded a blob or file!');
         });
     }
-
 }
+
 
 //https://tecadmin.net/get-current-date-time-javascript/
 //http://blogs.bytecode.com.au/glen/2018/03/06/recording-pwa-video.html#:~:text=You%20take%20an%20incoming%20stream,in%20my%20callback%20every%20second.
