@@ -1,5 +1,6 @@
-import {getStorage, ref, uploadBytes} from "firebase/storage";
+import {getStorage, ref} from "firebase/storage";
 import {auth} from "../../firebase";
+import {uploadVideo} from "../../model/db/DB";
 
 let mediaStream
 let video;
@@ -52,15 +53,12 @@ export function stopRecording(alertId) {
         chunks.push(e.data);
     }
 
-    mediaRecorder.onstop = function (e) {
+    mediaRecorder.onstop = async function (e) {
         const recording = new Blob(chunks, {'type': 'video/webm'});
 
         const storage = getStorage();
         const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertId}`);
-
-        uploadBytes(alertRecordingRef, recording).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
-        });
+        await uploadVideo(alertRecordingRef, recording)
     }
 }
 

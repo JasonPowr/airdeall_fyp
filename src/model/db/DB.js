@@ -1,6 +1,6 @@
 import {collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
 import {auth, db} from "../../firebase";
-import {deleteObject, getDownloadURL, getMetadata, getStorage, ref} from "firebase/storage";
+import {deleteObject, getDownloadURL, getMetadata, getStorage, ref, uploadBytes} from "firebase/storage";
 
 export async function getUserPhoneNumberFromDB() {
     const userRef = doc(db, "users", `${auth.currentUser.uid}`)
@@ -151,6 +151,10 @@ export async function getAlertVideo(alertHistoryId) {
         });
 
     return foundVideo
+}
+
+export async function uploadVideo(alertRecordingRef, recording) {
+    return uploadBytes(alertRecordingRef, recording)
 }
 
 export async function deleteVideoFromAlert(alertHistoryId) {
