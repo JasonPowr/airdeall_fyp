@@ -12,23 +12,30 @@ import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 import {loginWithFacebook} from "../../Socials/facebook/facebook";
 import {auth} from "../../../firebase";
 import UserContext from "../../../contexts/Auth/authContext";
+import {getCameraPermissions, getGeoLocationPermissions} from "../../Permissions/Permissions";
 
 export default function CreateAlertForm({editAlert}) {
     const navigate = useNavigate()
     const [error, setError] = useState(null);
     const {user} = useContext(UserContext)
-    const [facebookLinked, isFacebookLinked] = useState(false);
+
+    const [isFacebookLinked, setIsFacebookLinked] = useState(false);
+    const [isPhoneLinked, setIsPhoneLinked] = useState(false);
+    const [geoLocationPermissionsGranted, setGeoLocationPermissionsGranted] = useState(false);
+    const [cameraPermissionsGranted, setCameraPermissionsGranted] = useState(false);
 
     useEffect(() => {
         auth.onAuthStateChanged(user => {
             if (user) {
-                if (user.providerData.length > 1) {
-                    user.providerData.map((index) => {
-                        if (index.providerId === "facebook.com") {
-                            isFacebookLinked(true)
-                        }
-                    })
-                }
+                user.providerData.map((index) => {
+                    if (index.providerId === "facebook.com") {
+                        setIsFacebookLinked(true)
+                    } else if (index.providerId === "phone") {
+                        setIsPhoneLinked(true)
+                    }
+                })
+                setGeoLocationPermissionsGranted(getGeoLocationPermissions())
+                setCameraPermissionsGranted(getCameraPermissions())
             }
         })
     }, [user]);
@@ -214,7 +221,7 @@ export default function CreateAlertForm({editAlert}) {
     const handleFacebookLink = async () => {
         try {
             loginWithFacebook()
-            isFacebookLinked(true)
+            setIsFacebookLinked(true)
         } catch (error) {
             console.log(error)
         }
@@ -226,200 +233,274 @@ export default function CreateAlertForm({editAlert}) {
     };
 
     return (
-        <div className={styles.createAlertForm}>
-            <form autoComplete={"off"}>
+        <div>
+            {user ? (
+                <div className={styles.createAlertForm}>
+                    <form autoComplete={"off"}>
 
-                <div>
-                    {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
-                </div>
-
-
-                <div>
-                    <TextField
-                        error={!!(errors.title && touched.title)}
-                        label={errors.title && touched.title ? "Invalid Name" : "Alert Name"}
-                        helperText={errors.title && touched.title ? errors.title : " "}
-                        value={values.title}
-                        variant="filled"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        className={"textField"}
-                        id={"title"}
-                        placeholder={"Alert Title"}
-                        InputProps={{
-                            disableUnderline: true,
-                            inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                        }}/>
-                </div>
-
-                <div>
-                    <TextField
-                        error={!!(errors.alertDesc && touched.alertDesc)}
-                        label={errors.alertDesc && touched.alertDesc ? "Invalid Desc" : "Alert Desc"}
-                        helperText={errors.alertDesc && touched.alertDesc ? errors.alertDesc : " "}
-                        value={values.alertDesc}
-                        variant="filled"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        className={"textField"}
-                        id={"alertDesc"}
-                        placeholder={"Alert Description"}
-                        InputProps={{
-                            disableUnderline: true,
-                            inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                        }}/>
-                </div>
-
-                <div>
-                    <p>SMS message</p>
-                    <Switch
-                        onChange={handleChange}
-                        id={"smsMessage"}
-                        defaultChecked={editAlert ? editAlert.sms.sendSMS : false}
-                    />
-
-                    {values.smsMessage && (
                         <div>
-                            <Button className={"button"} onClick={handleTrustedContacts} variant={"contained"}
-                                    size={"large"}><b> Set Trusted Contacts</b></Button>
+                            {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
+                        </div>
 
+
+                        <div>
                             <TextField
-                                error={!!(errors.messageBody && touched.messageBody)}
-                                label={errors.messageBody && touched.messageBody ? "Invalid Message Body" : "Message Body"}
-                                helperText={errors.messageBody && touched.messageBody ? errors.messageBody : " "}
-                                value={values.messageBody}
+                                error={!!(errors.title && touched.title)}
+                                label={errors.title && touched.title ? "Invalid Name" : "Alert Name"}
+                                helperText={errors.title && touched.title ? errors.title : " "}
+                                value={values.title}
                                 variant="filled"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 className={"textField"}
-                                id={"messageBody"}
-                                placeholder={"Alert Message"}
+                                id={"title"}
+                                placeholder={"Alert Title"}
                                 InputProps={{
                                     disableUnderline: true,
                                     inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
                                 }}/>
-
-                            <p id={"contact-list"}></p>
-
-                            <div>
-                                <p>locationInfo</p>
-                                <Switch
-                                    onChange={handleChange}
-                                    id={"locationInfo"}
-                                    defaultChecked={editAlert ? editAlert.locationInfo : false}
-                                />
-                            </div>
-
-                            <div>
-                                <p>recurringLocationInfo</p>
-                                <Switch
-                                    onChange={handleChange}
-                                    id={"recurringLocationInfo"}
-                                    defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
-                                />
-                            </div>
-                            <div>
-                                <p>Proximity Alert</p>
-
-                                <Switch
-                                    onChange={handleChange}
-                                    id={"proximitySMS"}
-                                    defaultChecked={editAlert ? editAlert.proximitySMS : false}
-                                />
-                            </div>
                         </div>
-                    )}
 
-                </div>
-
-                <div>
-                    <p>Include On Public map</p>
-
-                    <Switch
-                        type={"checkbox"}
-                        defaultChecked={editAlert ? editAlert.includeOnPublicMap : false}
-                        onChange={handleChange}
-                        id={"includeOnPublicMap"}
-                    />
-
-                </div>
-
-                <div>
-                    <p>Sound Alarm</p>
-
-                    <Switch
-                        onChange={handleChange}
-                        id={"alarm"}
-                        defaultChecked={editAlert ? editAlert.alarm : false}
-                    />
-                </div>
-
-                <div>
-                    <p>Trigger Flashlight</p>
-
-                    <Switch
-                        onChange={handleChange}
-                        id={"flashlight"}
-                        defaultChecked={editAlert ? editAlert.flashlight : false}
-                    />
-                </div>
-
-                <div>
-                    <p>Automatic recording</p>
-
-                    <Switch
-                        onChange={handleChange}
-                        id={"automaticRecordings"}
-                        defaultChecked={editAlert ? editAlert.automaticRecordings : false}
-                    />
-                </div>
-
-                <div>
-                    <p>Social Media Integration</p>
-
-                    <Switch
-                        onChange={handleChange}
-                        id={"socialMediaIntegration.isEnabled"}
-                        defaultChecked={editAlert ? editAlert.socialMediaIntegration.isEnabled : false}
-                    />
-
-                    {values.socialMediaIntegration.isEnabled && (
                         <div>
-                            <p>Facebook</p>
-
-                            <Switch
+                            <TextField
+                                error={!!(errors.alertDesc && touched.alertDesc)}
+                                label={errors.alertDesc && touched.alertDesc ? "Invalid Desc" : "Alert Desc"}
+                                helperText={errors.alertDesc && touched.alertDesc ? errors.alertDesc : " "}
+                                value={values.alertDesc}
+                                variant="filled"
                                 onChange={handleChange}
-                                id={"socialMediaIntegration.facebook.isEnabled"}
-                                defaultChecked={editAlert ? editAlert.socialMediaIntegration.facebook.isEnabled : false}
-                            />
-                            {values.socialMediaIntegration.facebook.isEnabled && (
+                                onBlur={handleBlur}
+                                className={"textField"}
+                                id={"alertDesc"}
+                                placeholder={"Alert Description"}
+                                InputProps={{
+                                    disableUnderline: true,
+                                    inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
+                                }}/>
+                        </div>
+
+                        <div>
+                            <p>SMS message</p>
+
+
+                            {isPhoneLinked ? (
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"smsMessage"}
+                                    defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>) : (
                                 <div>
-                                    {facebookLinked ? (
+                                    <p>You must verify you phone number before using SMS</p>
+                                    <Switch
+                                        onChange={handleChange}
+                                        id={"smsMessage"}
+                                        disabled={true}
+                                        defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>
+                                </div>
+                            )}
+
+                            {values.smsMessage && (
+                                <div>
+                                    <Button className={"button"} onClick={handleTrustedContacts} variant={"contained"}
+                                            size={"large"}><b> Set Trusted Contacts</b></Button>
+
+                                    <TextField
+                                        error={!!(errors.messageBody && touched.messageBody)}
+                                        label={errors.messageBody && touched.messageBody ? "Invalid Message Body" : "Message Body"}
+                                        helperText={errors.messageBody && touched.messageBody ? errors.messageBody : " "}
+                                        value={values.messageBody}
+                                        variant="filled"
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        className={"textField"}
+                                        id={"messageBody"}
+                                        placeholder={"Alert Message"}
+                                        InputProps={{
+                                            disableUnderline: true,
+                                            inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
+                                        }}/>
+
+                                    <p id={"contact-list"}></p>
+
+                                    {geoLocationPermissionsGranted ? (
                                         <div>
-                                            <div>
-                                                <p>Post to facebook</p>
+                                            <p>locationInfo</p>
+                                            <Switch
+                                                onChange={handleChange}
+                                                id={"locationInfo"}
+                                                defaultChecked={editAlert ? editAlert.locationInfo : false}
+                                            />
 
-                                                <Switch
-                                                    onChange={handleChange}
-                                                    id={"socialMediaIntegration.facebook.isPostEnabled"}
-                                                    defaultChecked={editAlert ? editAlert.socialMediaIntegration.facebook.isPostEnabled : false}
-                                                />
+                                            <p>recurringLocationInfo</p>
+                                            <Switch
+                                                onChange={handleChange}
+                                                id={"recurringLocationInfo"}
+                                                defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
+                                            />
 
-                                            </div>
+                                            <p>Proximity Alert</p>
 
+                                            <Switch
+                                                onChange={handleChange}
+                                                id={"proximitySMS"}
+                                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
+                                            />
                                         </div>
-                                    ) : (<Button onClick={handleFacebookLink}>Link Facebook</Button>)}
+                                    ) : (
+                                        <div>
+                                            <p>You need to allow us to access you location</p>
+
+                                            <p>locationInfo</p>
+                                            <Switch
+                                                onChange={handleChange}
+                                                id={"locationInfo"}
+                                                disabled={true}
+                                                defaultChecked={editAlert ? editAlert.locationInfo : false}
+                                            />
+
+                                            <p>recurringLocationInfo</p>
+                                            <Switch
+                                                onChange={handleChange}
+                                                id={"recurringLocationInfo"}
+                                                disabled={true}
+                                                defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
+                                            />
+
+                                            <p>Proximity Alert</p>
+
+                                            <Switch
+                                                onChange={handleChange}
+                                                id={"proximitySMS"}
+                                                disabled={true}
+                                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
+                                            />
+                                        </div>)}
                                 </div>
                             )}
                         </div>
-                    )}
+
+                        <div>
+                            {geoLocationPermissionsGranted ? (<div><p>Include On Public map</p>
+
+                                <Switch
+                                    type={"checkbox"}
+                                    defaultChecked={editAlert ? editAlert.includeOnPublicMap : false}
+                                    onChange={handleChange}
+                                    color={"error"}
+                                    id={"includeOnPublicMap"}
+                                /></div>) : (<div>
+
+                                <p>You need to allow us to access you location</p>
+                                <p>Include On Public map</p>
+
+                                <Switch
+                                    type={"checkbox"}
+                                    defaultChecked={editAlert ? editAlert.includeOnPublicMap : false}
+                                    disabled={true}
+                                    onChange={handleChange}
+                                    id={"includeOnPublicMap"}
+                                /></div>)}
+
+                        </div>
+
+                        <div>
+                            <p>Sound Alarm</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"alarm"}
+                                defaultChecked={editAlert ? editAlert.alarm : false}
+                            />
+                        </div>
+
+                        {!cameraPermissionsGranted ? (<div>
+                            <p>Trigger Flashlight</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"flashlight"}
+                                defaultChecked={editAlert ? editAlert.flashlight : false}
+                            />
+                        </div>) : (<div>
+                            <p> You need to give access to camera</p>
+                            <p>Trigger Flashlight</p>
+                            <Switch
+                                onChange={handleChange}
+                                id={"flashlight"}
+                                disabled={true}
+                                defaultChecked={editAlert ? editAlert.flashlight : false}
+                            />
+                        </div>)}
+
+
+                        {!cameraPermissionsGranted ? (<div>
+                            <p>Automatic recording</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"automaticRecordings"}
+                                defaultChecked={editAlert ? editAlert.automaticRecordings : false}
+                            />
+                        </div>) : (<div>
+                            <p> You need to give access to camera </p>
+                            <p>Automatic recording</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"automaticRecordings"}
+                                disabled={true}
+                                defaultChecked={editAlert ? editAlert.automaticRecordings : false}
+                            />
+                        </div>)}
+
+                        <div>
+                            <p>Social Media Integration</p>
+
+                            <Switch
+                                onChange={handleChange}
+                                id={"socialMediaIntegration.isEnabled"}
+                                defaultChecked={editAlert ? editAlert.socialMediaIntegration.isEnabled : false}
+                            />
+
+                            {values.socialMediaIntegration.isEnabled && (
+                                <div>
+                                    <p>Facebook</p>
+
+                                    <Switch
+                                        onChange={handleChange}
+                                        id={"socialMediaIntegration.facebook.isEnabled"}
+                                        defaultChecked={editAlert ? editAlert.socialMediaIntegration.facebook.isEnabled : false}
+                                    />
+                                    {values.socialMediaIntegration.facebook.isEnabled && (
+                                        <div>
+                                            {isFacebookLinked ? (
+                                                <div>
+                                                    <div>
+                                                        <p>Post to facebook</p>
+
+                                                        <Switch
+                                                            onChange={handleChange}
+                                                            id={"socialMediaIntegration.facebook.isPostEnabled"}
+                                                            defaultChecked={editAlert ? editAlert.socialMediaIntegration.facebook.isPostEnabled : false}
+                                                        />
+
+                                                    </div>
+
+                                                </div>
+                                            ) : (<Button onClick={handleFacebookLink}>Link Facebook</Button>)}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        {editAlert ? <Button onClick={handleUpdate}> Update </Button> :
+                            <Button onClick={handleCreate}> Create </Button>}
+                        {editAlert ? <Button onClick={handleCancelUpdate}> Cancel </Button> :
+                            <Button onClick={handleCancelCreate}> Cancel </Button>}
+                    </form>
                 </div>
-                {editAlert ? <Button onClick={handleUpdate}> Update </Button> :
-                    <Button onClick={handleCreate}> Create </Button>}
-                {editAlert ? <Button onClick={handleCancelUpdate}> Cancel </Button> :
-                    <Button onClick={handleCancelCreate}> Cancel </Button>}
-            </form>
+            ) : (
+                <div>Loading ...</div>
+            )}
         </div>
     );
-
 }
