@@ -1,5 +1,4 @@
-import {Button, TextField} from "@material-ui/core";
-import {Switch} from "@mui/material";
+import {Button} from "@material-ui/core";
 import {useNavigate} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
 import {useFormik} from "formik";
@@ -12,7 +11,15 @@ import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 import {loginWithFacebook} from "../../Socials/facebook/facebook";
 import {auth} from "../../../firebase";
 import UserContext from "../../../contexts/Auth/authContext";
-import {getCameraPermissions, getGeoLocationPermissions} from "../../Permissions/Permissions";
+import {getCameraPermissions, getGeoLocationPermissions, getMicPermissions} from "../../Permissions/Permissions";
+import VoiceActivationComponent from "./CreateFormComponents/VoiceActivationComponent";
+import SocialMediaIntegration from "./CreateFormComponents/SocialMediaComponent";
+import AutomaticRecordings from "./CreateFormComponents/AutomaticRecordings";
+import FlashlightComponent from "./CreateFormComponents/FlashlightComponent";
+import SoundComponent from "./CreateFormComponents/SoundComponent";
+import IncludeOnPublicMap from "./CreateFormComponents/IncludeOnPublicMap";
+import SMSComponent from "./CreateFormComponents/SMSComponent";
+import AlertDetailsComponent from "./CreateFormComponents/AlertDetailsComponent";
 
 export default function CreateAlertForm({editAlert}) {
     const navigate = useNavigate()
@@ -23,6 +30,7 @@ export default function CreateAlertForm({editAlert}) {
     const [isPhoneLinked, setIsPhoneLinked] = useState(false);
     const [geoLocationPermissionsGranted, setGeoLocationPermissionsGranted] = useState(false);
     const [cameraPermissionsGranted, setCameraPermissionsGranted] = useState(false);
+    const [microphonePermissionsGranted, setMicrophonePermissionsGranted] = useState(false);
 
     useEffect(() => {
         auth.onAuthStateChanged(user => {
@@ -36,6 +44,7 @@ export default function CreateAlertForm({editAlert}) {
                 })
                 setGeoLocationPermissionsGranted(getGeoLocationPermissions())
                 setCameraPermissionsGranted(getCameraPermissions())
+                setMicrophonePermissionsGranted(getMicPermissions())
             }
         })
     }, [user]);
@@ -43,11 +52,12 @@ export default function CreateAlertForm({editAlert}) {
     const {values, handleChange, handleBlur, errors, touched} = useFormik({
         initialValues: {
             title: editAlert ? editAlert.title : "",
-            alertDesc: editAlert ? editAlert.desc : "",
+            description: editAlert ? editAlert.description : "",
             smsMessage: editAlert ? editAlert.sms.sendSMS : false,
             locationInfo: editAlert ? editAlert.sms.locationInfo : false,
             recurringLocationInfo: editAlert ? editAlert.sms.recurringLocationInfo : false,
             messageBody: editAlert ? editAlert.sms.message.body : "",
+            proximitySMS: editAlert ? editAlert.sms.proximitySMS : false,
             contacts: {
                 contact_1: {
                     name: editAlert ? editAlert.sms.contacts.contact_1.name : "",
@@ -63,10 +73,12 @@ export default function CreateAlertForm({editAlert}) {
                 }
             },
             includeOnPublicMap: editAlert ? editAlert.includeOnPublicMap : false,
-            proximitySMS: editAlert ? editAlert.proximitySMS : false,
             alarm: editAlert ? editAlert.alarm : false,
             flashlight: editAlert ? editAlert.flashlight : false,
-            automaticRecordings: editAlert ? editAlert.automaticRecordings : false,
+            automaticRecordings: {
+                automaticVideoAndAudioRecording: editAlert ? editAlert.automaticRecordings.automaticVideoAndAudioRecording : false,
+                audioTranscript: editAlert ? editAlert.automaticRecordings.audioTranscript : false,
+            },
             socialMediaIntegration: {
                 isEnabled: editAlert ? editAlert.socialMediaIntegration.isEnabled : false,
                 facebook: {
@@ -74,6 +86,12 @@ export default function CreateAlertForm({editAlert}) {
                     isLinked: editAlert ? editAlert.socialMediaIntegration.facebook.isLinked : false,
                     isPostEnabled: editAlert ? editAlert.socialMediaIntegration.facebook.isPostEnabled : false,
                 }
+            },
+            voiceActivation: {
+                isEnabled: editAlert ? editAlert.voiceActivation.isEnabled : false,
+                voiceActivationPhrase: editAlert ? editAlert.voiceActivation.voiceActivationPhrase : "",
+                voiceActivationForAlertWithCountDown: editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithCountDown : false,
+                voiceActivationForAlertWithoutCountDown: editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithoutCountDown : false,
             }
         },
         validationSchema: createAlertValidationSchema,
@@ -83,11 +101,12 @@ export default function CreateAlertForm({editAlert}) {
         const alert = {
             id: uuidv4(),
             title: values.title,
-            desc: values.alertDesc,
+            description: values.description,
             sms: {
                 sendSMS: values.smsMessage,
                 locationInfo: values.locationInfo,
                 recurringLocationInfo: values.recurringLocationInfo,
+                proximitySMS: values.proximitySMS,
                 message: {
                     body: values.messageBody,
                 },
@@ -109,8 +128,10 @@ export default function CreateAlertForm({editAlert}) {
             alarm: values.alarm,
             flashlight: values.flashlight,
             includeOnPublicMap: values.includeOnPublicMap,
-            proximitySMS: values.proximitySMS,
-            automaticRecordings: values.automaticRecordings,
+            automaticRecordings: {
+                automaticVideoAndAudioRecording: values.automaticRecordings.automaticVideoAndAudioRecording,
+                audioTranscript: values.automaticRecordings.audioTranscript
+            },
             socialMediaIntegration: {
                 isEnabled: values.socialMediaIntegration.isEnabled,
                 facebook: {
@@ -118,8 +139,15 @@ export default function CreateAlertForm({editAlert}) {
                     isLinked: values.socialMediaIntegration.facebook.isLinked,
                     isPostEnabled: values.socialMediaIntegration.facebook.isPostEnabled,
                 }
+            },
+            voiceActivation: {
+                isEnabled: values.voiceActivation.isEnabled,
+                voiceActivationPhrase: values.voiceActivation.voiceActivationPhrase,
+                voiceActivationForAlertWithCountDown: values.voiceActivation.voiceActivationForAlertWithCountDown,
+                voiceActivationForAlertWithoutCountDown: values.voiceActivation.voiceActivationForAlertWithoutCountDown,
             }
         }
+
         try {
             await createAlert(alert)
             navigate('/alerts')
@@ -136,11 +164,12 @@ export default function CreateAlertForm({editAlert}) {
         const updatedAlert = {
             id: editAlert.id,
             title: values.title,
-            desc: values.alertDesc,
+            description: values.description,
             sms: {
                 sendSMS: values.smsMessage,
                 locationInfo: values.locationInfo,
                 recurringLocationInfo: values.recurringLocationInfo,
+                proximitySMS: values.proximitySMS,
                 message: {
                     body: values.messageBody,
                 },
@@ -162,8 +191,10 @@ export default function CreateAlertForm({editAlert}) {
             alarm: values.alarm,
             flashlight: values.flashlight,
             includeOnPublicMap: values.includeOnPublicMap,
-            proximitySMS: values.proximitySMS,
-            automaticRecordings: values.automaticRecordings,
+            automaticRecordings: {
+                automaticVideoAndAudioRecording: values.automaticRecordings.automaticVideoAndAudioRecording,
+                audioTranscript: values.automaticRecordings.audioTranscript
+            },
             socialMediaIntegration: {
                 isEnabled: values.socialMediaIntegration.isEnabled,
                 facebook: {
@@ -171,9 +202,14 @@ export default function CreateAlertForm({editAlert}) {
                     isLinked: values.socialMediaIntegration.facebook.isLinked,
                     isPostEnabled: values.socialMediaIntegration.facebook.isPostEnabled,
                 }
+            },
+            voiceActivation: {
+                isEnabled: values.voiceActivation.isEnabled,
+                voiceActivationPhrase: values.voiceActivation.voiceActivationPhrase,
+                voiceActivationForAlertWithCountDown: values.voiceActivation.voiceActivationForAlertWithCountDown,
+                voiceActivationForAlertWithoutCountDown: values.voiceActivation.voiceActivationForAlertWithoutCountDown,
             }
         }
-
         updateAlert(updatedAlert).then(r => {
             navigate(`/${editAlert.id}/alert_view`, {state: {alertId: editAlert.id}});
         })
@@ -242,262 +278,79 @@ export default function CreateAlertForm({editAlert}) {
                             {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
                         </div>
 
+                        <AlertDetailsComponent
+                            errors={errors}
+                            touched={touched}
+                            values={values}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                        />
 
-                        <div>
-                            <TextField
-                                error={!!(errors.title && touched.title)}
-                                label={errors.title && touched.title ? "Invalid Name" : "Alert Name"}
-                                helperText={errors.title && touched.title ? errors.title : " "}
-                                value={values.title}
-                                variant="filled"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                className={"textField"}
-                                id={"title"}
-                                placeholder={"Alert Title"}
-                                InputProps={{
-                                    disableUnderline: true,
-                                    inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                                }}/>
-                        </div>
+                        <SMSComponent
+                            isPhoneLinked={isPhoneLinked}
+                            handleChange={handleChange}
+                            editAlert={editAlert}
+                            handleTrustedContacts={handleTrustedContacts}
+                            errors={errors}
+                            touched={touched}
+                            handleBlur={handleBlur}
+                            values={values}
+                            geoLocationPermissionsGranted={geoLocationPermissionsGranted}
+                        />
 
-                        <div>
-                            <TextField
-                                error={!!(errors.alertDesc && touched.alertDesc)}
-                                label={errors.alertDesc && touched.alertDesc ? "Invalid Desc" : "Alert Desc"}
-                                helperText={errors.alertDesc && touched.alertDesc ? errors.alertDesc : " "}
-                                value={values.alertDesc}
-                                variant="filled"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                className={"textField"}
-                                id={"alertDesc"}
-                                placeholder={"Alert Description"}
-                                InputProps={{
-                                    disableUnderline: true,
-                                    inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                                }}/>
-                        </div>
+                        <IncludeOnPublicMap
+                            geoLocationPermissionsGranted={geoLocationPermissionsGranted}
+                            editAlert={editAlert}
+                            handleChange={handleChange}
+                        />
 
-                        <div>
-                            <p>SMS message</p>
+                        <SoundComponent
+                            handleChange={handleChange}
+                            editAlert={editAlert}/>
 
+                        <FlashlightComponent
+                            cameraPermissionsGranted={cameraPermissionsGranted}
+                            editAlert={editAlert}
+                            handleChange={handleChange}
+                        />
 
-                            {isPhoneLinked ? (
-                                <Switch
-                                    onChange={handleChange}
-                                    id={"smsMessage"}
-                                    defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>) : (
-                                <div>
-                                    <p>You must verify you phone number before using SMS</p>
-                                    <Switch
-                                        onChange={handleChange}
-                                        id={"smsMessage"}
-                                        disabled={true}
-                                        defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>
-                                </div>
-                            )}
+                        <AutomaticRecordings
+                            cameraPermissionsGranted={cameraPermissionsGranted}
+                            microphonePermissionsGranted={microphonePermissionsGranted}
+                            handleChange={handleChange}
+                            editAlert={editAlert}
+                            values={values}
+                        />
 
-                            {values.smsMessage && (
-                                <div>
-                                    <Button className={"button"} onClick={handleTrustedContacts} variant={"contained"}
-                                            size={"large"}><b> Set Trusted Contacts</b></Button>
+                        <SocialMediaIntegration
+                            socialMediaIntegrationEnabled={values.socialMediaIntegration.isEnabled}
+                            handleChange={handleChange}
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            editAlert={editAlert}
+                            handleBlur={handleBlur}
+                            isFacebookLinked={isFacebookLinked}
+                            handleFacebookLink={handleFacebookLink}
+                        />
 
-                                    <TextField
-                                        error={!!(errors.messageBody && touched.messageBody)}
-                                        label={errors.messageBody && touched.messageBody ? "Invalid Message Body" : "Message Body"}
-                                        helperText={errors.messageBody && touched.messageBody ? errors.messageBody : " "}
-                                        value={values.messageBody}
-                                        variant="filled"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        className={"textField"}
-                                        id={"messageBody"}
-                                        placeholder={"Alert Message"}
-                                        InputProps={{
-                                            disableUnderline: true,
-                                            inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                                        }}/>
+                        <VoiceActivationComponent
+                            microphonePermissionsGranted={microphonePermissionsGranted}
+                            handleChange={handleChange}
+                            editAlert={editAlert}
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            handleBlur={handleBlur}
+                        />
 
-                                    <p id={"contact-list"}></p>
-
-                                    {geoLocationPermissionsGranted ? (
-                                        <div>
-                                            <p>locationInfo</p>
-                                            <Switch
-                                                onChange={handleChange}
-                                                id={"locationInfo"}
-                                                defaultChecked={editAlert ? editAlert.locationInfo : false}
-                                            />
-
-                                            <p>recurringLocationInfo</p>
-                                            <Switch
-                                                onChange={handleChange}
-                                                id={"recurringLocationInfo"}
-                                                defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
-                                            />
-
-                                            <p>Proximity Alert</p>
-
-                                            <Switch
-                                                onChange={handleChange}
-                                                id={"proximitySMS"}
-                                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <p>You need to allow us to access you location</p>
-
-                                            <p>locationInfo</p>
-                                            <Switch
-                                                onChange={handleChange}
-                                                id={"locationInfo"}
-                                                disabled={true}
-                                                defaultChecked={editAlert ? editAlert.locationInfo : false}
-                                            />
-
-                                            <p>recurringLocationInfo</p>
-                                            <Switch
-                                                onChange={handleChange}
-                                                id={"recurringLocationInfo"}
-                                                disabled={true}
-                                                defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
-                                            />
-
-                                            <p>Proximity Alert</p>
-
-                                            <Switch
-                                                onChange={handleChange}
-                                                id={"proximitySMS"}
-                                                disabled={true}
-                                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
-                                            />
-                                        </div>)}
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            {geoLocationPermissionsGranted ? (<div><p>Include On Public map</p>
-
-                                <Switch
-                                    type={"checkbox"}
-                                    defaultChecked={editAlert ? editAlert.includeOnPublicMap : false}
-                                    onChange={handleChange}
-                                    color={"error"}
-                                    id={"includeOnPublicMap"}
-                                /></div>) : (<div>
-
-                                <p>You need to allow us to access you location</p>
-                                <p>Include On Public map</p>
-
-                                <Switch
-                                    type={"checkbox"}
-                                    defaultChecked={editAlert ? editAlert.includeOnPublicMap : false}
-                                    disabled={true}
-                                    onChange={handleChange}
-                                    id={"includeOnPublicMap"}
-                                /></div>)}
-
-                        </div>
-
-                        <div>
-                            <p>Sound Alarm</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"alarm"}
-                                defaultChecked={editAlert ? editAlert.alarm : false}
-                            />
-                        </div>
-
-                        {!cameraPermissionsGranted ? (<div>
-                            <p>Trigger Flashlight</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"flashlight"}
-                                defaultChecked={editAlert ? editAlert.flashlight : false}
-                            />
-                        </div>) : (<div>
-                            <p> You need to give access to camera</p>
-                            <p>Trigger Flashlight</p>
-                            <Switch
-                                onChange={handleChange}
-                                id={"flashlight"}
-                                disabled={true}
-                                defaultChecked={editAlert ? editAlert.flashlight : false}
-                            />
-                        </div>)}
-
-
-                        {!cameraPermissionsGranted ? (<div>
-                            <p>Automatic recording</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"automaticRecordings"}
-                                defaultChecked={editAlert ? editAlert.automaticRecordings : false}
-                            />
-                        </div>) : (<div>
-                            <p> You need to give access to camera </p>
-                            <p>Automatic recording</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"automaticRecordings"}
-                                disabled={true}
-                                defaultChecked={editAlert ? editAlert.automaticRecordings : false}
-                            />
-                        </div>)}
-
-                        <div>
-                            <p>Social Media Integration</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"socialMediaIntegration.isEnabled"}
-                                defaultChecked={editAlert ? editAlert.socialMediaIntegration.isEnabled : false}
-                            />
-
-                            {values.socialMediaIntegration.isEnabled && (
-                                <div>
-                                    <p>Facebook</p>
-
-                                    <Switch
-                                        onChange={handleChange}
-                                        id={"socialMediaIntegration.facebook.isEnabled"}
-                                        defaultChecked={editAlert ? editAlert.socialMediaIntegration.facebook.isEnabled : false}
-                                    />
-                                    {values.socialMediaIntegration.facebook.isEnabled && (
-                                        <div>
-                                            {isFacebookLinked ? (
-                                                <div>
-                                                    <div>
-                                                        <p>Post to facebook</p>
-
-                                                        <Switch
-                                                            onChange={handleChange}
-                                                            id={"socialMediaIntegration.facebook.isPostEnabled"}
-                                                            defaultChecked={editAlert ? editAlert.socialMediaIntegration.facebook.isPostEnabled : false}
-                                                        />
-
-                                                    </div>
-
-                                                </div>
-                                            ) : (<Button onClick={handleFacebookLink}>Link Facebook</Button>)}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
                         {editAlert ? <Button onClick={handleUpdate}> Update </Button> :
                             <Button onClick={handleCreate}> Create </Button>}
                         {editAlert ? <Button onClick={handleCancelUpdate}> Cancel </Button> :
                             <Button onClick={handleCancelCreate}> Cancel </Button>}
                     </form>
                 </div>
+
             ) : (
                 <div>Loading ...</div>
             )}

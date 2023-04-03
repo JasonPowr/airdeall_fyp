@@ -6,6 +6,7 @@ import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
 import {addAlertHistory} from "../../model/db/DB";
 import {v4 as uuidv4} from "uuid";
 import {createPost} from "../Socials/facebook/facebook";
+import {AlertDialog} from "../Popup/AlertPopUp/alertPopup";
 
 let alertCountdown;
 let flashlightTrigger;
@@ -34,8 +35,8 @@ export const FireAlertWithCountdown = ({alert}) => {
             includeOnPublicMap()
         }
 
-        if (alert.automaticRecordings) {
-            recordAlert()
+        if (alert.automaticRecordings.audioTranscript || alert.automaticRecordings.automaticVideoAndAudioRecording) {
+            recordAlert(alert)
         }
 
         if (alert.socialMediaIntegration) {
@@ -61,12 +62,13 @@ export const FireAlertWithoutCountdown = ({alert}) => {
     if (alert.includeOnPublicMap) {
         includeOnPublicMap(alert.proximitySMS)
     }
-    if (alert.automaticRecordings) {
-        recordAlert()
+    if (alert.automaticRecordings.audioTranscript || alert.automaticRecordings.automaticVideoAndAudioRecording) {
+        recordAlert(alert)
     }
     if (alert.socialMediaIntegration) {
         configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isPostEnabled)
     }
+    AlertDialog(alert, true)
 };
 
 export const CancelAlert = ({alert}) => {
@@ -88,7 +90,7 @@ export const CancelAlert = ({alert}) => {
         deleteDoc(doc(db, "activeAlerts", auth.currentUser.uid));
     }
 
-    if (alert.automaticRecordings) {
+    if (alert.automaticRecordings.automaticVideoAndAudioRecording) {
         stopRecording(alertHistoryId)
     }
 
@@ -142,7 +144,6 @@ const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_
 }
 const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone, locationInfo, recurringLocationInfo, proximitySMS) => {
 
-    console.log(contact_1_phone)
     if (messageBody === "") {
         messageBody = "Default Alert Message"
     }
@@ -208,15 +209,19 @@ const includeOnPublicMap = async () => {
     await setDoc(alertRef, {location}, {merge: true});
 }
 
-function recordAlert() {
-    startRecording().then(r => {
-    })
+function recordAlert(alert) {
+    if (alert.automaticRecordings.automaticVideoAndAudioRecording) {
+        startRecording().then(r => {
+        })
+    }
+
+    if (alert.automaticRecordings.audioTranscript) {
+        console.log("audio transcript")
+    }
 }
 
 function configureSocialMediaIntegration(facebookIsEnabled, facebookIsPostEnabled) {
     if (facebookIsEnabled) {
-        console.log("hello")
-        console.log(facebookIsPostEnabled)
         if (facebookIsPostEnabled) {
             createPost()
         }

@@ -37,6 +37,12 @@ function AlertsPage() {
         })
     }, []);
 
+    useEffect(() => {
+        if (alerts.length > 0) {
+            // handleVoiceActivationOnLoad(alerts)
+        }
+    }, [currentUser, alerts]);
+
     const handleCloseEmailError = () => {
         setEmailVerified(false);
         return false
@@ -48,25 +54,33 @@ function AlertsPage() {
     };
 
     return (
-        <div className={"createAlertPage"}>
-            <header>Your Alerts</header>
+        <div>
+            {currentUser ? (
+                <div>
+                    <header>Your Alerts</header>
 
-            <div>
-                {(currentUser && !emailVerified) &&
-                    <WarningPopUp message={"Email is not verified"} onCloseClick={handleCloseEmailError}
-                                  context={"email"}/>}
+                    <div>
+                        {(currentUser && !emailVerified) &&
+                            <WarningPopUp message={"Email is not verified"} onCloseClick={handleCloseEmailError}
+                                          context={"email"}/>}
 
-                {(currentUser && !phoneVerified) &&
-                    <WarningPopUp message={"Phone is not verified"} onCloseClick={handleClosePhoneError}
-                                  context={"phone"}/>}
-            </div>
+                        {(currentUser && !phoneVerified) &&
+                            <WarningPopUp message={"Phone is not verified"} onCloseClick={handleClosePhoneError}
+                                          context={"phone"}/>}
+                    </div>
 
-            <div className={"alertContainer"}>
-                {alerts.map((index) =>
-                    <AlertCard key={index.alert.id} alert={index.alert}/>)}
-            </div>
-            <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
-            <BottomNav value={tab} onChange={setTab}/>
+                    <div className={"alertContainer"}>
+                        {alerts.map((index) =>
+                            <AlertCard key={index.alert.id} alert={index.alert}/>)}
+                    </div>
+
+                    <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
+                    <BottomNav value={tab} onChange={setTab}/>
+                </div>
+
+            ) : (
+                <div>Loading .....</div>
+            )}
         </div>
     );
 }
