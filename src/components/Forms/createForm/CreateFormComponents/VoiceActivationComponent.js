@@ -45,7 +45,7 @@ function VoiceActivationComponent({
                                 defaultChecked={editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithoutCountDown : false}
                             />
 
-                            {(values.voiceActivation.voiceActivationForAlertWithoutCountDown || values.voiceActivation.voiceActivationForAlertWithoutCountDown) && (
+                            {(values.voiceActivation.voiceActivationForAlertWithoutCountDown || values.voiceActivation.voiceActivationForAlertWithCountDown) && (
                                 <div>
                                     <p>Please enter a passphrase</p>
                                     <TextField

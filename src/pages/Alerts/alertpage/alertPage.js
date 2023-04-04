@@ -9,12 +9,19 @@ import {getUserAlertsFromDB} from "../../../model/db/DB";
 import AlertCard from "../../../components/Cards/AlertCard/AlertCard";
 import {auth} from "../../../firebase";
 import {WarningPopUp} from "../../../components/Popup/WarningPopUp/WarningPopUp";
+import {AlertDialog} from "../../../components/Popup/AlertPopUp/alertPopup";
+import {HandleVoiceActivationOnLoad} from "../../../components/SpeechRecognition/SpeechRecognition";
 
 function AlertsPage() {
     const [alerts, setAlerts] = useState([]);
+    const [activeAlert, setActiveAlert] = useState(null);
+    const [isAlertActive, setIsAlertActive] = useState(false);
+    const [isAlertInCountdown, setIsAlertInCountdown] = useState(false);
+
     const [emailVerified, setEmailVerified] = useState(false);
     const [phoneVerified, setPhoneVerified] = useState(false);
     const [currentUser, setCurrentUser] = useState(false);
+
     const [tab, setTab] = useState(0)
 
     requestCameraAccess()
@@ -39,9 +46,19 @@ function AlertsPage() {
 
     useEffect(() => {
         if (alerts.length > 0) {
-            // handleVoiceActivationOnLoad(alerts)
+            HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown)
         }
-    }, [currentUser, alerts]);
+    }, [alerts]);
+
+    useEffect(() => {
+        if (isAlertActive || isAlertInCountdown) {
+            alerts.map((index) => {
+                if (index.alert.isActive || index.alert.isInCountdown) {
+                    setActiveAlert(index.alert)
+                }
+            })
+        }
+    }, [alerts, isAlertActive, isAlertInCountdown]);
 
     const handleCloseEmailError = () => {
         setEmailVerified(false);
@@ -69,9 +86,21 @@ function AlertsPage() {
                                           context={"phone"}/>}
                     </div>
 
+                    {isAlertActive && (
+                        <AlertDialog alert={activeAlert}
+                                     isAlertActive={isAlertActive}
+                                     setIsAlertActive={setIsAlertActive}
+                                     isAlertInCountdown={isAlertInCountdown}
+                                     setAlertInCountdown={setIsAlertInCountdown}/>
+                    )}
+
                     <div className={"alertContainer"}>
                         {alerts.map((index) =>
-                            <AlertCard key={index.alert.id} alert={index.alert}/>)}
+                            <AlertCard key={index.alert.id}
+                                       alert={index.alert}
+                                       isAlertActive={isAlertActive}
+                                       setIsAlertActive={setIsAlertActive}
+                                       setAlertInCountdown={setIsAlertInCountdown}/>)}
                     </div>
 
                     <Link to={"/create_alert"}><Button>Create Alert</Button></Link>

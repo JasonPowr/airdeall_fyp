@@ -52,6 +52,7 @@ export default function CreateAlertForm({editAlert}) {
     const {values, handleChange, handleBlur, errors, touched} = useFormik({
         initialValues: {
             title: editAlert ? editAlert.title : "",
+            isActive: editAlert ? editAlert.state : false,
             description: editAlert ? editAlert.description : "",
             smsMessage: editAlert ? editAlert.sms.sendSMS : false,
             locationInfo: editAlert ? editAlert.sms.locationInfo : false,
@@ -102,6 +103,7 @@ export default function CreateAlertForm({editAlert}) {
             id: uuidv4(),
             title: values.title,
             description: values.description,
+            isActive: false,
             sms: {
                 sendSMS: values.smsMessage,
                 locationInfo: values.locationInfo,
@@ -164,6 +166,7 @@ export default function CreateAlertForm({editAlert}) {
         const updatedAlert = {
             id: editAlert.id,
             title: values.title,
+            isActive: false,
             description: values.description,
             sms: {
                 sendSMS: values.smsMessage,

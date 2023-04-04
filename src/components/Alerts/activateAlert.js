@@ -6,19 +6,18 @@ import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
 import {addAlertHistory} from "../../model/db/DB";
 import {v4 as uuidv4} from "uuid";
 import {createPost} from "../Socials/facebook/facebook";
-import {AlertDialog} from "../Popup/AlertPopUp/alertPopup";
 
 let alertCountdown;
 let flashlightTrigger;
 let locationUpdates;
 const audio = new Audio(sound)
-export let isAlertActive = false
 let history_locationUpdates = []
 
 export const FireAlertWithCountdown = ({alert}) => {
+    alert.isInCountdown = true
     alertCountdown = setTimeout(function () {
+        alert.isInCountdown = false
         history_locationUpdates = []
-        isAlertActive = true
         if (alert.sms) {
             configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
         }
@@ -43,13 +42,14 @@ export const FireAlertWithCountdown = ({alert}) => {
             configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isPostEnabled)
         }
 
+        alert.isActive = true
         clearTimeout(alertCountdown);
     }, 30000);
 };
 
 export const FireAlertWithoutCountdown = ({alert}) => {
+    alert.isInCountdown = false
     history_locationUpdates = []
-    isAlertActive = true
     if (alert.sms) {
         configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
     }
@@ -68,11 +68,10 @@ export const FireAlertWithoutCountdown = ({alert}) => {
     if (alert.socialMediaIntegration) {
         configureSocialMediaIntegration(alert.socialMediaIntegration.facebook.isEnabled, alert.socialMediaIntegration.facebook.isPostEnabled)
     }
-    AlertDialog(alert, true)
+    alert.isActive = true
 };
 
 export const CancelAlert = ({alert}) => {
-    isAlertActive = false
     clearTimeout(alertCountdown);
     clearTimeout(locationUpdates)
     toggleFlashlightOff()
@@ -97,7 +96,7 @@ export const CancelAlert = ({alert}) => {
     addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId, history_locationUpdates)).then(r => {
         history_locationUpdates = null
     })
-
+    alert.isActive = false
 }
 
 const validateNumber = (phoneNumber) => {

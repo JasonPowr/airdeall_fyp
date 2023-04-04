@@ -3,9 +3,10 @@ import {CardContent, CardHeader, IconButton} from "@mui/material";
 import "./AlertCard.css"
 import {Settings, VolumeUp} from "@material-ui/icons";
 import {useNavigate} from "react-router-dom";
-import {AlertDialog} from "../../Popup/AlertPopUp/alertPopup";
+import {Button} from "@material-ui/core";
+import {FireAlertWithCountdown, FireAlertWithoutCountdown} from "../../Alerts/activateAlert";
 
-export default function AlertCard({alert}) {
+export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAlertInCountdown}) {
     const navigate = useNavigate()
 
     function handleInfoClickButton() {
@@ -15,6 +16,34 @@ export default function AlertCard({alert}) {
     function handleDisplayActivationPhrase() {
         console.log(alert.voiceActivation.voiceActivationPhrase)
     }
+
+    function handleActivateNowClick() {
+        if (!isAlertActive) {
+            try {
+                FireAlertWithoutCountdown({alert});
+            } catch (error) {
+                console.log(error)
+            }
+            setIsAlertActive(true)
+        } else {
+            console.log("Alert is already Active")
+        }
+    }
+
+    function handleActivateClick() {
+        if (!isAlertActive) {
+            try {
+                FireAlertWithCountdown({alert});
+            } catch (error) {
+                console.log(error)
+            }
+            setIsAlertActive(true)
+            setAlertInCountdown(true)
+        } else {
+            console.log("Alert is already Active")
+        }
+    }
+
 
     return (
         <Card className={"cards"}>
@@ -37,7 +66,8 @@ export default function AlertCard({alert}) {
                 }
             />
             <CardContent>
-                <AlertDialog alert={alert}/>
+                <Button type={"button"} onClick={handleActivateNowClick} size="medium">Activate Now</Button>
+                <Button type={"button"} onClick={handleActivateClick} size="medium">Activate</Button>
             </CardContent>
         </Card>
     )

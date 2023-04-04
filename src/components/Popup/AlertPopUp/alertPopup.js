@@ -2,53 +2,39 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
-import {
-    CancelAlert,
-    FireAlertWithCountdown,
-    FireAlertWithoutCountdown,
-    isAlertActive
-} from "../../Alerts/activateAlert";
 import {DialogTitle} from "@mui/material";
+import {CancelAlert} from "../../Alerts/activateAlert";
 
-export default function AlertDialog({alert}) {
-    const [isOpen, setIsOpen] = React.useState(false);
-
-    function handleActivateClick() {
-        if (!isAlertActive) {
-            FireAlertWithCountdown({alert})
-            setIsOpen(true);
-        }
-    }
+export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCountdown, setAlertInCountdown}) {
 
     function handleCancelClick() {
-        if (isAlertActive) {
+        if (isAlertActive || isAlertInCountdown) {
             CancelAlert({alert})
-            setIsOpen(false);
+            setIsAlertActive(false)
+            setAlertInCountdown(false)
         }
     }
 
-    function handleActivateNowClick() {
-        if (!isAlertActive) {
-            FireAlertWithoutCountdown({alert})
-            setIsOpen(true);
-        }
-    }
-
-    return (
-        <div>
-            <div>
-                <Button variant="outlined" onClick={handleActivateNowClick}>
-                    Activate Now
-                </Button>
-
-                <Button variant="outlined" onClick={handleActivateClick}>
-                    Activate
-                </Button>
-            </div>
-
+    if (isAlertInCountdown) {
+        return (
             <Dialog
-                open={isOpen}
+                open={isAlertInCountdown}
             >
+                <DialogTitle>
+                    {"Alert In Countdown"}
+                </DialogTitle>
+
+                <DialogActions>
+                    <Button onClick={handleCancelClick}>Cancel Alert</Button>
+                </DialogActions>
+
+            </Dialog>
+        )
+    }
+
+    if (isAlertActive) {
+        return (
+            <Dialog open={isAlertActive}>
                 <DialogTitle>
                     {"Alert Activated"}
                 </DialogTitle>
@@ -58,8 +44,9 @@ export default function AlertDialog({alert}) {
                 </DialogActions>
 
             </Dialog>
-        </div>
-    );
+        )
+    }
+
 }
 
 //https://mui.com/material-ui/react-dialog/

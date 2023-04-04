@@ -41,7 +41,6 @@ export const AuthContextProvider = ({children}) => {
     }
 
     const sendVerificationSMS = (phoneNumber, submitButtonId) => {
-        console.log("help")
         window.recaptchaVerifier = new RecaptchaVerifier(submitButtonId, {
             'size': 'invisible',
         }, auth);

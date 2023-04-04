@@ -25,7 +25,8 @@ export const stopTranscribing = () => {
     }
 }
 
-export function handleVoiceActivationOnLoad(alerts) {
+
+export function HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown) {
     const alertsWithVoiceActivationEnabled = []
     alerts.map((index) => {
         if (index.alert.voiceActivation.isEnabled) {
@@ -41,15 +42,17 @@ export function handleVoiceActivationOnLoad(alerts) {
             if (transcript.toString().toLowerCase().replace(/[.,' \s]/g, '').includes(alert.voiceActivation.voiceActivationPhrase.toString().toLowerCase().replace(/[.,' \s]/g, ''))) {
                 if (alert.voiceActivation.voiceActivationForAlertWithoutCountDown) {
                     FireAlertWithoutCountdown({alert})
+                    setIsAlertActive(true)
                 } else {
                     FireAlertWithCountdown({alert})
+                    setIsAlertActive(true)
+                    setIsAlertInCountdown(true)
                 }
             }
         })
     };
     setTimeout(stopTranscribing, 10000);
 }
-
 
 //https://github.com/speechly/speech-recognition-polyfill#integrating-with-react-speech-recognition
 //https://github.com/JamesBrill/react-speech-recognition/blob/HEAD/docs/POLYFILLS.md
