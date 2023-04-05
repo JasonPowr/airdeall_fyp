@@ -6,6 +6,7 @@ const appId = process.env.REACT_APP_SPEECHLY_APP_ID;
 const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
 export let speechRecognition;
 let isTranscribing = false
+
 export const startTranscribing = () => {
     if (SpeechlySpeechRecognition.hasBrowserSupport) {
         speechRecognition = new SpeechlySpeechRecognition();
@@ -18,13 +19,13 @@ export const startTranscribing = () => {
         window.alert("Not Supported")
     }
 }
+
 export const stopTranscribing = () => {
     if (isTranscribing) {
         speechRecognition.stop();
         console.log("not transcribing")
     }
 }
-
 
 export function HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown) {
     const alertsWithVoiceActivationEnabled = []
@@ -51,7 +52,6 @@ export function HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlert
             }
         })
     };
-    setTimeout(stopTranscribing, 10000);
 }
 
 //https://github.com/speechly/speech-recognition-polyfill#integrating-with-react-speech-recognition

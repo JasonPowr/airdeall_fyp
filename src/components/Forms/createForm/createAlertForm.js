@@ -76,10 +76,7 @@ export default function CreateAlertForm({editAlert}) {
             includeOnPublicMap: editAlert ? editAlert.includeOnPublicMap : false,
             alarm: editAlert ? editAlert.alarm : false,
             flashlight: editAlert ? editAlert.flashlight : false,
-            automaticRecordings: {
-                automaticVideoAndAudioRecording: editAlert ? editAlert.automaticRecordings.automaticVideoAndAudioRecording : false,
-                audioTranscript: editAlert ? editAlert.automaticRecordings.audioTranscript : false,
-            },
+            automaticRecording: editAlert ? editAlert.automaticRecording : false,
             socialMediaIntegration: {
                 isEnabled: editAlert ? editAlert.socialMediaIntegration.isEnabled : false,
                 facebook: {
@@ -130,10 +127,7 @@ export default function CreateAlertForm({editAlert}) {
             alarm: values.alarm,
             flashlight: values.flashlight,
             includeOnPublicMap: values.includeOnPublicMap,
-            automaticRecordings: {
-                automaticVideoAndAudioRecording: values.automaticRecordings.automaticVideoAndAudioRecording,
-                audioTranscript: values.automaticRecordings.audioTranscript
-            },
+            automaticRecording: editAlert ? editAlert.automaticRecording : false,
             socialMediaIntegration: {
                 isEnabled: values.socialMediaIntegration.isEnabled,
                 facebook: {
@@ -194,10 +188,7 @@ export default function CreateAlertForm({editAlert}) {
             alarm: values.alarm,
             flashlight: values.flashlight,
             includeOnPublicMap: values.includeOnPublicMap,
-            automaticRecordings: {
-                automaticVideoAndAudioRecording: values.automaticRecordings.automaticVideoAndAudioRecording,
-                audioTranscript: values.automaticRecordings.audioTranscript
-            },
+            automaticRecording: values.automaticRecording,
             socialMediaIntegration: {
                 isEnabled: values.socialMediaIntegration.isEnabled,
                 facebook: {

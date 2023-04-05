@@ -58,7 +58,7 @@ export async function deleteAlert(alertId) {
     const alertHistory = await getAllAlertHistory(alertId)
     if (alertHistory.length > 0) {
         alertHistory.map(async (index) => {
-            await deleteAlertHistory(index.alertHistory.alert.id, index.alertHistory.id, index.alertHistory.alert.automaticRecordings)
+            await deleteAlertHistory(index.alertHistory.alert.id, index.alertHistory.id, index.alertHistory.alert.automaticRecording)
         })
     }
 

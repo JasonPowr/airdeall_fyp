@@ -25,6 +25,7 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
                 console.log(error)
             }
             setIsAlertActive(true)
+            setAlertInCountdown(false)
         } else {
             console.log("Alert is already Active")
         }
@@ -43,7 +44,6 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
             console.log("Alert is already Active")
         }
     }
-
 
     return (
         <Card className={"cards"}>

@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button} from "@material-ui/core";
 import "./alertPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
@@ -10,22 +10,27 @@ import AlertCard from "../../../components/Cards/AlertCard/AlertCard";
 import {auth} from "../../../firebase";
 import {WarningPopUp} from "../../../components/Popup/WarningPopUp/WarningPopUp";
 import {AlertDialog} from "../../../components/Popup/AlertPopUp/alertPopup";
-import {HandleVoiceActivationOnLoad} from "../../../components/SpeechRecognition/SpeechRecognition";
+import {ListeningButton} from "../../../components/Buttons/ListeningButton/ListeningButton";
+import {HandleVoiceActivationOnLoad, stopTranscribing} from "../../../components/SpeechRecognition/SpeechRecognition";
 
 function AlertsPage() {
     const [alerts, setAlerts] = useState([]);
     const [activeAlert, setActiveAlert] = useState(null);
     const [isAlertActive, setIsAlertActive] = useState(false);
     const [isAlertInCountdown, setIsAlertInCountdown] = useState(false);
+    const [isListening, setIsListening] = useState(true);
 
     const [emailVerified, setEmailVerified] = useState(false);
     const [phoneVerified, setPhoneVerified] = useState(false);
     const [currentUser, setCurrentUser] = useState(false);
 
+    const transScriptTimeoutRef = useRef(null);
+
     const [tab, setTab] = useState(0)
 
     requestCameraAccess()
     requestLocationPermission()
+
 
     useEffect(() => {
         auth.onAuthStateChanged(user => {
@@ -46,9 +51,20 @@ function AlertsPage() {
 
     useEffect(() => {
         if (alerts.length > 0) {
-            HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown)
+            if (isListening) {
+                HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown)
+                transScriptTimeoutRef.current = setTimeout(() => {
+                    stopTranscribing()
+                    setIsListening(false)
+                }, 10000)
+            }
+
+            if (!isListening) {
+                stopTranscribing()
+                clearTimeout(transScriptTimeoutRef.current);
+            }
         }
-    }, [alerts]);
+    }, [alerts, isListening]);
 
     useEffect(() => {
         if (isAlertActive || isAlertInCountdown) {
@@ -76,6 +92,10 @@ function AlertsPage() {
                 <div>
                     <header>Your Alerts</header>
 
+                    <ListeningButton
+                        isListening={isListening}
+                        setIsListening={setIsListening}/>
+
                     <div>
                         {(currentUser && !emailVerified) &&
                             <WarningPopUp message={"Email is not verified"} onCloseClick={handleCloseEmailError}
@@ -86,7 +106,7 @@ function AlertsPage() {
                                           context={"phone"}/>}
                     </div>
 
-                    {isAlertActive && (
+                    {(isAlertActive || isAlertInCountdown) && (
                         <AlertDialog alert={activeAlert}
                                      isAlertActive={isAlertActive}
                                      setIsAlertActive={setIsAlertActive}

@@ -12,24 +12,12 @@ function AutomaticRecordings({
         <div>
             {cameraPermissionsGranted && microphonePermissionsGranted ? (
                 <div>
-                    <p>Automatic recordings</p>
+                    <p>Automatic recording</p>
                     <Switch
                         onChange={handleChange}
-                        id={"automaticRecordings.automaticVideoAndAudioRecording"}
-                        defaultChecked={editAlert ? editAlert.automaticRecordings.automaticVideoAndAudioRecording : false}
+                        id={"automaticRecording"}
+                        defaultChecked={editAlert ? editAlert.automaticRecording : false}
                     />
-
-                    {values.automaticRecordings.automaticVideoAndAudioRecording && (
-                        <div>
-                            <p>Transcript of audio</p>
-                            <Switch
-                                onChange={handleChange}
-                                id={"automaticRecordings.audioTranscript"}
-                                defaultChecked={editAlert ? editAlert.automaticRecordings.audioTranscript : false}
-                            />
-                        </div>
-                    )}
-
                 </div>
             ) : (
                 <div>
@@ -37,9 +25,9 @@ function AutomaticRecordings({
                     <p>Automatic recording</p>
                     <Switch
                         onChange={handleChange}
-                        id={"automaticRecordings.automaticVideoAndAudioRecording"}
+                        id={"automaticRecording"}
                         disabled={true}
-                        defaultChecked={editAlert ? editAlert.automaticRecordings.automaticVideoAndAudioRecording : false}
+                        defaultChecked={editAlert ? editAlert.automaticRecording : false}
                     />
                 </div>
             )}

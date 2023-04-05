@@ -20,6 +20,7 @@ export function requestCameraAccess() {
             mediaRecorder = new MediaRecorder(mediaStream);
         })
         .catch(function (error) {
+            console.log(error)
         });
 }
 
@@ -41,21 +42,23 @@ export function toggleFlashlightOff() {
     }
 }
 
-export async function startRecording() {
+export function startRecording() {
     chunks = [];
+    console.log(mediaRecorder.state)
     mediaRecorder.start()
+    console.log(mediaRecorder.state)
 }
 
 export function stopRecording(alertId) {
-    mediaRecorder.stop();
-
+    console.log(mediaRecorder.state)
+    mediaRecorder.stop()
+    console.log(mediaRecorder.state)
     mediaRecorder.ondataavailable = function (e) {
         chunks.push(e.data);
     }
 
     mediaRecorder.onstop = function (e) {
         const recording = new Blob(chunks, {'type': 'video/webm'});
-
         const storage = getStorage();
         const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertId}`);
         uploadVideo(alertRecordingRef, recording).then(r => {

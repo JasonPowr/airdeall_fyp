@@ -24,7 +24,7 @@ export default function AlertHistoryViewPage() {
             if (user) {
                 getAlertHistoryById(alertId, alertHistoryId).then(foundAlertHistory => {
                     setAlertHistory(foundAlertHistory)
-                    if (foundAlertHistory.alert.automaticRecordings) {
+                    if (foundAlertHistory.alert.automaticRecording) {
                         getAlertVideo(alertHistoryId).then(foundVideo => {
                             setVideo(foundVideo)
                         })
@@ -70,7 +70,7 @@ export default function AlertHistoryViewPage() {
                         </div>
                     )}
 
-                    {alertHistory.alert.automaticRecordings && (
+                    {alertHistory.alert.automaticRecording && (
                         <div>
                             <p>Videos</p>
                             {video != null ? (

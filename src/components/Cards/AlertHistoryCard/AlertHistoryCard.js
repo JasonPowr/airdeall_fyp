@@ -10,7 +10,7 @@ export default function AlertHistoryCard({alertHistory, onDelete}) {
     const navigate = useNavigate()
 
     function handleDeletePressed() {
-        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecordings.automaticVideoAndAudioRecording).then(r => {
+        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording).then(r => {
             onDelete(alertHistory.id)
         })
     }

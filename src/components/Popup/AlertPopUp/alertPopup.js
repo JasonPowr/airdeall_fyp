@@ -7,12 +7,10 @@ import {CancelAlert} from "../../Alerts/activateAlert";
 
 export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCountdown, setAlertInCountdown}) {
 
-    function handleCancelClick() {
-        if (isAlertActive || isAlertInCountdown) {
-            CancelAlert({alert})
-            setIsAlertActive(false)
-            setAlertInCountdown(false)
-        }
+    function handleCancel() {
+        setIsAlertActive(false)
+        setAlertInCountdown(false)
+        CancelAlert({alert})
     }
 
     if (isAlertInCountdown) {
@@ -25,7 +23,7 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
                 </DialogTitle>
 
                 <DialogActions>
-                    <Button onClick={handleCancelClick}>Cancel Alert</Button>
+                    <Button onClick={handleCancel}>Cancel Alert</Button>
                 </DialogActions>
 
             </Dialog>
@@ -40,7 +38,7 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
                 </DialogTitle>
 
                 <DialogActions>
-                    <Button onClick={handleCancelClick}>Cancel Alert</Button>
+                    <Button onClick={handleCancel}>Cancel Alert</Button>
                 </DialogActions>
 
             </Dialog>

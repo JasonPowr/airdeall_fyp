@@ -27,7 +27,7 @@ function AlertViewPage() {
         })
     }, []);
 
-    function updateList(id) {
+    function updateList() {
         getAllAlertHistory(alertId).then(alertHistory => {
             setAlertHistory(alertHistory)
         })
