@@ -19,7 +19,6 @@ function Alerts() {
     const [phoneVerified, setPhoneVerified] = useState(false);
     const transScriptTimeoutRef = useRef(null);
 
-
     useEffect(() => {
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -53,6 +52,12 @@ function Alerts() {
             }
         }
     }, [alerts, isListening]);
+
+    useEffect(() => {
+        if (alerts.length === 0) {
+            setIsListening(false)
+        }
+    }, [alerts]);
 
 
     useEffect(() => {
