@@ -32,7 +32,7 @@ export const FireAlertWithCountdown = ({alert}) => {
         }
 
         if (alert.includeOnPublicMap) {
-            await includeOnPublicMap()
+            await includeOnPublicMap(alert)
         }
 
         if (alert.automaticRecording) {
@@ -61,7 +61,7 @@ export const FireAlertWithoutCountdown = ({alert}) => {
         triggerFlashlight()
     }
     if (alert.includeOnPublicMap) {
-        includeOnPublicMap()
+        includeOnPublicMap(alert)
     }
     if (alert.automaticRecording) {
         recordAlert()
@@ -195,7 +195,7 @@ export const triggerFlashlight = () => {
     }, 1000);
 }
 
-const includeOnPublicMap = async () => {
+const includeOnPublicMap = async (alert) => {
     const userLocation = await getLocation()
     const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
 
@@ -204,6 +204,7 @@ const includeOnPublicMap = async () => {
         alertLocation: userLocationGeoPoint
     };
 
+    alert.location = userLocationGeoPoint
     const alertRef = doc(db, "activeAlerts", auth.currentUser.uid);
     await setDoc(alertRef, {location}, {merge: true});
 }

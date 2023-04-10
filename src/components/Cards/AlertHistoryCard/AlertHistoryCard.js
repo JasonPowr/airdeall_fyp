@@ -1,8 +1,8 @@
 import Card from "@mui/material/Card";
 import {CardHeader, IconButton} from "@mui/material";
 import {Close, ViewAgendaRounded} from "@material-ui/icons";
-import {deleteAlertHistory} from "../../../model/db/DB";
 import {useLocation, useNavigate} from "react-router-dom";
+import {deleteAlertHistory} from "../../../model/db/DB";
 
 export default function AlertHistoryCard({alertHistory, onDelete}) {
     const location = useLocation();
@@ -10,9 +10,11 @@ export default function AlertHistoryCard({alertHistory, onDelete}) {
     const navigate = useNavigate()
 
     function handleDeletePressed() {
-        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording).then(r => {
+
+        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording, alertHistory.alert.includeOnPublicMap).then(r => {
             onDelete(alertHistory.id)
         })
+
     }
 
     function handleInfoPressed() {

@@ -1,17 +1,18 @@
 import React, {useEffect, useState} from "react"
 import "./map.css"
 import {Circle, DirectionsRenderer, GoogleMap, Marker} from "@react-google-maps/api";
-import {getActiveAlerts} from "../../model/db/DB";
+import {getActiveAlerts, updateLocationInDb} from "../../model/db/DB";
+import {auth} from "../../firebase";
 
 export function requestLocationPermission() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
-            // auth.onAuthStateChanged(async user => {
-            //     if (user) {
-            //         await updateLocationInDb(position.coords.latitude,
-            //             position.coords.longitude)
-            //     }
-            // })
+            auth.onAuthStateChanged(async user => {
+                if (user) {
+                    await updateLocationInDb(position.coords.latitude,
+                        position.coords.longitude)
+                }
+            })
         }, () => {
         });
     } else {
@@ -28,7 +29,7 @@ export function getLocation() {
                     lng: position.coords.longitude,
                 };
                 resolve(location);
-                // await updateLocationInDb(position.coords.latitude, position.coords.longitude)
+                await updateLocationInDb(position.coords.latitude, position.coords.longitude)
             },
             error => {
                 reject(error);

@@ -1,4 +1,14 @@
-import {collection, deleteDoc, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {
+    collection,
+    deleteDoc,
+    deleteField,
+    doc,
+    GeoPoint,
+    getDoc,
+    getDocs,
+    setDoc,
+    updateDoc
+} from "firebase/firestore";
 import {auth, db} from "../../firebase";
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref, uploadBytes} from "firebase/storage";
 
@@ -58,7 +68,7 @@ export async function deleteAlert(alertId) {
     const alertHistory = await getAllAlertHistory(alertId)
     if (alertHistory.length > 0) {
         alertHistory.map(async (index) => {
-            await deleteAlertHistory(index.alertHistory.alert.id, index.alertHistory.id, index.alertHistory.alert.automaticRecording)
+            await deleteAlertHistory(index.alertHistory.alert.id, index.alertHistory.id, index.alertHistory.alert.automaticRecording, index.alertHistory.alert.includeOnPublicMap)
         })
     }
 
@@ -76,16 +86,16 @@ export async function getActiveAlerts() {
     return activeAlerts
 }
 
-// export async function updateLocationInDb(lat, lng) {
-//     const userRef = doc(db, "users", `${GetUserId}`);
-//     await updateDoc(userRef, {
-//         location: new GeoPoint(lat, lng)
-//     });
-// }
+export async function updateLocationInDb(lat, lng) {
+    const userRef = doc(db, "users", `${auth.currentUser.uid}`);
+    await updateDoc(userRef, {
+        location: new GeoPoint(lat, lng)
+    });
+}
 
 export async function addAlertHistory(alertId, alertHistory) {
     const alertRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", `${alertHistory.id}`);
-    await setDoc(alertRef, {alertHistory}, {merge: true});
+    await setDoc(alertRef, alertHistory, {merge: true});
 }
 
 export async function getAllAlertHistory(alertId) {
@@ -93,7 +103,7 @@ export async function getAllAlertHistory(alertId) {
     const querySnapshot = await getDocs(collection(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory"));
     querySnapshot.forEach((doc) => {
         alertHistory.push({
-            alertHistory: doc.data().alertHistory
+            alertHistory: doc.data()
         });
     });
     return alertHistory
@@ -103,15 +113,54 @@ export async function getAlertHistoryById(alertId, alertHistoryId) {
     let foundAlertHistory;
     const docRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId);
     const foundDoc = await getDoc(docRef);
-    foundAlertHistory = foundDoc.data().alertHistory
+    foundAlertHistory = foundDoc.data()
     return foundAlertHistory
 }
 
-export async function deleteAlertHistory(alertId, alertHistoryId, isRecording) {
+export async function deleteAlertHistory(alertId, alertHistoryId, isRecording, isIncludeOnPublicMap) {
     await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId));
 
     if (isRecording) {
         await deleteVideoFromAlert(alertHistoryId)
+    }
+
+    if (isIncludeOnPublicMap) {
+        await deleteIncidentReport(alertId, alertHistoryId)
+    }
+
+}
+
+export async function updateAlertHistory(alertId, alertHistoryId, update) {
+    const alertHistoryRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId);
+    await updateDoc(alertHistoryRef, update, {merge: true});
+}
+
+export async function updateIncidentReport(alertId, alertHistoryId, update) {
+    const alertHistoryRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId);
+    await updateDoc(alertHistoryRef, {
+        "alert.incidentReport": update
+    });
+
+    const publicAlertRef = doc(db, 'publicAlerts', alertHistoryId)
+    await updateDoc(publicAlertRef, {
+        "mapAlert.incidentReport": update
+    });
+}
+
+export async function deleteIncidentReport(alertId, alertHistoryId) {
+    const alertHistoryRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId);
+    try {
+        await updateDoc(alertHistoryRef, {
+            incidentReport: deleteField()
+        });
+    } catch (e) {
+
+    }
+
+    try {
+        await deleteDoc(doc(db, 'publicAlerts', alertHistoryId));
+    } catch (e) {
+
     }
 }
 
@@ -167,6 +216,11 @@ export async function deleteVideoFromAlert(alertHistoryId) {
     }).catch((error) => {
         console.log(error)
     });
+}
+
+export async function addPublicAlert(alertHistoryId, mapAlert) {
+    const alertRef = doc(db, 'publicAlerts', alertHistoryId);
+    await setDoc(alertRef, {mapAlert}, {merge: true});
 }
 
 
