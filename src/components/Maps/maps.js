@@ -124,7 +124,7 @@ export default function Map() {
     const [infoWindow, showInfoWindow] = useState(false)
     const [infoWindowContent, setInfoWindowContent] = useState([])
     const [userLocation, setUserLocation] = useState(null);
-    const [gardaStations, setGardaStations] = useState(null);
+    const [places, setPlaces] = useState(null);
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -158,29 +158,38 @@ export default function Map() {
         strokeOpacity: 0.5
     }
 
-    const loadNearByGardaStations = () => {
+    let foundPlaces = []
+    const loadPlaces = (type) => {
         const request = {
             location: userLocation,
-            radius: 2000,
-            type: ['police']
+            radius: 5000,
+            type: [type]
         };
 
         let service = new window.google.maps.places.PlacesService(mapRef.current);
         service.nearbySearch(request, callback);
 
-
-        let foundGardaStations = []
-
         function callback(results, status) {
             if (status === window.google.maps.places.PlacesServiceStatus.OK) {
                 for (let i = 0; i < results.length; i++) {
-                    foundGardaStations.push(results[i])
-                    setGardaStations(foundGardaStations)
+
+                    if (type === "police") {
+                        results[i].types.push("POLICE_STATION_MARKER")
+                    } else if (type === "gym") {
+                        results[i].types.push("GYM_MARKER")
+                    } else if (type === "hospital") {
+                        results[i].types.push("HOSPITAL_MARKER")
+                    }
+
+                    foundPlaces.push(results[i])
+                    setPlaces(foundPlaces)
                 }
             }
             //https://developers.google.com/maps/documentation/javascript/places#place_search_requests
+            //https://developers.google.com/maps/documentation/places/web-service/supported_types
         }
     }
+
     return (
         <div className={"container"}>
             <div className={"map"}>
@@ -190,9 +199,11 @@ export default function Map() {
                         options={mapOptions}
                         center={userLocation}
                         mapContainerClassName={"map-container"}
-                        onLoad={(map) => {
+                        onLoad={async (map) => {
                             mapRef.current = map;
-                            loadNearByGardaStations()
+                            await loadPlaces('police')
+                            await loadPlaces('gym')
+                            await loadPlaces('hospital')
                         }}>
 
                         {userLocation && <Marker
@@ -242,18 +253,34 @@ export default function Map() {
                             </div>
                         )}
 
-                        {gardaStations && (
+                        {places && (
                             <div>
-                                {gardaStations.map((index) =>
-                                    <Marker
-                                        key={index}
-                                        position={{
-                                            lat: index.geometry.location.lat(),
-                                            lng: index.geometry.location.lng()
-                                        }}
-                                    >
-                                    </Marker>
-                                )}
+                                {places.map((index) => {
+                                    let url = "";
+                                    if (index.types.includes("POLICE_STATION_MARKER")) {
+                                        url = (require('../../assets/images/mapImages/policeStation.png'))
+                                    } else if (index.types.includes("GYM_MARKER")) {
+                                        url = (require('../../assets/images/mapImages/gym.png'))
+                                    } else if (index.types.includes("hospital")) {
+                                        url = (require('../../assets/images/mapImages/hospitalIcon.png'))
+                                    }
+                                    return (
+                                        <div>
+                                            <Marker
+                                                icon={{
+                                                    url: url,
+                                                    scaledSize: new window.google.maps.Size(30, 30)
+                                                }}
+                                                key={index.types}
+                                                position={{
+                                                    lat: index.geometry.location.lat(),
+                                                    lng: index.geometry.location.lng()
+                                                }}
+                                            >
+                                            </Marker>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         )}
 
