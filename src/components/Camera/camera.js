@@ -18,7 +18,23 @@ export function requestCameraAccess() {
         });
 }
 
-export function toggleFlashlightOn() {
+async function setUpCamera() {
+    await navigator.mediaDevices.getUserMedia({audio: true, video: {facingMode: "environment"}})
+        .then(function (s) {
+            video = document.createElement('video');
+            mediaStream = s
+            video.srcObject = mediaStream;
+            track = mediaStream.getVideoTracks()[0];
+            capabilities = track.getCapabilities()
+            mediaRecorder = new MediaRecorder(mediaStream);
+        })
+        .catch(function (error) {
+            console.log(error)
+        });
+}
+
+export async function toggleFlashlightOn() {
+    await setUpCamera()
     if (capabilities.torch) {
         track.applyConstraints({
             advanced: [{torch: true}]
@@ -37,19 +53,7 @@ export function toggleFlashlightOff() {
 }
 
 export async function startRecording() {
-    await navigator.mediaDevices.getUserMedia({audio: true, video: {facingMode: "environment"}})
-        .then(function (s) {
-            video = document.createElement('video');
-            mediaStream = s
-            video.srcObject = mediaStream;
-            track = mediaStream.getVideoTracks()[0];
-            capabilities = track.getCapabilities()
-            mediaRecorder = new MediaRecorder(mediaStream);
-        })
-        .catch(function (error) {
-            console.log(error)
-        });
-
+    await setUpCamera()
     chunks = [];
     mediaRecorder.start()
 }
