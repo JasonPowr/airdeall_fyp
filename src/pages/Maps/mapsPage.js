@@ -4,8 +4,7 @@ import React, {useState} from "react";
 import {useLoadScript} from "@react-google-maps/api"
 import Map from "../../components/Maps/maps"
 
-
-const libraries = ["places"]
+import {libraries} from "../../components/Maps/config";
 
 function MapsPage() {
     const [tab, setTab] = useState(0);

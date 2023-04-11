@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from "react"
 import "./map.css"
-import {Circle, DirectionsRenderer, GoogleMap, InfoWindow, Marker} from "@react-google-maps/api";
+import {Circle, DirectionsRenderer, GoogleMap, HeatmapLayer, InfoWindow, Marker} from "@react-google-maps/api";
 import {getActiveAlerts, getAllPublicIncidents, updateLocationInDb} from "../../model/db/DB";
 import {auth} from "../../firebase";
 import * as geolib from "geolib";
+import {Cancel, Directions} from "@material-ui/icons";
 
 export function requestLocationPermission() {
     if (navigator.geolocation) {
@@ -129,6 +130,8 @@ export default function Map() {
     const [places, setPlaces] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false)
     const [isInProximity, setIsInProximity] = useState(false)
+    const [directionsResponse, setDirectionsResponse] = useState(null);
+    const [heatMapData, setHeatMapData] = useState(null);
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -195,7 +198,6 @@ export default function Map() {
                     } else if (type === "hospital") {
                         results[i].types.push("HOSPITAL_MARKER")
                     }
-
                     foundPlaces.push(results[i])
                     setPlaces(foundPlaces)
                 }
@@ -205,10 +207,34 @@ export default function Map() {
         }
     }
 
+    async function handleDirections(userLocation, lat, lng) {
+        const directionsService = new window.google.maps.DirectionsService();
+        const results = await directionsService.route({
+            origin: {
+                lat: userLocation.lat,
+                lng: userLocation.lng
+            },
+            destination: {
+                lat: lat,
+                lng: lng,
+            },
+            travelMode: window.google.maps.TravelMode.DRIVING,
+        });
+        setDirectionsResponse(results);
+    }
+
+    function generateHeatMapData() {
+        let data = []
+        publicIncidents.map((incident) => {
+            data.push(new window.google.maps.LatLng(incident.location._lat, incident.location._long));
+        })
+        setHeatMapData(data)
+    }
+
     return (
         <div className={"container"}>
             <div className={"map"}>
-                {(userLocation && activeAlerts) && (
+                {(userLocation && activeAlerts && publicIncidents) && (
                     <GoogleMap
                         zoom={13}
                         options={mapOptions}
@@ -217,55 +243,136 @@ export default function Map() {
                         onLoad={async (map) => {
                             mapRef.current = map;
                             checkActiveAlertsInProximity()
+                            generateHeatMapData()
                             await loadPlaces('police')
                             await loadPlaces('gym')
                             await loadPlaces('hospital')
                             setIsLoaded(true)
                         }}>
 
-                        {userLocation && <Marker
-                            icon={{
-                                url: (require('../../assets/images/mapImages/userLocation.png')),
-                                scaledSize: new window.google.maps.Size(50, 50)
-                            }}
-                            position={userLocation}/>}
-                        {userLocation && <Circle center={userLocation} radius={2000}
-                                                 options={circleOptions}/>}
+
+                        {userLocation &&
+                            <Marker
+                                icon={{
+                                    url: (require('../../assets/images/mapImages/userLocation.png')),
+                                    scaledSize: new window.google.maps.Size(50, 50)
+                                }}
+                                position={userLocation}
+                                onClick={() => {
+                                    mapRef.current.panTo({
+                                        lat: userLocation.lat,
+                                        lng: userLocation.lng
+                                    })
+                                    setInfoWindowContent(userLocation)
+                                    showInfoWindow(true)
+                                }}
+                            >
+
+                                {(infoWindow && (infoWindowContent === userLocation)) && (
+                                    <InfoWindow
+                                        options={{
+                                            position: {
+                                                lat: infoWindowContent.lat,
+                                                lng: infoWindowContent.lng
+                                            },
+                                        }}
+                                        onCloseClick={() => {
+                                            showInfoWindow(false)
+                                        }}
+                                    >
+                                        <div className={"map-infoWindow"}>
+                                            <h3>Your Location!</h3>
+                                        </div>
+
+                                    </InfoWindow>
+                                )}
+                                <Circle center={userLocation} radius={2000} options={circleOptions}/>
+                            </Marker>
+                        }
+
 
                         {(activeAlertsInProximity && isInProximity) && (
                             <div>
-                                {activeAlerts.map((alert) =>
+                                {activeAlerts.map((alert, index) =>
                                     <Marker
                                         icon={{
                                             url: (require('../../assets/images/mapImages/activeAlertIcon.png')),
                                             scaledSize: new window.google.maps.Size(30, 30)
                                         }}
-                                        key={alert} position={alert}
-                                    />)}
+                                        key={index}
+                                        position={alert}
+                                        onClick={() => {
+                                            mapRef.current.panTo({
+                                                lat: alert.lat,
+                                                lng: alert.lng
+                                            })
+                                            setInfoWindowContent(alert)
+                                            showInfoWindow(true)
+                                        }}
+                                    >
+                                        {(infoWindow && (infoWindowContent === alert)) && (
+                                            <InfoWindow
+                                                options={{
+                                                    position: {
+                                                        lat: infoWindowContent.lat,
+                                                        lng: infoWindowContent.lng
+                                                    },
+                                                }}
+                                                onCloseClick={() => {
+                                                    showInfoWindow(false)
+                                                }}
+                                            >
+                                                <div className={"map-infoWindow"}>
+                                                    <h3>There is currently an alert active here!</h3>
+
+                                                    <div>
+                                                        <div className={"directions-div"} onClick={() => {
+                                                            handleDirections(userLocation, alert.lat, alert.lng).then(r => {
+                                                            })
+                                                        }}>
+                                                            <Directions fontSize={"medium"}/>
+                                                            <p>Get Directions</p>
+                                                        </div>
+
+                                                        <div className={"directions-div"} onClick={() => {
+                                                            setDirectionsResponse(null)
+                                                            showInfoWindow(false)
+                                                        }}>
+                                                            <Cancel fontSize={"medium"}/>
+                                                            <p>Cancel</p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </InfoWindow>
+                                        )}
+
+                                    </Marker>
+                                )}
                             </div>
 
                         )}
 
                         {publicIncidents && (
                             <div>
-                                {publicIncidents.map((index) =>
+                                {publicIncidents.map((incident, index) =>
                                     <Marker icon={{
                                         url: (require('../../assets/images/mapImages/publicAlertIcon.png')),
                                         scaledSize: new window.google.maps.Size(30, 30)
                                     }}
                                             key={index}
-                                            position={{lat: index.location._lat, lng: index.location._long}}
+                                            position={{lat: incident.location._lat, lng: incident.location._long}}
                                             onClick={() => {
                                                 mapRef.current.panTo({
-                                                    lat: index.location._lat,
-                                                    lng: index.location._long
+                                                    lat: incident.location._lat,
+                                                    lng: incident.location._long
                                                 })
-                                                setInfoWindowContent(index)
+                                                setInfoWindowContent(incident)
                                                 showInfoWindow(true)
                                             }}
                                     >
 
-                                        {(infoWindow && infoWindowContent) && (
+                                        {(infoWindow && (infoWindowContent === incident)) && (
                                             <InfoWindow
                                                 options={{
                                                     position: {
@@ -275,7 +382,6 @@ export default function Map() {
                                                 }}
                                                 onCloseClick={() => {
                                                     showInfoWindow(false)
-                                                    setInfoWindowContent(null)
                                                 }}
                                             >
                                                 <div className={"map-infoWindow"}>
@@ -286,46 +392,119 @@ export default function Map() {
 
                                                     <h5>User Account:</h5>
                                                     <p className={"p-tag"}>{infoWindowContent.incidentReport}</p>
+
+                                                    <div>
+                                                        <div className={"directions-div"} onClick={() => {
+                                                            handleDirections(userLocation, incident.location._lat, incident.location._long).then(r => {
+                                                            })
+                                                        }}>
+                                                            <Directions fontSize={"medium"}/>
+                                                            <p>Get Directions</p>
+                                                        </div>
+
+                                                        <div className={"directions-div"} onClick={() => {
+                                                            setDirectionsResponse(null)
+                                                            showInfoWindow(false)
+                                                        }}>
+                                                            <Cancel fontSize={"medium"}/>
+                                                            <p>Cancel</p>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
 
                                             </InfoWindow>
                                         )}
-
                                     </Marker>
                                 )}
-
                             </div>
                         )}
 
                         {(places && isLoaded) && (
                             <div>
                                 {places.map((place, index) => {
-                                    let url = "";
+                                        let url = "";
 
-                                    if (place.types.includes("POLICE_STATION_MARKER")) {
-                                        url = (require('../../assets/images/mapImages/policeStation.png'))
-                                    } else if (place.types.includes("GYM_MARKER")) {
-                                        url = (require('../../assets/images/mapImages/gym.png'))
-                                    } else if (place.types.includes("HOSPITAL_MARKER")) {
-                                        url = (require('../../assets/images/mapImages/hospitalIcon.png'))
+                                        if (place.types.includes("POLICE_STATION_MARKER")) {
+                                            url = (require('../../assets/images/mapImages/policeStation.png'))
+                                        } else if (place.types.includes("GYM_MARKER")) {
+                                            url = (require('../../assets/images/mapImages/gym.png'))
+                                        } else if (place.types.includes("HOSPITAL_MARKER")) {
+                                            url = (require('../../assets/images/mapImages/hospitalIcon.png'))
+                                        }
+
+                                        return (
+                                            <div key={index}>
+                                                <Marker
+                                                    icon={{
+                                                        url: url,
+                                                        scaledSize: new window.google.maps.Size(30, 30),
+                                                    }}
+                                                    position={{
+                                                        lat: place.geometry.location.lat(),
+                                                        lng: place.geometry.location.lng(),
+                                                    }}
+                                                    onClick={() => {
+                                                        mapRef.current.panTo({
+                                                            lat: place.geometry.location.lat(),
+                                                            lng: place.geometry.location.lng(),
+                                                        })
+                                                        setInfoWindowContent(place)
+                                                        showInfoWindow(true)
+                                                    }}>
+
+                                                    {(infoWindow && (infoWindowContent === place)) && (
+                                                        <InfoWindow
+                                                            options={{
+                                                                position: {
+                                                                    lat: place.geometry.location.lat(),
+                                                                    lng: place.geometry.location.lng(),
+                                                                },
+                                                            }}
+                                                            onCloseClick={() => {
+                                                                showInfoWindow(false)
+                                                            }}
+                                                        >
+                                                            <div className={"map-infoWindow"}>
+                                                                <h3>{place.name}</h3>
+                                                                <div>
+                                                                    <div className={"directions-div"} onClick={() => {
+                                                                        handleDirections(userLocation, place.geometry.location.lat(), place.geometry.location.lng()).then(r => {
+                                                                        })
+                                                                    }}>
+                                                                        <Directions fontSize={"medium"}/>
+                                                                        <p>Get Directions</p>
+                                                                    </div>
+
+                                                                    <div className={"directions-div"} onClick={() => {
+                                                                        setDirectionsResponse(null)
+                                                                        showInfoWindow(false)
+                                                                    }}>
+                                                                        <Cancel fontSize={"medium"}/>
+                                                                        <p>Cancel</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </InfoWindow>
+                                                    )}
+
+                                                </Marker>
+
+                                            </div>
+                                        )
                                     }
-
-                                    return (
-                                        <div key={index}>
-                                            <Marker
-                                                icon={{
-                                                    url: url,
-                                                    scaledSize: new window.google.maps.Size(30, 30),
-                                                }}
-                                                position={{
-                                                    lat: place.geometry.location.lat(),
-                                                    lng: place.geometry.location.lng(),
-                                                }}
-                                            />
-                                        </div>
-                                    );
-                                })}
+                                )}
                             </div>
+                        )}
+
+                        {directionsResponse && (
+                            <DirectionsRenderer options={{
+                                suppressMarkers: true,
+                            }} directions={directionsResponse}/>
+                        )}
+
+                        {heatMapData && (
+                            <HeatmapLayer data={heatMapData}/>
                         )}
 
                     </GoogleMap>
@@ -334,8 +513,11 @@ export default function Map() {
         </div>
     )
 }
+//https://stackoverflow.com/questions/58529797/typeerror-b-lat-is-not-a-function-heatmap-layer
+//https://developers.google.com/maps/documentation/javascript/heatmaplayer
 //https://www.youtube.com/watch?v=2po9_CIRW7I&t=2577s
 //https://stackoverflow.com/questions/71423686/how-to-add-custom-ico-or-svg-as-marker-icon-in-react-google-maps-api
 //https://udarax.me/technology/how-to-draw-directions-between-2-points-in-the-google-maps-using-react-js/
 //https://developers.google.com/maps/documentation/javascript/reference/directions#DirectionsRequest
 //https://linuxhint.com/remove-first-and-last-element-in-array-javascript/#:~:text=For%20removing%20the%20first%20and,which%20needs%20to%20be%20removed.
+//https://stackoverflow.com/questions/12507925/how-to-remove-only-a-and-b-markers-in-a-route-but-not-waypoint-marker

@@ -33,3 +33,8 @@
 .p-tag {
     margin-top: -15px;
 }
+
+.directions-div {
+    display: flex;
+    align-items: center;
+}
