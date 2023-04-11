@@ -223,5 +223,18 @@ export async function addPublicAlert(alertHistoryId, mapAlert) {
     await setDoc(alertRef, {mapAlert}, {merge: true});
 }
 
+export async function getAllPublicIncidents() {
+    const querySnapshot = await getDocs(collection(db, "publicAlerts"));
+    const publicIncidents = [];
+    querySnapshot.forEach((doc) => {
+        publicIncidents.push({
+            alertId: doc.data().mapAlert.alertId,
+            incidentReport: doc.data().mapAlert.incidentReport,
+            location: new GeoPoint(doc.data().mapAlert.location._lat, doc.data().mapAlert.location._long)
+        })
+    });
+    return publicIncidents
+}
+
 
 
