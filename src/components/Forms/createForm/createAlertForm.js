@@ -127,7 +127,7 @@ export default function CreateAlertForm({editAlert}) {
             alarm: values.alarm,
             flashlight: values.flashlight,
             includeOnPublicMap: values.includeOnPublicMap,
-            automaticRecording: editAlert ? editAlert.automaticRecording : false,
+            automaticRecording: values.automaticRecording,
             socialMediaIntegration: {
                 isEnabled: values.socialMediaIntegration.isEnabled,
                 facebook: {

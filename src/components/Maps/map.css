@@ -24,3 +24,12 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+.map-infoWindow {
+    color: black;
+    font-size: medium;
+}
+
+.p-tag {
+    margin-top: -15px;
+}

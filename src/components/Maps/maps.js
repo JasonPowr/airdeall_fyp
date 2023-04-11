@@ -264,6 +264,33 @@ export default function Map() {
                                                 showInfoWindow(true)
                                             }}
                                     >
+
+                                        {(infoWindow && infoWindowContent) && (
+                                            <InfoWindow
+                                                options={{
+                                                    position: {
+                                                        lat: infoWindowContent.location._lat,
+                                                        lng: infoWindowContent.location._long
+                                                    },
+                                                }}
+                                                onCloseClick={() => {
+                                                    showInfoWindow(false)
+                                                    setInfoWindowContent(null)
+                                                }}
+                                            >
+                                                <div className={"map-infoWindow"}>
+                                                    <h3>An incident Has Occurred In this area!</h3>
+                                                    <h4>Here is a brief report of the Incident</h4>
+                                                    <p className={"p-tag"}>Time:</p>
+                                                    <p className={"p-tag"}>Date:</p>
+
+                                                    <h5>User Account:</h5>
+                                                    <p className={"p-tag"}>{infoWindowContent.incidentReport}</p>
+                                                </div>
+
+                                            </InfoWindow>
+                                        )}
+
                                     </Marker>
                                 )}
 
@@ -299,28 +326,6 @@ export default function Map() {
                                     );
                                 })}
                             </div>
-                        )}
-
-                        {(infoWindow && infoWindowContent) && (
-                            <InfoWindow
-                                options={{
-                                    position: {
-                                        lat: infoWindowContent.location._lat,
-                                        lng: infoWindowContent.location._long
-                                    },
-                                }}
-                                onCloseClick={() => {
-                                    showInfoWindow(false)
-                                    setInfoWindowContent(null)
-                                }}
-                            >
-                                <div>
-                                    <h4>An incident Has Occurred In this area!</h4>
-                                    <p>Here is a brief description of what happened</p>
-                                    <p>{infoWindowContent.incidentReport}</p>
-                                </div>
-
-                            </InfoWindow>
                         )}
 
                     </GoogleMap>

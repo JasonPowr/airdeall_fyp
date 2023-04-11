@@ -79,7 +79,6 @@ export const CancelAlert = ({alert}) => {
     } else {
         alert.isInCountdown = false
         clearTimeout(locationUpdates)
-        toggleFlashlightOff()
         const alertHistoryId = generateIdFoHistory()
         if (alert.flashlight) {
             clearInterval(flashlightTrigger)
