@@ -3,6 +3,7 @@ import "./map.css"
 import {Circle, DirectionsRenderer, GoogleMap, InfoWindow, Marker} from "@react-google-maps/api";
 import {getActiveAlerts, getAllPublicIncidents, updateLocationInDb} from "../../model/db/DB";
 import {auth} from "../../firebase";
+import * as geolib from "geolib";
 
 export function requestLocationPermission() {
     if (navigator.geolocation) {
@@ -119,12 +120,15 @@ function HistoryMap({locations}) {
 
 export default function Map() {
     const mapRef = useRef();
-    const [alerts, setAlert] = useState(null);
+    const [activeAlerts, setActiveAlerts] = useState(null);
+    const [activeAlertsInProximity, setActiveAlertsInProximity] = useState([]);
     const [publicIncidents, setPublicIncidents] = useState(null);
     const [infoWindow, showInfoWindow] = useState(false)
     const [infoWindowContent, setInfoWindowContent] = useState([])
     const [userLocation, setUserLocation] = useState(null);
     const [places, setPlaces] = useState(null);
+    const [isLoaded, setIsLoaded] = useState(false)
+    const [isInProximity, setIsInProximity] = useState(false)
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -135,7 +139,7 @@ export default function Map() {
         });
 
         getActiveAlerts().then((alert) => {
-            setAlert(alert);
+            setActiveAlerts(alert);
         });
 
         getAllPublicIncidents().then((r) => {
@@ -154,8 +158,19 @@ export default function Map() {
         clickable: false,
         editable: false,
         draggable: false,
+
         strokeWeight: 2,
         strokeOpacity: 0.5
+    }
+
+    const checkActiveAlertsInProximity = () => {
+        activeAlerts.forEach((alert) => {
+            const distance = geolib.getDistance(userLocation, alert);
+            if (distance <= 2000) {
+                setIsInProximity(true)
+                setActiveAlertsInProximity(alert)
+            }
+        });
     }
 
     let foundPlaces = []
@@ -193,7 +208,7 @@ export default function Map() {
     return (
         <div className={"container"}>
             <div className={"map"}>
-                {userLocation && (
+                {(userLocation && activeAlerts) && (
                     <GoogleMap
                         zoom={13}
                         options={mapOptions}
@@ -201,9 +216,11 @@ export default function Map() {
                         mapContainerClassName={"map-container"}
                         onLoad={async (map) => {
                             mapRef.current = map;
+                            checkActiveAlertsInProximity()
                             await loadPlaces('police')
                             await loadPlaces('gym')
                             await loadPlaces('hospital')
+                            setIsLoaded(true)
                         }}>
 
                         {userLocation && <Marker
@@ -215,9 +232,9 @@ export default function Map() {
                         {userLocation && <Circle center={userLocation} radius={2000}
                                                  options={circleOptions}/>}
 
-                        {alerts && (
+                        {(activeAlertsInProximity && isInProximity) && (
                             <div>
-                                {alerts.map((alert) =>
+                                {activeAlerts.map((alert) =>
                                     <Marker
                                         icon={{
                                             url: (require('../../assets/images/mapImages/activeAlertIcon.png')),
@@ -253,33 +270,33 @@ export default function Map() {
                             </div>
                         )}
 
-                        {places && (
+                        {(places && isLoaded) && (
                             <div>
-                                {places.map((index) => {
+                                {places.map((place, index) => {
                                     let url = "";
-                                    if (index.types.includes("POLICE_STATION_MARKER")) {
+
+                                    if (place.types.includes("POLICE_STATION_MARKER")) {
                                         url = (require('../../assets/images/mapImages/policeStation.png'))
-                                    } else if (index.types.includes("GYM_MARKER")) {
+                                    } else if (place.types.includes("GYM_MARKER")) {
                                         url = (require('../../assets/images/mapImages/gym.png'))
-                                    } else if (index.types.includes("hospital")) {
+                                    } else if (place.types.includes("HOSPITAL_MARKER")) {
                                         url = (require('../../assets/images/mapImages/hospitalIcon.png'))
                                     }
+
                                     return (
-                                        <div>
+                                        <div key={index}>
                                             <Marker
                                                 icon={{
                                                     url: url,
-                                                    scaledSize: new window.google.maps.Size(30, 30)
+                                                    scaledSize: new window.google.maps.Size(30, 30),
                                                 }}
-                                                key={index.types}
                                                 position={{
-                                                    lat: index.geometry.location.lat(),
-                                                    lng: index.geometry.location.lng()
+                                                    lat: place.geometry.location.lat(),
+                                                    lng: place.geometry.location.lng(),
                                                 }}
-                                            >
-                                            </Marker>
+                                            />
                                         </div>
-                                    )
+                                    );
                                 })}
                             </div>
                         )}
@@ -307,7 +324,6 @@ export default function Map() {
                         )}
 
                     </GoogleMap>
-
                 )}
             </div>
         </div>

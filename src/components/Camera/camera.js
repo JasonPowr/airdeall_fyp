@@ -12,12 +12,6 @@ let mediaRecorder;
 export function requestCameraAccess() {
     navigator.mediaDevices.getUserMedia({audio: true, video: {facingMode: "environment"}})
         .then(function (s) {
-            video = document.createElement('video');
-            mediaStream = s
-            video.srcObject = mediaStream;
-            track = mediaStream.getVideoTracks()[0];
-            capabilities = track.getCapabilities()
-            mediaRecorder = new MediaRecorder(mediaStream);
         })
         .catch(function (error) {
             console.log(error)
@@ -42,17 +36,26 @@ export function toggleFlashlightOff() {
     }
 }
 
-export function startRecording() {
+export async function startRecording() {
+    await navigator.mediaDevices.getUserMedia({audio: true, video: {facingMode: "environment"}})
+        .then(function (s) {
+            video = document.createElement('video');
+            mediaStream = s
+            video.srcObject = mediaStream;
+            track = mediaStream.getVideoTracks()[0];
+            capabilities = track.getCapabilities()
+            mediaRecorder = new MediaRecorder(mediaStream);
+        })
+        .catch(function (error) {
+            console.log(error)
+        });
+
     chunks = [];
-    console.log(mediaRecorder.state)
     mediaRecorder.start()
-    console.log(mediaRecorder.state)
 }
 
 export function stopRecording(alertId) {
-    console.log(mediaRecorder.state)
     mediaRecorder.stop()
-    console.log(mediaRecorder.state)
     mediaRecorder.ondataavailable = function (e) {
         chunks.push(e.data);
     }
