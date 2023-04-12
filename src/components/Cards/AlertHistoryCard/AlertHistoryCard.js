@@ -1,5 +1,5 @@
 import Card from "@mui/material/Card";
-import {CardHeader, IconButton} from "@mui/material";
+import {CardHeader, IconButton, Typography} from "@mui/material";
 import {Close, ViewAgendaRounded} from "@material-ui/icons";
 import {useLocation, useNavigate} from "react-router-dom";
 import {deleteAlertHistory} from "../../../model/db/DB";
@@ -29,15 +29,18 @@ export default function AlertHistoryCard({alertHistory, onDelete}) {
     return (
         <Card className={"cards"}>
             <CardHeader
-                title={alertHistory.id}
+                title={
+                    <Typography align={"left"}
+                                fontSize={16}>{alertHistory.date + ' - ' + alertHistory.timeStart}</Typography>
+                }
                 action={
                     <div>
                         <IconButton onClick={handleInfoPressed}>
-                            <ViewAgendaRounded/>
+                            <ViewAgendaRounded fontSize={"small"}/>
                         </IconButton>
 
                         <IconButton onClick={handleDeletePressed}>
-                            <Close/>
+                            <Close fontSize={"small"}/>
                         </IconButton>
                     </div>
                 }

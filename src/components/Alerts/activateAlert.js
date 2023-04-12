@@ -11,16 +11,19 @@ let alertCountdown;
 let flashlightTrigger;
 let locationUpdates;
 let history_locationUpdates = []
+let timeStart;
+let date;
+const today = new Date();
 const audio = new Audio(sound)
 
 export const FireAlertWithCountdown = ({alert}) => {
     alert.isInCountdown = true
     alertCountdown = setTimeout(async function () {
-        console.log(alert.title)
         alert.isInCountdown = false
+        setTime()
         history_locationUpdates = []
         if (alert.sms) {
-            await configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
+            await configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1, alert.sms.contacts.contact_2, alert.sms.contacts.contact_3, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
         }
 
         if (alert.alarm) {
@@ -49,10 +52,10 @@ export const FireAlertWithCountdown = ({alert}) => {
 };
 
 export const FireAlertWithoutCountdown = ({alert}) => {
-    console.log(alert.title)
     history_locationUpdates = []
+    setTime()
     if (alert.sms) {
-        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1.phone, alert.sms.contacts.contact_2.phone, alert.sms.contacts.contact_3.phone, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
+        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1, alert.sms.contacts.contact_2, alert.sms.contacts.contact_3, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
     }
     if (alert.alarm) {
         soundAlarm()
@@ -73,7 +76,6 @@ export const FireAlertWithoutCountdown = ({alert}) => {
 };
 
 export const CancelAlert = ({alert}) => {
-    console.log(alert.title)
     if (alert.isInCountdown) {
         clearTimeout(alertCountdown);
     } else {
@@ -92,9 +94,19 @@ export const CancelAlert = ({alert}) => {
         if (alert.automaticRecording) {
             cancelRecording(alertHistoryId)
         }
-        addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId, history_locationUpdates)).then(r => {
+        const end = new Date();
+        let timeEnd;
+
+        if (end.getMinutes() > 10) {
+            timeEnd = end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds();
+        } else {
+            timeEnd = end.getHours() + ":" + '0' + end.getMinutes() + ":" + end.getSeconds();
+        }
+
+        addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId, history_locationUpdates, timeEnd)).then(r => {
             history_locationUpdates = null
         })
+        timeEnd = null
         alert.isActive = false
     }
 }
@@ -108,6 +120,9 @@ const validateNumber = (phoneNumber) => {
 }
 
 const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone) => {
+    console.log(await validateNumber(contact_1_phone))
+    console.log(await validateNumber(contact_2_phone))
+    console.log(await validateNumber(contact_3_phone))
     // if (contact_1_phone !== "") {
     //     const contact1 = await validateNumber(contact_1_phone);
     //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
@@ -141,7 +156,7 @@ const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_
     //         .catch(error => console.error(error));
     // }
 }
-const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone, locationInfo, recurringLocationInfo, proximitySMS) => {
+const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locationInfo, recurringLocationInfo, proximitySMS) => {
 
     if (messageBody === "") {
         messageBody = "Default Alert Message"
@@ -153,8 +168,7 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
         messageBody = messageBody + ` Alert Fired at this location: https://maps.google.com/?q=${location.lat},${location.lng}`
     }
 
-    await sendSMS(messageBody, contact_1_phone,
-        contact_2_phone, contact_3_phone)
+    await sendSMS(messageBody, contact_1.phone, contact_2.phone, contact_3.phone)
 
     if (proximitySMS) {
         const userLocation = await getLocation()
@@ -175,7 +189,7 @@ const configureSMS = async (messageBody, contact_1_phone, contact_2_phone, conta
             const location = await getLocation()
             history_locationUpdates.push(location)
             // messageBody = ` Location Update: https://maps.google.com/?q=${location.lat},${location.lng}`
-            // await sendSMS(messageBody, contact_1_phone, contact_2_phone, contact_3_phone)
+            // await sendSMS(messageBody, contact_1.phone, contact_2.phone, contact_3.phone
         }, 30000);
     }
 
@@ -229,10 +243,27 @@ function generateIdFoHistory() {
     return uuidv4()
 }
 
-function generateAlertHistory(alert, alertHistoryId, locationUpdates) {
+function setTime() {
+    timeStart = null
+    date = null
+
+    if ((today.getMonth() + 1) < 10) {
+        date = (today.getDate()) + '-0' + (today.getMonth() + 1) + '-' + today.getFullYear();
+    } else {
+        date = (today.getDate()) + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+    }
+    timeStart = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+}
+
+function generateAlertHistory(alert, alertHistoryId, locationUpdates, timeEnd) {
     return {
+        timeStart: timeStart,
+        timeEnd: timeEnd,
+        date: date,
         id: alertHistoryId,
         alert: alert,
         locationInfo: locationUpdates,
     }
 }
+
+//https://tecadmin.net/get-current-date-time-javascript/

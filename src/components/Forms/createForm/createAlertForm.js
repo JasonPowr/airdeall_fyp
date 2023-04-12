@@ -3,9 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
 import {useFormik} from "formik";
 import {createAlertValidationSchema} from "../../../Helpers/Validation/CreateAlertValidation";
-import TrustedContactPicker from "../../Contacts/contacts";
 import {createAlert, updateAlert} from "../../../model/db/DB";
-import styles from "./createAlertForm.css";
 import {useContext, useEffect, useState} from "react";
 import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 import {loginWithFacebook} from "../../Socials/facebook/facebook";
@@ -49,53 +47,7 @@ export default function CreateAlertForm({editAlert}) {
         })
     }, [user]);
 
-    const {values, handleChange, handleBlur, errors, touched} = useFormik({
-        initialValues: {
-            title: editAlert ? editAlert.title : "",
-            isActive: editAlert ? editAlert.state : false,
-            description: editAlert ? editAlert.description : "",
-            smsMessage: editAlert ? editAlert.sms.sendSMS : false,
-            locationInfo: editAlert ? editAlert.sms.locationInfo : false,
-            recurringLocationInfo: editAlert ? editAlert.sms.recurringLocationInfo : false,
-            messageBody: editAlert ? editAlert.sms.message.body : "",
-            proximitySMS: editAlert ? editAlert.sms.proximitySMS : false,
-            contacts: {
-                contact_1: {
-                    name: editAlert ? editAlert.sms.contacts.contact_1.name : "",
-                    phone: editAlert ? editAlert.sms.contacts.contact_1.phone : "",
-                },
-                contact_2: {
-                    name: editAlert ? editAlert.sms.contacts.contact_2.name : "",
-                    phone: editAlert ? editAlert.sms.contacts.contact_2.phone : "",
-                },
-                contact_3: {
-                    name: editAlert ? editAlert.sms.contacts.contact_3.name : "",
-                    phone: editAlert ? editAlert.sms.contacts.contact_3.phone : "",
-                }
-            },
-            includeOnPublicMap: editAlert ? editAlert.includeOnPublicMap : false,
-            alarm: editAlert ? editAlert.alarm : false,
-            flashlight: editAlert ? editAlert.flashlight : false,
-            automaticRecording: editAlert ? editAlert.automaticRecording : false,
-            socialMediaIntegration: {
-                isEnabled: editAlert ? editAlert.socialMediaIntegration.isEnabled : false,
-                facebook: {
-                    isEnabled: editAlert ? editAlert.socialMediaIntegration.facebook.isEnabled : false,
-                    isLinked: editAlert ? editAlert.socialMediaIntegration.facebook.isLinked : false,
-                    isPostEnabled: editAlert ? editAlert.socialMediaIntegration.facebook.isPostEnabled : false,
-                }
-            },
-            voiceActivation: {
-                isEnabled: editAlert ? editAlert.voiceActivation.isEnabled : false,
-                voiceActivationPhrase: editAlert ? editAlert.voiceActivation.voiceActivationPhrase : "",
-                voiceActivationForAlertWithCountDown: editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithCountDown : false,
-                voiceActivationForAlertWithoutCountDown: editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithoutCountDown : false,
-            }
-        },
-        validationSchema: createAlertValidationSchema,
-    })
-
-    async function handleCreate() {
+    const onSubmit = async () => {
         const alert = {
             id: uuidv4(),
             title: values.title,
@@ -110,18 +62,9 @@ export default function CreateAlertForm({editAlert}) {
                     body: values.messageBody,
                 },
                 contacts: {
-                    contact_1: {
-                        name: values.contacts.contact_1.name,
-                        phone: values.contacts.contact_1.phone,
-                    },
-                    contact_2: {
-                        name: values.contacts.contact_2.name,
-                        phone: values.contacts.contact_2.phone,
-                    },
-                    contact_3: {
-                        name: values.contacts.contact_3.name,
-                        phone: values.contacts.contact_3.phone,
-                    }
+                    contact_1: values.contacts.contact_1,
+                    contact_2: values.contacts.contact_2,
+                    contact_3: values.contacts.contact_3,
                 },
             },
             alarm: values.alarm,
@@ -152,6 +95,44 @@ export default function CreateAlertForm({editAlert}) {
         }
     }
 
+    const {values, handleChange, handleBlur, errors, touched, handleSubmit} = useFormik({
+        initialValues: {
+            title: editAlert ? editAlert.title : "",
+            isActive: editAlert ? editAlert.state : false,
+            description: editAlert ? editAlert.description : "",
+            smsMessage: editAlert ? editAlert.sms.sendSMS : false,
+            locationInfo: editAlert ? editAlert.sms.locationInfo : false,
+            recurringLocationInfo: editAlert ? editAlert.sms.recurringLocationInfo : false,
+            messageBody: editAlert ? editAlert.sms.message.body : "",
+            proximitySMS: editAlert ? editAlert.sms.proximitySMS : false,
+            contacts: {
+                contact_1: editAlert ? editAlert.sms.contacts.contact_1 : null,
+                contact_2: editAlert ? editAlert.sms.contacts.contact_2 : null,
+                contact_3: editAlert ? editAlert.sms.contacts.contact_3 : null,
+            },
+            includeOnPublicMap: editAlert ? editAlert.includeOnPublicMap : false,
+            alarm: editAlert ? editAlert.alarm : false,
+            flashlight: editAlert ? editAlert.flashlight : false,
+            automaticRecording: editAlert ? editAlert.automaticRecording : false,
+            socialMediaIntegration: {
+                isEnabled: editAlert ? editAlert.socialMediaIntegration.isEnabled : false,
+                facebook: {
+                    isEnabled: editAlert ? editAlert.socialMediaIntegration.facebook.isEnabled : false,
+                    isLinked: editAlert ? editAlert.socialMediaIntegration.facebook.isLinked : false,
+                    isPostEnabled: editAlert ? editAlert.socialMediaIntegration.facebook.isPostEnabled : false,
+                }
+            },
+            voiceActivation: {
+                isEnabled: editAlert ? editAlert.voiceActivation.isEnabled : false,
+                voiceActivationPhrase: editAlert ? editAlert.voiceActivation.voiceActivationPhrase : "",
+                voiceActivationForAlertWithCountDown: editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithCountDown : false,
+                voiceActivationForAlertWithoutCountDown: editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithoutCountDown : false,
+            }
+        },
+        validationSchema: createAlertValidationSchema,
+        onSubmit
+    })
+
     function handleCancelCreate() {
         navigate('/alerts')
     }
@@ -171,18 +152,9 @@ export default function CreateAlertForm({editAlert}) {
                     body: values.messageBody,
                 },
                 contacts: {
-                    contact_1: {
-                        name: values.contacts.contact_1.name,
-                        phone: values.contacts.contact_1.phone,
-                    },
-                    contact_2: {
-                        name: values.contacts.contact_2.name,
-                        phone: values.contacts.contact_2.phone,
-                    },
-                    contact_3: {
-                        name: values.contacts.contact_3.name,
-                        phone: values.contacts.contact_3.phone,
-                    }
+                    contact_1: values.contacts.contact_1,
+                    contact_2: values.contacts.contact_2,
+                    contact_3: values.contacts.contact_3,
                 },
             },
             alarm: values.alarm,
@@ -214,40 +186,6 @@ export default function CreateAlertForm({editAlert}) {
         navigate(`/${editAlert.id}/alert_view`, {state: {alertId: editAlert.id}});
     }
 
-
-    let trustedContacts = [];
-    const handleTrustedContacts = async () => {
-        trustedContacts = await TrustedContactPicker();
-
-        let html = "";
-        if (trustedContacts.length <= 3) {
-            for (let i = 0; i < trustedContacts.length; i++) {
-                html += `<Contact/>`;
-            }
-            document.getElementById("contact-list").innerHTML = html;
-
-            if (trustedContacts[0].name != null) {
-                values.contacts.contact_1.name = trustedContacts[0].name
-                values.contacts.contact_1.phone = trustedContacts[0].tel[0]
-            }
-
-            if (trustedContacts[1].name != null) {
-                values.contacts.contact_2.name = trustedContacts[1].name
-                values.contacts.contact_2.phone = trustedContacts[1].tel[0]
-            }
-
-            if (trustedContacts[2].name != null) {
-                values.contacts.contact_3.name = trustedContacts[2].name
-                values.contacts.contact_3.phone = trustedContacts[2].tel[0]
-            }
-
-        } else {
-            alert("You can only select up to three Contacts")
-            trustedContacts = null
-        }
-
-    }
-
     const handleFacebookLink = async () => {
         try {
             loginWithFacebook()
@@ -265,86 +203,89 @@ export default function CreateAlertForm({editAlert}) {
     return (
         <div>
             {user ? (
-                <div className={styles.createAlertForm}>
-                    <form autoComplete={"off"}>
+                <form onSubmit={handleSubmit} autoComplete={"off"}>
 
-                        <div>
-                            {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
-                        </div>
+                    <div>
+                        {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
+                    </div>
 
-                        <AlertDetailsComponent
-                            errors={errors}
-                            touched={touched}
-                            values={values}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                        />
+                    <AlertDetailsComponent
+                        errors={errors}
+                        touched={touched}
+                        values={values}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                    />
 
-                        <SMSComponent
-                            isPhoneLinked={isPhoneLinked}
-                            handleChange={handleChange}
-                            editAlert={editAlert}
-                            handleTrustedContacts={handleTrustedContacts}
-                            errors={errors}
-                            touched={touched}
-                            handleBlur={handleBlur}
-                            values={values}
-                            geoLocationPermissionsGranted={geoLocationPermissionsGranted}
-                        />
+                    <SMSComponent
+                        isPhoneLinked={isPhoneLinked}
+                        handleChange={handleChange}
+                        editAlert={editAlert}
+                        errors={errors}
+                        touched={touched}
+                        handleBlur={handleBlur}
+                        values={values}
+                        geoLocationPermissionsGranted={geoLocationPermissionsGranted}
+                    />
 
-                        <IncludeOnPublicMap
-                            geoLocationPermissionsGranted={geoLocationPermissionsGranted}
-                            editAlert={editAlert}
-                            handleChange={handleChange}
-                        />
+                    <IncludeOnPublicMap
+                        geoLocationPermissionsGranted={geoLocationPermissionsGranted}
+                        editAlert={editAlert}
+                        handleChange={handleChange}
+                    />
 
-                        <SoundComponent
-                            handleChange={handleChange}
-                            editAlert={editAlert}/>
+                    <SoundComponent
+                        handleChange={handleChange}
+                        editAlert={editAlert}/>
 
-                        <FlashlightComponent
-                            cameraPermissionsGranted={cameraPermissionsGranted}
-                            editAlert={editAlert}
-                            handleChange={handleChange}
-                        />
+                    <FlashlightComponent
+                        cameraPermissionsGranted={cameraPermissionsGranted}
+                        editAlert={editAlert}
+                        handleChange={handleChange}
+                    />
 
-                        <AutomaticRecordings
-                            cameraPermissionsGranted={cameraPermissionsGranted}
-                            microphonePermissionsGranted={microphonePermissionsGranted}
-                            handleChange={handleChange}
-                            editAlert={editAlert}
-                            values={values}
-                        />
+                    <AutomaticRecordings
+                        cameraPermissionsGranted={cameraPermissionsGranted}
+                        microphonePermissionsGranted={microphonePermissionsGranted}
+                        handleChange={handleChange}
+                        editAlert={editAlert}
+                        values={values}
+                    />
 
-                        <SocialMediaIntegration
-                            socialMediaIntegrationEnabled={values.socialMediaIntegration.isEnabled}
-                            handleChange={handleChange}
-                            values={values}
-                            errors={errors}
-                            touched={touched}
-                            editAlert={editAlert}
-                            handleBlur={handleBlur}
-                            isFacebookLinked={isFacebookLinked}
-                            handleFacebookLink={handleFacebookLink}
-                        />
+                    <SocialMediaIntegration
+                        socialMediaIntegrationEnabled={values.socialMediaIntegration.isEnabled}
+                        handleChange={handleChange}
+                        values={values}
+                        errors={errors}
+                        touched={touched}
+                        editAlert={editAlert}
+                        handleBlur={handleBlur}
+                        isFacebookLinked={isFacebookLinked}
+                        handleFacebookLink={handleFacebookLink}
+                    />
 
-                        <VoiceActivationComponent
-                            microphonePermissionsGranted={microphonePermissionsGranted}
-                            handleChange={handleChange}
-                            editAlert={editAlert}
-                            values={values}
-                            errors={errors}
-                            touched={touched}
-                            handleBlur={handleBlur}
-                        />
+                    <VoiceActivationComponent
+                        microphonePermissionsGranted={microphonePermissionsGranted}
+                        handleChange={handleChange}
+                        editAlert={editAlert}
+                        values={values}
+                        errors={errors}
+                        touched={touched}
+                        handleBlur={handleBlur}
+                    />
 
-                        {editAlert ? <Button onClick={handleUpdate}> Update </Button> :
-                            <Button onClick={handleCreate}> Create </Button>}
-                        {editAlert ? <Button onClick={handleCancelUpdate}> Cancel </Button> :
-                            <Button onClick={handleCancelCreate}> Cancel </Button>}
-                    </form>
-                </div>
+                    {editAlert ?
+                        <Button className={"button"} onClick={handleUpdate} variant={"contained"}
+                                size={"large"}><b>Update Alert</b></Button> :
+                        <Button className={"button"} type={"submit"} variant={"contained"}
+                                size={"large"}><b>Create Alert</b></Button>
+                    }
 
+                    {editAlert ?
+
+                        <Button onClick={handleCancelUpdate}> Cancel </Button> :
+                        <Button onClick={handleCancelCreate}> Cancel </Button>}
+                </form>
             ) : (
                 <div>Loading ...</div>
             )}

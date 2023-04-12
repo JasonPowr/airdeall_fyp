@@ -158,9 +158,7 @@ export default function RegistrationForm() {
                         inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
                     }}/>
             </div>
-
             <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}><b>Register</b></Button>
-
         </form>
     );
 }
