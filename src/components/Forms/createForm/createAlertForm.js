@@ -106,9 +106,9 @@ export default function CreateAlertForm({editAlert}) {
             messageBody: editAlert ? editAlert.sms.message.body : "",
             proximitySMS: editAlert ? editAlert.sms.proximitySMS : false,
             contacts: {
-                contact_1: editAlert ? editAlert.sms.contacts.contact_1 : null,
-                contact_2: editAlert ? editAlert.sms.contacts.contact_2 : null,
-                contact_3: editAlert ? editAlert.sms.contacts.contact_3 : null,
+                contact_1: editAlert ? editAlert.sms.contacts.contact_1 : false,
+                contact_2: editAlert ? editAlert.sms.contacts.contact_2 : false,
+                contact_3: editAlert ? editAlert.sms.contacts.contact_3 : false,
             },
             includeOnPublicMap: editAlert ? editAlert.includeOnPublicMap : false,
             alarm: editAlert ? editAlert.alarm : false,

@@ -124,14 +124,14 @@ function SMSComponent({
                             <Switch
                                 onChange={handleChange}
                                 id={"locationInfo"}
-                                defaultChecked={editAlert ? editAlert.locationInfo : false}
+                                defaultChecked={editAlert ? editAlert.sms.locationInfo : false}
                             />
 
                             <p>recurringLocationInfo</p>
                             <Switch
                                 onChange={handleChange}
                                 id={"recurringLocationInfo"}
-                                defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
+                                defaultChecked={editAlert ? editAlert.sms.recurringLocationInfo : false}
                             />
 
                             <p>Proximity Alert</p>
@@ -139,7 +139,7 @@ function SMSComponent({
                             <Switch
                                 onChange={handleChange}
                                 id={"proximitySMS"}
-                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
+                                defaultChecked={editAlert ? editAlert.sms.proximitySMS : false}
                             />
                         </div>
                     ) : (

@@ -5,12 +5,15 @@ import Button from "@mui/material/Button";
 import {incidentReportSchema} from "../../../Helpers/Validation/incidentReportSchema";
 import {addPublicAlert, deleteIncidentReport, updateAlertHistory, updateIncidentReport} from "../../../model/db/DB";
 
-function SubmitAlertIncidentToMap({alert, alertHistoryId, setIsSubmitted, incidentReport, setIncidentReport}) {
+function SubmitAlertIncidentToMap({alert, alertHistory, setIsSubmitted, incidentReport, setIncidentReport}) {
 
     const onSubmit = async () => {
         let publicAlert = {
+            timeStart: alertHistory.timeStart,
+            timeEnd: alertHistory.timeEnd,
+            date: alertHistory.date,
             incidentReport: values.incidentReport,
-            location: alert.location,
+            location: alertHistory.locationInfo[0],
             alertId: alert.id
         }
 
@@ -19,8 +22,8 @@ function SubmitAlertIncidentToMap({alert, alertHistoryId, setIsSubmitted, incide
         }
 
         try {
-            await addPublicAlert(alertHistoryId, publicAlert)
-            await updateAlertHistory(alert.id, alertHistoryId, update)
+            await addPublicAlert(alertHistory.id, publicAlert)
+            await updateAlertHistory(alert.id, alertHistory.id, update)
             setIsSubmitted(true)
             setIncidentReport(values.incidentReport)
         } catch (error) {
@@ -38,7 +41,7 @@ function SubmitAlertIncidentToMap({alert, alertHistoryId, setIsSubmitted, incide
 
     async function handleEdit() {
         try {
-            await updateIncidentReport(alert.id, alertHistoryId, values.incidentReport)
+            await updateIncidentReport(alert.id, alertHistory.id, values.incidentReport)
             setIsSubmitted(true)
             setIncidentReport(values.incidentReport)
         } catch (error) {
@@ -48,7 +51,7 @@ function SubmitAlertIncidentToMap({alert, alertHistoryId, setIsSubmitted, incide
 
     async function handleDelete() {
         try {
-            await deleteIncidentReport(alert.id, alertHistoryId)
+            await deleteIncidentReport(alert.id, alertHistory.id)
             setIsSubmitted(true)
             setIncidentReport(null)
         } catch (error) {

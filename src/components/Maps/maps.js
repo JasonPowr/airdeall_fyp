@@ -40,85 +40,6 @@ export function getLocation() {
     });
 }
 
-export function generateUserMap(isRecurring, alertLocations) {
-    if (isRecurring) {
-        return (
-            <div>
-                <div><HistoryMap locations={alertLocations}/></div>
-            </div>
-        )
-    } else {
-        return (
-            <div>
-                <div><HistoryMap locations={alertLocations}/></div>
-            </div>
-        )
-    }
-}
-
-function HistoryMap({locations}) {
-    const [alertLocations, setAlertLocations] = useState([]);
-    const [directionsResponse, setDirectionsResponse] = useState(null);
-
-    const getRoute = async (origin, destinations) => {
-        const directionsService = new window.google.maps.DirectionsService();
-        const wayPoints = destinations.slice(1, -1);
-        const results = await directionsService.route({
-            origin: origin,
-            destination: destinations.at(destinations.length - 1),
-            waypoints: wayPoints.map((waypoint) => ({
-                location: waypoint,
-                stopover: false
-            })),
-            travelMode: window.google.maps.TravelMode.DRIVING,
-        });
-        setDirectionsResponse(results);
-    }
-
-    useEffect(() => {
-        setAlertLocations(locations);
-
-        const destinations = []
-        locations.map((l) => {
-            destinations.push(l)
-        })
-        getRoute(locations[0], destinations);
-    }, []);
-
-    const mapOptions = {
-        disableDefaultUI: true,
-        center: {
-            lat: locations[0].lat,
-            lng: locations[0].lng,
-        }
-    };
-
-    return (
-        <div className={"container"}>
-            <div className={"history-map"}>
-                <GoogleMap
-                    zoom={13}
-                    options={mapOptions}
-                    mapContainerClassName={"history-map-container"}>
-
-                    {alertLocations && (
-                        <div>
-                            {alertLocations.map((l, index) =>
-                                <Marker key={index} position={l}/>
-                            )}
-                        </div>
-                    )}
-
-                    {directionsResponse && (
-                        <DirectionsRenderer directions={directionsResponse}/>
-                    )}
-
-                </GoogleMap>
-            </div>
-        </div>
-    )
-}
-
 export default function Map() {
     const mapRef = useRef();
     const [activeAlerts, setActiveAlerts] = useState(null);
@@ -387,8 +308,8 @@ export default function Map() {
                                                 <div className={"map-infoWindow"}>
                                                     <h3>An incident Has Occurred In this area!</h3>
                                                     <h4>Here is a brief report of the Incident</h4>
-                                                    <p className={"p-tag"}>Time:</p>
-                                                    <p className={"p-tag"}>Date:</p>
+                                                    <p className={"p-tag"}>Time: {infoWindowContent.timeStart + " - " + infoWindowContent.timeEnd}</p>
+                                                    <p className={"p-tag"}>Date: {infoWindowContent.date}</p>
 
                                                     <h5>User Account:</h5>
                                                     <p className={"p-tag"}>{infoWindowContent.incidentReport}</p>

@@ -4,10 +4,9 @@ import React, {useEffect, useState} from "react";
 import {auth} from "../../../firebase";
 import {getAlertHistoryById, getAlertVideo} from "../../../model/db/DB";
 import VideoCard from "../../../components/Cards/VideoCard/VideoCard";
-import {generateUserMap} from "../../../components/Maps/maps";
-import {useLoadScript} from "@react-google-maps/api";
 import SubmitAlertIncidentToMap from "../../../components/Forms/SubmitAlertIncidentToMapForm/SubmitAlertIncidentToMap";
 import {Fab} from "@mui/material";
+import {useLoadScript} from "@react-google-maps/api";
 
 export default function AlertHistoryViewPage() {
     const location = useLocation();
@@ -17,9 +16,14 @@ export default function AlertHistoryViewPage() {
     const [alertHistory, setAlertHistory] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [video, setVideo] = useState(null);
+    const [alertLocation, setAlertLocation] = useState(null);
     const [incidentReport, setIncidentReport] = useState("")
 
-    const {isLoaded} = useLoadScript({
+    const [showRecurring, setShowRecurring] = useState(false)
+    const [recurringAlertLocations, setRecurringAlertLocations] = useState()
+    const [encodedPath, setEncodedPath] = useState(null);
+
+    useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     })
 
@@ -38,6 +42,21 @@ export default function AlertHistoryViewPage() {
                     if (foundAlertHistory.incidentReport !== "") {
                         setIncidentReport(foundAlertHistory.incidentReport)
                     }
+
+                    if (foundAlertHistory.alert.includeOnPublicMap || foundAlertHistory.alert.sms.locationInfo) {
+                        let alertLocationString = foundAlertHistory.locationInfo[0].lat.toString() + "," + foundAlertHistory.locationInfo[0].lng.toString()
+                        setAlertLocation(alertLocationString)
+                    }
+
+                    if (foundAlertHistory.alert.sms.recurringLocationInfo) {
+                        let locations = []
+                        foundAlertHistory.locationInfo.map((ping) => {
+                            locations.push(ping.lat.toString() + "," + ping.lng.toString())
+                        })
+                        setShowRecurring(true)
+                        setRecurringAlertLocations(locations)
+                        calcRoute(locations[0], locations[locations.length - 1], locations)
+                    }
                 })
             }
         })
@@ -53,6 +72,32 @@ export default function AlertHistoryViewPage() {
         }, 2000)
     }, [isSubmitted, incidentReport]);
 
+    function calcRoute(start, end, locations) {
+        const waypts = [];
+
+        locations.map((l) => {
+            waypts.push({
+                location: l,
+                stopover: true,
+            });
+        })
+
+        const directionsService = new window.google.maps.DirectionsService();
+        const request = {
+            origin: start,
+            destination: end,
+            waypoints: waypts,
+            travelMode: 'DRIVING'
+        };
+
+        directionsService.route(request, function (result, status) {
+            if (status === 'OK') {
+                console.log(result)
+                setEncodedPath(result.routes[0].overview_polyline)
+            }
+        });
+    }
+
     function handleBack() {
         navigate(`/${alertId}/alert_view`, {state: {alertId: alertId}});
     }
@@ -65,61 +110,80 @@ export default function AlertHistoryViewPage() {
             {alertHistory != null ? (
 
                 <div>
-                    <p>Time & Date</p>
+                    <h3>Time & Date</h3>
 
-                    {alertHistory.alert.sms.sendSMS && (
-                        <div>
-                            <p>Maps</p>
-                            {alertHistory.alert.sms.locationInfo || alertHistory.alert.sms.recurringLocationInfo ? (
-                                (isLoaded ? (
-                                    <div>
-                                        {generateUserMap(alertHistory.alert.sms.recurringLocationInfo, alertHistory.locationInfo)}
-                                    </div>
+                    <p>Start Time :{alertHistory.timeStart}</p>
+                    <p>End Time :{alertHistory.timeEnd}</p>
+
+                    <div>
+                        <h3>Recordings</h3>
+                        {alertHistory.alert.automaticRecording ? (
+                            <div>
+                                <p>Videos</p>
+                                {video != null ? (
+                                    <VideoCard video={video}/>
                                 ) : (
-                                    <div>
-                                        <p>Loading.....</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <div>
-                                    <p>No Location Information</p>
-                                </div>
-                            )
-                            }
-                        </div>
-                    )}
+                                    <p>Loading....</p>
+                                )}
+                            </div>
+                        ) : (
+                            <div>
+                                <p>Video Recording Not Enabled</p>
+                            </div>
 
-                    {alertHistory.alert.automaticRecording && (
-                        <div>
-                            <p>Videos</p>
-                            {video != null ? (
-                                <VideoCard video={video}/>
-                            ) : (
-                                <p>Loading....</p>
-                            )}
-                        </div>
-                    )}
+                        )}
+                    </div>
 
-                    {alertHistory.alert.includeOnPublicMap && (
-                        <div>
-                            {isSubmitted ? (
-                                <Fab
-                                    aria-label="save"
-                                    color="primary"
-                                >
-                                    <Check/>
-                                </Fab>
-                            ) : (
+                    <div>
+                        <h3>Location Information</h3>
+                        {(alertHistory.alert.includeOnPublicMap || alertHistory.alert.sms.locationInfo || alertHistory.alert.sms.recurringLocationInfo) ? (
+                            <div>
                                 <div>
-                                    <SubmitAlertIncidentToMap alert={alertHistory.alert}
-                                                              setIsSubmitted={setIsSubmitted}
-                                                              alertHistoryId={alertHistoryId}
-                                                              incidentReport={incidentReport}
-                                                              setIncidentReport={setIncidentReport}/>
+                                    {(alertHistory.alert.sms.recurringLocationInfo && showRecurring && encodedPath && recurringAlertLocations) && (
+                                        <img
+                                            src={`https://maps.googleapis.com/maps/api/staticmap?size=400x400&markers=color:red|${recurringAlertLocations[0]}&markers=color:red|${recurringAlertLocations[recurringAlertLocations.length - 1]}&center=${alertLocation}&zoom=12&path=weight:12%7Ccolor:red%7Cenc:${encodedPath}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                                            alt={"alertLocation"}
+                                        />
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                    )}
+
+                                <div>
+                                    {((alertHistory.alert.includeOnPublicMap || alertHistory.alert.sms.locationInfo) && !showRecurring) && (
+                                        <div>
+                                            {isSubmitted ? (
+                                                <Fab
+                                                    aria-label="save"
+                                                    color="primary"
+                                                >
+                                                    <Check/>
+                                                </Fab>
+                                            ) : (
+                                                <div>
+
+                                                    {alertLocation && (
+                                                        <img
+                                                            src={`https://maps.googleapis.com/maps/api/staticmap?center=${alertLocation}&zoom=13&size=400x400&markers=color:red|${alertLocation}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                                                            alt={"alertLocation"}
+                                                        />
+                                                    )}
+
+                                                    <SubmitAlertIncidentToMap alert={alertHistory.alert}
+                                                                              setIsSubmitted={setIsSubmitted}
+                                                                              alertHistory={alertHistory}
+                                                                              incidentReport={incidentReport}
+                                                                              setIncidentReport={setIncidentReport}/>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                Location Information Not Enabled
+                            </div>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <p>Loading ....</p>
@@ -127,3 +191,7 @@ export default function AlertHistoryViewPage() {
         </div>
     );
 }
+
+//https://developers.google.com/maps/documentation/maps-static/start
+//https://developers.google.com/maps/documentation/maps-static/start#Latlons
+//https://stackoverflow.com/questions/32477351/how-can-i-generate-walking-or-driving-static-google-map

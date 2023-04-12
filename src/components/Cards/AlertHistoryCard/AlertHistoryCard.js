@@ -11,7 +11,7 @@ export default function AlertHistoryCard({alertHistory, onDelete}) {
 
     function handleDeletePressed() {
 
-        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording, alertHistory.alert.includeOnPublicMap).then(r => {
+        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording, alertHistory.alert.includeOnPublicMap, alertHistory.alert.sms.locationInfo).then(r => {
             onDelete(alertHistory.id)
         })
 

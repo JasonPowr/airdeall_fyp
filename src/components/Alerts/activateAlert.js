@@ -112,53 +112,51 @@ export const CancelAlert = ({alert}) => {
 }
 
 const validateNumber = (phoneNumber) => {
-    let validatedPhoneNumber = phoneNumber.replace(/\s/g, '');
+    let validatedPhoneNumber;
+    validatedPhoneNumber = phoneNumber.replace(/\s/g, '');
     if (validatedPhoneNumber.charAt(0) === '0') {
         validatedPhoneNumber = validatedPhoneNumber.replace('0', '+353')
     }
     return validatedPhoneNumber
 }
 
-const sendSMS = async (messageBody, contact_1_phone, contact_2_phone, contact_3_phone) => {
-    console.log(await validateNumber(contact_1_phone))
-    console.log(await validateNumber(contact_2_phone))
-    console.log(await validateNumber(contact_3_phone))
-    // if (contact_1_phone !== "") {
-    //     const contact1 = await validateNumber(contact_1_phone);
-    //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
-    //     const requestOptions = {
-    //         method: 'GET',
-    //         mode: 'no-cors'
-    //     };
-    //     fetch(url, requestOptions)
-    //         .catch(error => console.error(error));
-    // }
-    //
-    // if (contact_2_phone !== "") {
-    //     const contact2 = await validateNumber(contact_2_phone);
-    //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`;
-    //     const requestOptions = {
-    //         method: 'GET',
-    //         mode: 'no-cors'
-    //     };
-    //     fetch(url, requestOptions)
-    //         .catch(error => console.error(error));
-    // }
-    //
-    // if (contact_3_phone !== "") {
-    //     const contact3 = await validateNumber(contact_3_phone);
-    //     const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`;
-    //     const requestOptions = {
-    //         method: 'GET',
-    //         mode: 'no-cors'
-    //     };
-    //     fetch(url, requestOptions)
-    //         .catch(error => console.error(error));
-    // }
+const sendSMS = async (messageBody, contact_1, contact_2, contact_3) => {
+    if (contact_1 !== false) {
+        const contact1 = await validateNumber(contact_1.phone);
+        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
+        // const requestOptions = {
+        //     method: 'GET',
+        //     mode: 'no-cors'
+        // };
+        // fetch(url, requestOptions)
+        //     .catch(error => console.error(error));
+    }
+
+    if (contact_2 !== false) {
+        const contact2 = await validateNumber(contact_2.phone);
+        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`;
+        // const requestOptions = {
+        //     method: 'GET',
+        //     mode: 'no-cors'
+        // };
+        // fetch(url, requestOptions)
+        //     .catch(error => console.error(error));
+    }
+
+    if (contact_3 !== false) {
+        const contact3 = await validateNumber(contact_3.phone);
+        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`;
+        // const requestOptions = {
+        //     method: 'GET',
+        //     mode: 'no-cors'
+        // };
+        // fetch(url, requestOptions)
+        //     .catch(error => console.error(error));
+    }
 }
 const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locationInfo, recurringLocationInfo, proximitySMS) => {
 
-    if (messageBody === "") {
+    if (messageBody === " ") {
         messageBody = "Default Alert Message"
     }
 
@@ -168,7 +166,7 @@ const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locati
         messageBody = messageBody + ` Alert Fired at this location: https://maps.google.com/?q=${location.lat},${location.lng}`
     }
 
-    await sendSMS(messageBody, contact_1.phone, contact_2.phone, contact_3.phone)
+    await sendSMS(messageBody, contact_1, contact_2, contact_3)
 
     if (proximitySMS) {
         const userLocation = await getLocation()
@@ -189,7 +187,7 @@ const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locati
             const location = await getLocation()
             history_locationUpdates.push(location)
             // messageBody = ` Location Update: https://maps.google.com/?q=${location.lat},${location.lng}`
-            // await sendSMS(messageBody, contact_1.phone, contact_2.phone, contact_3.phone
+            // await sendSMS(messageBody, contact_1, contact_2, contact_3)
         }, 30000);
     }
 
@@ -209,15 +207,8 @@ export const triggerFlashlight = () => {
 }
 
 const includeOnPublicMap = async (alert) => {
-    const userLocation = await getLocation()
-    const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
-
-    const location = {
-        alertUID: auth.currentUser.uid,
-        alertLocation: userLocationGeoPoint
-    };
-
-    alert.location = userLocationGeoPoint
+    const location = await getLocation()
+    history_locationUpdates.push(location)
     const alertRef = doc(db, "activeAlerts", auth.currentUser.uid);
     await setDoc(alertRef, {location}, {merge: true});
 }

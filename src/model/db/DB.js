@@ -68,7 +68,7 @@ export async function deleteAlert(alertId) {
     const alertHistory = await getAllAlertHistory(alertId)
     if (alertHistory.length > 0) {
         alertHistory.map(async (index) => {
-            await deleteAlertHistory(index.alertHistory.alert.id, index.alertHistory.id, index.alertHistory.alert.automaticRecording, index.alertHistory.alert.includeOnPublicMap)
+            await deleteAlertHistory(index.alertHistory.alert.id, index.alertHistory.id, index.alertHistory.alert.automaticRecording, index.alertHistory.alert.includeOnPublicMap, index.alertHistory.alert.sms.locationInfo)
         })
     }
 
@@ -117,14 +117,14 @@ export async function getAlertHistoryById(alertId, alertHistoryId) {
     return foundAlertHistory
 }
 
-export async function deleteAlertHistory(alertId, alertHistoryId, isRecording, isIncludeOnPublicMap) {
+export async function deleteAlertHistory(alertId, alertHistoryId, isRecording, isIncludeOnPublicMap, isLocationOnSMS) {
     await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId));
 
     if (isRecording) {
         await deleteVideoFromAlert(alertHistoryId)
     }
 
-    if (isIncludeOnPublicMap) {
+    if (isIncludeOnPublicMap || isLocationOnSMS) {
         await deleteIncidentReport(alertId, alertHistoryId)
     }
 
@@ -138,7 +138,7 @@ export async function updateAlertHistory(alertId, alertHistoryId, update) {
 export async function updateIncidentReport(alertId, alertHistoryId, update) {
     const alertHistoryRef = doc(db, "users", `${auth.currentUser.uid}`, "alerts", alertId, "alertHistory", alertHistoryId);
     await updateDoc(alertHistoryRef, {
-        "alert.incidentReport": update
+        incidentReport: update
     });
 
     const publicAlertRef = doc(db, 'publicAlerts', alertHistoryId)
@@ -230,7 +230,10 @@ export async function getAllPublicIncidents() {
         publicIncidents.push({
             alertId: doc.data().mapAlert.alertId,
             incidentReport: doc.data().mapAlert.incidentReport,
-            location: new GeoPoint(doc.data().mapAlert.location._lat, doc.data().mapAlert.location._long)
+            location: new GeoPoint(doc.data().mapAlert.location.lat, doc.data().mapAlert.location.lng),
+            date: doc.data().mapAlert.date,
+            timeStart: doc.data().mapAlert.timeStart,
+            timeEnd: doc.data().mapAlert.timeEnd,
         })
     });
     return publicIncidents

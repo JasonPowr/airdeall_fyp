@@ -106,13 +106,18 @@ function AlertViewPage() {
                 <p>{alert.description}</p>
             </div>
 
-            {alert.sms.sendSMS && (
-                <div>
-                    <h3>Connected Contacts</h3>
-                    {contacts.length > 0 && (contacts.map((contact, index) => <ContactCard key={index}
-                                                                                           contact={contact}/>))}
-                </div>
-            )}
+            <div>
+                <h3>Connected Contacts</h3>
+                {alert.sms.sendSMS ? (
+                    <div>
+                        {contacts.length > 0 && (contacts.map((contact, index) =>
+                            <ContactCard key={index} contact={contact}/>
+                        ))}
+                    </div>
+                ) : (
+                    <div>SMS is not configured for this alert</div>
+                )}
+            </div>
 
             <div className={"crud"}>
                 <Delete onClick={handleDelete} fontSize={"inherit"}></Delete>
@@ -122,19 +127,25 @@ function AlertViewPage() {
             <div className={"alertHistory"}>
                 <p>Alert History</p>
 
-                <Stack onClick={sortListByMostRecent} direction="row" alignItems="center" gap={1}>
-                    <Sort/>
-                    <Typography variant="body1">Most Recent</Typography>
-                </Stack>
+                {alertHistory.length > 0 ? (
+                    <div>
+                        <Stack onClick={sortListByMostRecent} direction="row" alignItems="center" gap={1}>
+                            <Sort/>
+                            <Typography variant="body1">Most Recent</Typography>
+                        </Stack>
 
-                <Stack onClick={sortListByLeastRecent} direction="row" alignItems="center" gap={1}>
-                    <Sort/>
-                    <Typography variant="body1">Least Recent</Typography>
-                </Stack>
+                        <Stack onClick={sortListByLeastRecent} direction="row" alignItems="center" gap={1}>
+                            <Sort/>
+                            <Typography variant="body1">Least Recent</Typography>
+                        </Stack>
 
-                {alertHistory.length > 0 ? (alertHistory.map((index) =>
-                        <AlertHistoryCard key={index.alertHistory.id} alertHistory={index.alertHistory}
-                                          onDelete={updateList}/>)
+                        {alertHistory.map((index) =>
+                            <AlertHistoryCard key={index.alertHistory.id} alertHistory={index.alertHistory}
+                                              onDelete={updateList}/>)}
+
+
+                    </div>
+
                 ) : (
                     <p>No history found.</p>
                 )}
