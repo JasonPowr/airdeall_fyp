@@ -7,7 +7,7 @@ import {
     getDoc,
     getDocs,
     setDoc,
-    updateDoc
+    updateDoc,
 } from "firebase/firestore";
 import {auth, db} from "../../firebase";
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref, uploadBytes} from "firebase/storage";
@@ -237,6 +237,33 @@ export async function getAllPublicIncidents() {
         })
     });
     return publicIncidents
+}
+
+
+export async function deleteAllAlertHistory() {
+    const userAlerts = await getUserAlertsFromDB()
+
+    userAlerts.map(async (i) => {
+        const alertHistory = await getAllAlertHistory(i.alert.id)
+        alertHistory.map(async (j) => {
+            await deleteAlertHistory(i.alert.id, j.alertHistory.id, j.alertHistory.alert.automaticRecording, j.alertHistory.alert.includeOnPublicMap, j.alertHistory.alert.sms.locationInfo)
+        })
+    })
+
+}
+
+export async function deleteAllAlerts() {
+    const userAlerts = await getUserAlertsFromDB()
+
+    userAlerts.map(async (index) => {
+        await deleteAlert(index.alert.id)
+    })
+}
+
+export async function deleteUserData() {
+    await deleteAllAlertHistory()
+    await deleteAllAlerts()
+    await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`));
 }
 
 

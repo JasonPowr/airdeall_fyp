@@ -5,6 +5,7 @@ import UserContext from "../../contexts/Auth/authContext";
 import {loginWithFacebook, logoutWithFacebook} from "../Socials/facebook/facebook";
 import EnterPasswordPopup from "../Popup/EnterPasswordPopup/EnterPasswordPopup";
 import ConfirmationPopup from "../Popup/ConfirmationPopup/ConfirmationPopup";
+import {deleteUserData} from "../../model/db/DB";
 
 export function Settings() {
     const [user, setUser] = useState(null);
@@ -66,10 +67,11 @@ export function Settings() {
         });
     }
 
-    const handleDelete = (confirmation) => {
+    const handleDelete = async (confirmation) => {
         if (confirmation) {
             try {
-                deleteUserAccount()
+                await deleteUserData()
+                // deleteUserAccount()
             } catch (e) {
                 console.log(e)
             }
