@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import {auth, db} from "../../firebase";
 import {deleteObject, getDownloadURL, getMetadata, getStorage, ref, uploadBytes} from "firebase/storage";
+import {updateProfile} from 'firebase/auth';
 
 export async function getUserPhoneNumberFromDB() {
     const userRef = doc(db, "users", `${auth.currentUser.uid}`)
@@ -24,6 +25,7 @@ export async function getUserPhoneNumberFromDB() {
 }
 
 export async function updateProfileOnRegister(auth, firstName, lastName, email, phoneNumber) {
+    await updateProfile(auth.currentUser, {displayName: firstName + " " + lastName})
     await setDoc(doc(db, "users", `${auth.currentUser.uid}`), {
         uid: auth.currentUser.uid,
         firstName: firstName,
@@ -264,6 +266,21 @@ export async function deleteUserData() {
     await deleteAllAlertHistory()
     await deleteAllAlerts()
     await deleteDoc(doc(db, "users", `${auth.currentUser.uid}`));
+}
+
+
+export function uploadProofOfSafePoint(file, safePointApplicationId) {
+    const storage = getStorage();
+    const storageRef = ref(storage, `/safePointReg/${safePointApplicationId}`);
+
+    uploadBytes(storageRef, file).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+    });
+}
+
+export async function submitSafepointApplication(safePointApplication) {
+    const alertRef = doc(db, 'safePoint_applications', safePointApplication.applicationId);
+    await setDoc(alertRef, safePointApplication, {merge: true});
 }
 
 

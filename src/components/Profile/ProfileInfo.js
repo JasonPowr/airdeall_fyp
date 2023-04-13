@@ -54,7 +54,7 @@ export function ProfileInfo() {
                 <div>
                     <p>name: {user.displayName}</p>
                     <p>email: {user.email}</p>
-                    <p>Phone Number: {user.phoneNumber}</p>
+                    <p>Phone Number: {user.phoneNumber ? user.phoneNumber : "Phone Number not verified"}</p>
                     {isEmailUser && (
                         <div>
                             <Button onClick={handleChangePassword}>Change Password</Button>

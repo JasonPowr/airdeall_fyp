@@ -8,6 +8,7 @@ import {ArrowBack, Delete, Edit, Sort} from "@material-ui/icons";
 import ContactCard from "../../../components/Cards/ContactCard/contactCard";
 import AlertHistoryCard from "../../../components/Cards/AlertHistoryCard/AlertHistoryCard";
 import {Stack, Typography} from "@mui/material";
+import DeleteConfirmationPopup from "../../../components/Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
 
 function AlertViewPage() {
     const location = useLocation();
@@ -15,6 +16,7 @@ function AlertViewPage() {
     const [alert, setAlert] = useState(null);
     const [alertHistory, setAlertHistory] = useState([])
     const [contacts, setContacts] = useState(null)
+    const [openDeleteAlertConfirmation, setOpenDeleteAlertConfirmation] = useState(false);
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -43,8 +45,14 @@ function AlertViewPage() {
     }
 
     function handleDelete() {
-        deleteAlert(alertId).then()
-        navigate(`/alerts`)
+        setOpenDeleteAlertConfirmation(true)
+    }
+
+    function handleDeleteAfterConf(confirmation) {
+        if (confirmation) {
+            deleteAlert(alertId).then()
+            navigate(`/alerts`)
+        }
     }
 
     function handleEdit() {
@@ -150,6 +158,12 @@ function AlertViewPage() {
                     <p>No history found.</p>
                 )}
             </div>
+
+            {openDeleteAlertConfirmation && (
+                <DeleteConfirmationPopup openConfirmationDialog={openDeleteAlertConfirmation}
+                                         setOpenConfirmationDialog={setOpenDeleteAlertConfirmation}
+                                         handleConfirmation={handleDeleteAfterConf}/>
+            )}
 
             <div><BottomNav/></div>
         </div>

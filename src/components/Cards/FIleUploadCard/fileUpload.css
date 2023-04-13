@@ -1,0 +1,16 @@
+
+.card {
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    height: 250px;
+}
+
+.cardBtn {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}

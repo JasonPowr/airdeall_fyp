@@ -17,6 +17,8 @@ import AlertHistoryViewPage from "./pages/Alerts/AlertHistoryViewPage/AlertHisto
 import ConfirmPhoneNumberPage from "./pages/Login/ConfirmPhoneNumber/ConfirmPhoneNumberPage";
 import {initializeFacebookSDK} from "./components/Socials/facebook/facebook";
 import AccountExtraDetailsPage from "./pages/Login/AccountExtraDetails/AccountExtraDetailsPage";
+import SafePointRegistrationPage from "./pages/Register/SafePointRegistration/SafePointRegistration";
+import InfoPage from "./pages/Info/Infopage";
 
 const useStyles = makeStyles({
     app: {
@@ -41,9 +43,11 @@ function App() {
                         <Route path="/" element={<HomePage/>}/>
                         <Route path="/login" element={<LoginPage/>}/>
                         <Route path="/register" element={<RegistrationPage/>}/>
+                        <Route path="/register_safePoint" element={<SafePointRegistrationPage/>}/>
                         <Route path="/alerts" element={<ProtectedRoutes> <AlertsPage/></ProtectedRoutes>}/>
                         <Route path="/create_alert" element={<ProtectedRoutes> <CreateAlertPage/></ProtectedRoutes>}/>
                         <Route path="/maps" element={<ProtectedRoutes> <MapsPage/></ProtectedRoutes>}/>
+                        <Route path="/info" element={<ProtectedRoutes> <InfoPage/></ProtectedRoutes>}/>
                         <Route path="/profile" element={<ProtectedRoutes> <ProfilePage/></ProtectedRoutes>}/>
                         <Route path="/:id/alert_view" element={<ProtectedRoutes> <AlertViewPage/></ProtectedRoutes>}/>
                         <Route path="/:id/edit_alert" element={<ProtectedRoutes> <EditAlertPage/></ProtectedRoutes>}/>

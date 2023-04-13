@@ -1,20 +1,25 @@
 import Card from "@mui/material/Card";
 import {CardHeader, IconButton, Typography} from "@mui/material";
 import {Close, ViewAgendaRounded} from "@material-ui/icons";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {deleteAlertHistory} from "../../../model/db/DB";
+import {useState} from "react";
+import DeleteConfirmationPopup from "../../Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
 
 export default function AlertHistoryCard({alertHistory, onDelete}) {
-    const location = useLocation();
-    const alertId = location.state?.alertId;
     const navigate = useNavigate()
+    const [openConfirmDeleteAlertHistory, setOpenConfirmDeleteAlertHistory] = useState(false);
 
     function handleDeletePressed() {
+        setOpenConfirmDeleteAlertHistory(true)
+    }
 
-        deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording, alertHistory.alert.includeOnPublicMap, alertHistory.alert.sms.locationInfo).then(r => {
-            onDelete(alertHistory.id)
-        })
-
+    function handleDeletePressedAfterConf(confirmation) {
+        if (confirmation) {
+            deleteAlertHistory(alertHistory.alert.id, alertHistory.id, alertHistory.alert.automaticRecording, alertHistory.alert.includeOnPublicMap, alertHistory.alert.sms.locationInfo).then(r => {
+                onDelete(alertHistory.id)
+            })
+        }
     }
 
     function handleInfoPressed() {
@@ -27,24 +32,33 @@ export default function AlertHistoryCard({alertHistory, onDelete}) {
     }
 
     return (
-        <Card className={"cards"}>
-            <CardHeader
-                title={
-                    <Typography align={"left"}
-                                fontSize={16}>{alertHistory.date + ' - ' + alertHistory.timeStart}</Typography>
-                }
-                action={
-                    <div>
-                        <IconButton onClick={handleInfoPressed}>
-                            <ViewAgendaRounded fontSize={"small"}/>
-                        </IconButton>
+        <div>
+            <Card className={"cards"}>
+                <CardHeader
+                    title={
+                        <Typography align={"left"}
+                                    fontSize={16}>{alertHistory.date + ' - ' + alertHistory.timeStart}</Typography>
+                    }
+                    action={
+                        <div>
+                            <IconButton onClick={handleInfoPressed}>
+                                <ViewAgendaRounded fontSize={"small"}/>
+                            </IconButton>
 
-                        <IconButton onClick={handleDeletePressed}>
-                            <Close fontSize={"small"}/>
-                        </IconButton>
-                    </div>
-                }
-            />
-        </Card>
+                            <IconButton onClick={handleDeletePressed}>
+                                <Close fontSize={"small"}/>
+                            </IconButton>
+                        </div>
+                    }
+                />
+            </Card>
+
+            {openConfirmDeleteAlertHistory && (
+                <DeleteConfirmationPopup openConfirmationDialog={openConfirmDeleteAlertHistory}
+                                         setOpenConfirmationDialog={setOpenConfirmDeleteAlertHistory}
+                                         handleConfirmation={handleDeletePressedAfterConf}/>
+            )}
+
+        </div>
     )
 }

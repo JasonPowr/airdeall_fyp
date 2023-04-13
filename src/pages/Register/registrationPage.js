@@ -27,6 +27,7 @@ function RegistrationPage() {
             </div>
             <RegistrationForm/>
             <Link to={"/login"} className={classes.link}><p>Already a user ? Login here</p></Link>
+            <Link to={"/"} className={classes.link}><p>Cancel</p></Link>
         </div>
     );
 }

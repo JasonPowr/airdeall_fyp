@@ -123,7 +123,7 @@ export const AuthContextProvider = ({children}) => {
             deleteUserAccount,
             reAuthWithCredential,
             reAuthWithGoogle,
-            getRedirectResults
+            getRedirectResults,
         }}>
             {children}
         </UserContext.Provider>

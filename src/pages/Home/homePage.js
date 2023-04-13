@@ -69,6 +69,9 @@ function HomePage() {
                         <Link to={"/login"}> <Button className={classes.button} variant={"contained"}
                                                      size={"large"}><b>Login</b></Button></Link>
                         <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
+                        <Link to={"/register_safePoint"} className={classes.link}><p>Would you like to register your
+                            business as a
+                            safe point? Apply here</p></Link>
                     </div>
                 </div>
             )}

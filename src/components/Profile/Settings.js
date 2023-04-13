@@ -4,7 +4,7 @@ import {Button} from "@material-ui/core";
 import UserContext from "../../contexts/Auth/authContext";
 import {loginWithFacebook, logoutWithFacebook} from "../Socials/facebook/facebook";
 import EnterPasswordPopup from "../Popup/EnterPasswordPopup/EnterPasswordPopup";
-import ConfirmationPopup from "../Popup/ConfirmationPopup/ConfirmationPopup";
+import DeleteConfirmationPopup from "../Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
 import {deleteUserData} from "../../model/db/DB";
 
 export function Settings() {
@@ -16,7 +16,6 @@ export function Settings() {
         deleteUserAccount
     } = useContext(UserContext)
     const [isFacebookLinked, setIsFacebookLinked] = useState(false);
-    // const navigate = useNavigate()
 
     const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
     const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
@@ -71,7 +70,7 @@ export function Settings() {
         if (confirmation) {
             try {
                 await deleteUserData()
-                // deleteUserAccount()
+                deleteUserAccount()
             } catch (e) {
                 console.log(e)
             }
@@ -119,21 +118,21 @@ export function Settings() {
                     )}
 
                     {openConfirmationDialog && (
-                        <ConfirmationPopup openConfirmationDialog={openConfirmationDialog}
-                                           setOpenConfirmationDialog={setOpenConfirmationDialog}
-                                           handleConfirmation={handleDelete}/>
+                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationDialog}
+                                                 setOpenConfirmationDialog={setOpenConfirmationDialog}
+                                                 handleConfirmation={handleDelete}/>
                     )}
 
                     {openConfirmationGoogleAuthDialog && (
-                        <ConfirmationPopup openConfirmationDialog={openConfirmationGoogleAuthDialog}
-                                           setOpenConfirmationDialog={setOpenConfirmationGoogleAuthDialog}
-                                           handleConfirmation={handleGoogleAuth}/>
+                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationGoogleAuthDialog}
+                                                 setOpenConfirmationDialog={setOpenConfirmationGoogleAuthDialog}
+                                                 handleConfirmation={handleGoogleAuth}/>
                     )}
 
                     {openConfirmationUnlinkFacebookDialog && (
-                        <ConfirmationPopup openConfirmationDialog={openConfirmationUnlinkFacebookDialog}
-                                           setOpenConfirmationDialog={setOpenConfirmationUnlinkFacebookDialog}
-                                           handleConfirmation={handleFacebookUnlinkAfterConf}/>
+                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationUnlinkFacebookDialog}
+                                                 setOpenConfirmationDialog={setOpenConfirmationUnlinkFacebookDialog}
+                                                 handleConfirmation={handleFacebookUnlinkAfterConf}/>
                     )}
                 </div>
             )}

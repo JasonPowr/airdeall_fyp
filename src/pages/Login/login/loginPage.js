@@ -4,7 +4,7 @@ import LoginForm from "../../../components/Forms/loginForm/loginForm";
 import {useContext, useEffect, useState} from "react";
 import PasswordResetForm from "../../../components/Forms/PasswordResetForm/passwordResetForm";
 import UserContext from "../../../contexts/Auth/authContext";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const useStyles = makeStyles({
     container: {
@@ -66,7 +66,7 @@ function LoginPage() {
                                 <LoginForm onClick={showForm}/>
                             </div>
                         )}
-
+                        <Link to={"/"} className={classes.link}><p>Cancel</p></Link>
                     </div>
                 </div>
             )}
