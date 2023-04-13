@@ -40,6 +40,14 @@ export const loginWithFacebook = () => { //https://developers.facebook.com/docs/
     }, {scope: 'public_profile,email'});
 }
 
+export const logoutWithFacebook = () => {
+    window.FB.getLoginStatus(function (response) {
+        window.FB.logout(function (response) {
+            window.location = "/"; //https://stackoverflow.com/questions/8430474/fb-logout-called-without-an-access-token
+        });
+    });
+}
+//https://developers.facebook.com/docs/reference/javascript/FB.logout/
 export const createPost = () => {
     window.FB.ui({
         method: 'feed',

@@ -8,7 +8,7 @@ import {Button, TextField} from "@material-ui/core";
 import {updateProfileOnRegister} from "../../../model/db/DB";
 
 export default function AccountExtraDetailsPage() {
-    const {user} = useContext(UserContext)
+    const {user, deleteUserAccount} = useContext(UserContext)
     const navigate = useNavigate()
     const [error, setError] = useState(null);
 
@@ -33,6 +33,11 @@ export default function AccountExtraDetailsPage() {
         return false
     };
 
+
+    async function handleCancel() {
+        await deleteUserAccount()
+        navigate('/')
+    }
 
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
@@ -65,6 +70,9 @@ export default function AccountExtraDetailsPage() {
 
             <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}
                     onClick={onSubmit}><b>Register</b></Button>
+
+            <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}
+                    onClick={handleCancel}><b>Cancel</b></Button>
 
         </form>
     );

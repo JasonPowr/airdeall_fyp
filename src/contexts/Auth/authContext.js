@@ -1,16 +1,22 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {
     createUserWithEmailAndPassword,
+    deleteUser,
+    EmailAuthProvider,
+    getRedirectResult,
     GoogleAuthProvider,
     linkWithPhoneNumber,
     linkWithRedirect,
     onAuthStateChanged,
+    reauthenticateWithCredential,
+    reauthenticateWithRedirect,
     RecaptchaVerifier,
     sendEmailVerification,
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signInWithRedirect,
-    signOut
+    signOut,
+    unlink
 } from 'firebase/auth';
 import {auth} from "../../firebase";
 
@@ -67,6 +73,30 @@ export const AuthContextProvider = ({children}) => {
         return linkWithRedirect(auth, GoogleProvider);
     }
 
+    const unlinkFacebookAccount = () => {
+        return unlink(auth.currentUser, "facebook.com")
+    }
+
+    const deleteUserAccount = () => {
+        return deleteUser(auth.currentUser)
+    }
+
+
+    const reAuthWithGoogle = () => {
+        return reauthenticateWithRedirect(auth.currentUser, GoogleProvider)
+    }
+
+    const getRedirectResults = () => {
+        return getRedirectResult(auth)
+    }
+
+    const reAuthWithCredential = async (password) => {
+        const credential = await EmailAuthProvider.credential(user.email, password)
+        reauthenticateWithCredential(user, credential).then(() => {
+        });
+        //https://stackoverflow.com/questions/69186075/error-with-reauthenticatewithcredential-get-error-typeerror-credential-getreau
+    }
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -89,6 +119,11 @@ export const AuthContextProvider = ({children}) => {
             verifyCode,
             loginWithGoogle,
             linkAccountWithGoogle,
+            unlinkFacebookAccount,
+            deleteUserAccount,
+            reAuthWithCredential,
+            reAuthWithGoogle,
+            getRedirectResults
         }}>
             {children}
         </UserContext.Provider>
