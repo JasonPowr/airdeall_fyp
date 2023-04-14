@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "firebase/app";
 import {getAnalytics} from "firebase/analytics";
-import {getFirestore} from "firebase/firestore"
-import {FacebookAuthProvider, getAuth} from "firebase/auth";
+import {enableIndexedDbPersistence, getFirestore} from "firebase/firestore"
+import {getAuth} from "firebase/auth";
 import {getStorage} from "firebase/storage";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -16,15 +16,22 @@ const firebaseConfig = {
     storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
-    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
-const provider = new FacebookAuthProvider();
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app)
+
+enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+        console.log("App open in another tab")
+    } else if (err.code === 'unimplemented') {
+        console.log("Persistence not supported")
+    }
+});
+//https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-version-8
+
 export const storage = getStorage(app);
 export default app
