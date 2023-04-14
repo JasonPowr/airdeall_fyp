@@ -2,17 +2,6 @@ export function getStoredAlerts() {
     return sessionStorage.getItem('storedAlerts');
 }
 
-function getAlertById(id) {
-    const storedAlerts = JSON.parse(getStoredAlerts());
-    let foundAlert;
-    storedAlerts.map((index) => {
-        if (index.alert.id === id) {
-            foundAlert = index.alert
-        }
-    })
-    return foundAlert
-}
-
 export function setAlertsInStorage(alerts) {
     sessionStorage.setItem('storedAlerts', JSON.stringify(alerts));
 }
@@ -35,8 +24,11 @@ export function updateAlertInLocalStorage(id, updatedAlert) {
 
 export function deleteAlertFromLocalStorage(alertId) {
     const storedAlerts = JSON.parse(getStoredAlerts());
-    const indexOf = storedAlerts.indexOf(getAlertById(alertId))
-    storedAlerts.splice(indexOf, 1)
+    storedAlerts.map((index) => {
+        if (index.alert.id === alertId) {
+            storedAlerts.splice(storedAlerts.indexOf(index.alert, 1))
+        }
+    });
     setAlertsInStorage(storedAlerts);
 }
 
