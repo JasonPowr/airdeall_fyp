@@ -14,7 +14,9 @@ function MapsPage() {
         libraries
     })
 
-    if (!isLoaded) return <div>Loading...</div>
+    if (!isLoaded) return <div>
+        <div>Loading...</div>
+        <BottomNav value={tab} onChange={setTab}/></div>
     return (
         <div>
             <div><Map/></div>

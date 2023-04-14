@@ -14,7 +14,7 @@ export default function BottomNav({value, onChange}) {
             <BottomNavigationAction style={{color: "white"}} label={"Maps"}
                                     icon={<Map style={{color: 'white'}}/>} component={Link} to="/maps"/>
 
-            <BottomNavigationAction style={{color: "white"}} label={"Profile"}
+            <BottomNavigationAction style={{color: "white"}} label={"Info Section"}
                                     icon={<Info style={{color: 'white'}}/>} component={Link} to="/info"/>
 
             <BottomNavigationAction style={{color: "white"}} label={"Profile"}

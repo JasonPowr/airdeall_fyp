@@ -7,6 +7,8 @@ import AlertCard from "../Cards/AlertCard/AlertCard";
 import {AlertDialog} from "../Popup/AlertPopUp/alertPopup";
 import UserContext from "../../contexts/Auth/authContext";
 import {HandleVoiceActivationOnLoad, stopTranscribing} from "../SpeechRecognition/SpeechRecognition";
+import {Button} from "@material-ui/core";
+import {Link} from "react-router-dom";
 
 function Alerts() {
     const {user} = useContext(UserContext)
@@ -105,9 +107,13 @@ function Alerts() {
 
     return (
         <div>
-            <ListeningButton
-                isListening={isListening}
-                setIsListening={setIsListening}/>
+            <div>
+                <ListeningButton
+                    isListening={isListening}
+                    setIsListening={setIsListening}/>
+
+                <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
+            </div>
 
             <div>
                 {(user && !emailVerified) &&

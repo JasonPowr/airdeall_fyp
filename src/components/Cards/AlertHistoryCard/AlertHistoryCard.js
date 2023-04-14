@@ -4,7 +4,7 @@ import {Close, ViewAgendaRounded} from "@material-ui/icons";
 import {useNavigate} from "react-router-dom";
 import {deleteAlertHistory} from "../../../model/db/DB";
 import {useState} from "react";
-import DeleteConfirmationPopup from "../../Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
+import ConfirmationPopup from "../../Popup/DeleteConfirmationPopup/ConfirmationPopup";
 
 export default function AlertHistoryCard({alertHistory, onDelete}) {
     const navigate = useNavigate()
@@ -54,9 +54,10 @@ export default function AlertHistoryCard({alertHistory, onDelete}) {
             </Card>
 
             {openConfirmDeleteAlertHistory && (
-                <DeleteConfirmationPopup openConfirmationDialog={openConfirmDeleteAlertHistory}
-                                         setOpenConfirmationDialog={setOpenConfirmDeleteAlertHistory}
-                                         handleConfirmation={handleDeletePressedAfterConf}/>
+                <ConfirmationPopup openConfirmationDialog={openConfirmDeleteAlertHistory}
+                                   setOpenConfirmationDialog={setOpenConfirmDeleteAlertHistory}
+                                   handleConfirmation={handleDeletePressedAfterConf}
+                                   context={"delete this history"}/>
             )}
 
         </div>

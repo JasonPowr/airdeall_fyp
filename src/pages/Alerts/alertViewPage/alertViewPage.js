@@ -8,7 +8,7 @@ import {ArrowBack, Delete, Edit, Sort} from "@material-ui/icons";
 import ContactCard from "../../../components/Cards/ContactCard/contactCard";
 import AlertHistoryCard from "../../../components/Cards/AlertHistoryCard/AlertHistoryCard";
 import {Stack, Typography} from "@mui/material";
-import DeleteConfirmationPopup from "../../../components/Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
+import ConfirmationPopup from "../../../components/Popup/DeleteConfirmationPopup/ConfirmationPopup";
 
 function AlertViewPage() {
     const location = useLocation();
@@ -160,9 +160,10 @@ function AlertViewPage() {
             </div>
 
             {openDeleteAlertConfirmation && (
-                <DeleteConfirmationPopup openConfirmationDialog={openDeleteAlertConfirmation}
-                                         setOpenConfirmationDialog={setOpenDeleteAlertConfirmation}
-                                         handleConfirmation={handleDeleteAfterConf}/>
+                <ConfirmationPopup openConfirmationDialog={openDeleteAlertConfirmation}
+                                   setOpenConfirmationDialog={setOpenDeleteAlertConfirmation}
+                                   handleConfirmation={handleDeleteAfterConf}
+                                   context={"delete this Alert"}/>
             )}
 
             <div><BottomNav/></div>

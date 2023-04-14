@@ -28,6 +28,7 @@ const useStyles = makeStyles({
         left: '0',
         top: '0',
         color: 'white',
+        alignContent: "center",
         backgroundColor: '#393939',
     },
 })

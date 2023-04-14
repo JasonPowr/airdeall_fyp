@@ -6,7 +6,7 @@ import {auth} from "../../firebase";
 import {AvatarImage} from "./AvatarImage";
 import {ProfileInfo} from "./ProfileInfo";
 import {Settings} from "./Settings";
-import DeleteConfirmationPopup from "../Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
+import ConfirmationPopup from "../Popup/DeleteConfirmationPopup/ConfirmationPopup";
 
 export default function ProfileComponent() {
     const {logOut, user} = useContext(UserContext)
@@ -47,9 +47,10 @@ export default function ProfileComponent() {
                     <Button onClick={handleSignOut}>Sign Out</Button>
 
                     {openConfirmationSignOutDialog && (
-                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationSignOutDialog}
-                                                 setOpenConfirmationDialog={setOpenConfirmationSignOutDialog}
-                                                 handleConfirmation={handleSignOutAfterConf}/>
+                        <ConfirmationPopup openConfirmationDialog={openConfirmationSignOutDialog}
+                                           setOpenConfirmationDialog={setOpenConfirmationSignOutDialog}
+                                           handleConfirmation={handleSignOutAfterConf}
+                                           context={"sign out"}/>
                     )}
 
                 </div>

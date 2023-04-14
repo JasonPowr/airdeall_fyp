@@ -4,7 +4,7 @@ import {Button} from "@material-ui/core";
 import UserContext from "../../contexts/Auth/authContext";
 import {loginWithFacebook, logoutWithFacebook} from "../Socials/facebook/facebook";
 import EnterPasswordPopup from "../Popup/EnterPasswordPopup/EnterPasswordPopup";
-import DeleteConfirmationPopup from "../Popup/DeleteConfirmationPopup/DeleteConfirmationPopup";
+import ConfirmationPopup from "../Popup/DeleteConfirmationPopup/ConfirmationPopup";
 import {deleteUserData} from "../../model/db/DB";
 
 export function Settings() {
@@ -118,21 +118,24 @@ export function Settings() {
                     )}
 
                     {openConfirmationDialog && (
-                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationDialog}
-                                                 setOpenConfirmationDialog={setOpenConfirmationDialog}
-                                                 handleConfirmation={handleDelete}/>
+                        <ConfirmationPopup openConfirmationDialog={openConfirmationDialog}
+                                           setOpenConfirmationDialog={setOpenConfirmationDialog}
+                                           handleConfirmation={handleDelete}
+                                           context={"delete your Account"}/>
                     )}
 
                     {openConfirmationGoogleAuthDialog && (
-                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationGoogleAuthDialog}
-                                                 setOpenConfirmationDialog={setOpenConfirmationGoogleAuthDialog}
-                                                 handleConfirmation={handleGoogleAuth}/>
+                        <ConfirmationPopup openConfirmationDialog={openConfirmationGoogleAuthDialog}
+                                           setOpenConfirmationDialog={setOpenConfirmationGoogleAuthDialog}
+                                           handleConfirmation={handleGoogleAuth}
+                                           context={"delete your Account"}/>
                     )}
 
                     {openConfirmationUnlinkFacebookDialog && (
-                        <DeleteConfirmationPopup openConfirmationDialog={openConfirmationUnlinkFacebookDialog}
-                                                 setOpenConfirmationDialog={setOpenConfirmationUnlinkFacebookDialog}
-                                                 handleConfirmation={handleFacebookUnlinkAfterConf}/>
+                        <ConfirmationPopup openConfirmationDialog={openConfirmationUnlinkFacebookDialog}
+                                           setOpenConfirmationDialog={setOpenConfirmationUnlinkFacebookDialog}
+                                           handleConfirmation={handleFacebookUnlinkAfterConf}
+                                           context={"unlink your Facebook Account"}/>
                     )}
                 </div>
             )}
