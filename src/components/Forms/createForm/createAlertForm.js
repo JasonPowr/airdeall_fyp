@@ -18,6 +18,7 @@ import SoundComponent from "./CreateFormComponents/SoundComponent";
 import IncludeOnPublicMap from "./CreateFormComponents/IncludeOnPublicMap";
 import SMSComponent from "./CreateFormComponents/SMSComponent";
 import AlertDetailsComponent from "./CreateFormComponents/AlertDetailsComponent";
+import {addAlertToLocalStorage, updateAlertInLocalStorage} from "../../../model/local/localStorage";
 
 export default function CreateAlertForm({editAlert}) {
     const navigate = useNavigate()
@@ -89,6 +90,7 @@ export default function CreateAlertForm({editAlert}) {
 
         try {
             await createAlert(alert)
+            addAlertToLocalStorage(alert)
             navigate('/alerts')
         } catch (error) {
             setError(error.message);
@@ -177,6 +179,7 @@ export default function CreateAlertForm({editAlert}) {
             }
         }
         updateAlert(updatedAlert).then(r => {
+            updateAlertInLocalStorage(editAlert.id, updatedAlert)
             navigate(`/${editAlert.id}/alert_view`, {state: {alertId: editAlert.id}});
         })
 

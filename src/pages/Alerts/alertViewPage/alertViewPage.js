@@ -9,6 +9,7 @@ import ContactCard from "../../../components/Cards/ContactCard/contactCard";
 import AlertHistoryCard from "../../../components/Cards/AlertHistoryCard/AlertHistoryCard";
 import {Stack, Typography} from "@mui/material";
 import ConfirmationPopup from "../../../components/Popup/DeleteConfirmationPopup/ConfirmationPopup";
+import {deleteAlertFromLocalStorage} from "../../../model/local/localStorage";
 
 function AlertViewPage() {
     const location = useLocation();
@@ -48,9 +49,10 @@ function AlertViewPage() {
         setOpenDeleteAlertConfirmation(true)
     }
 
-    function handleDeleteAfterConf(confirmation) {
+    async function handleDeleteAfterConf(confirmation) {
         if (confirmation) {
-            deleteAlert(alertId).then()
+            await deleteAlert(alertId).then()
+            deleteAlertFromLocalStorage(alertId)
             navigate(`/alerts`)
         }
     }

@@ -12,7 +12,6 @@ export const startTranscribing = () => {
         speechRecognition = new SpeechlySpeechRecognition();
         speechRecognition.start();
         isTranscribing = true
-        console.log("transcribing")
 
         return isTranscribing
     } else {
@@ -23,7 +22,6 @@ export const startTranscribing = () => {
 export const stopTranscribing = () => {
     if (isTranscribing) {
         speechRecognition.stop();
-        console.log("not transcribing")
     }
 }
 
@@ -35,23 +33,26 @@ export function HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlert
         }
     })
 
-    startTranscribing();
-    speechRecognition.onresult = ({results}) => {
-        const transcript = results[0][0].transcript;
 
-        alertsWithVoiceActivationEnabled.map((alert) => {
-            if (transcript.toString().toLowerCase().replace(/[.,' \s]/g, '').includes(alert.voiceActivation.voiceActivationPhrase.toString().toLowerCase().replace(/[.,' \s]/g, ''))) {
-                if (alert.voiceActivation.voiceActivationForAlertWithoutCountDown) {
-                    FireAlertWithoutCountdown({alert})
-                    setIsAlertActive(true)
-                } else {
-                    FireAlertWithCountdown({alert})
-                    setIsAlertActive(true)
-                    setIsAlertInCountdown(true)
+    if (alertsWithVoiceActivationEnabled.length > 0) {
+        startTranscribing();
+        speechRecognition.onresult = ({results}) => {
+            const transcript = results[0][0].transcript;
+
+            alertsWithVoiceActivationEnabled.map((alert) => {
+                if (transcript.toString().toLowerCase().replace(/[.,' \s]/g, '').includes(alert.voiceActivation.voiceActivationPhrase.toString().toLowerCase().replace(/[.,' \s]/g, ''))) {
+                    if (alert.voiceActivation.voiceActivationForAlertWithoutCountDown) {
+                        FireAlertWithoutCountdown({alert})
+                        setIsAlertActive(true)
+                    } else {
+                        FireAlertWithCountdown({alert})
+                        setIsAlertActive(true)
+                        setIsAlertInCountdown(true)
+                    }
                 }
-            }
-        })
-    };
+            })
+        };
+    }
 }
 
 //https://github.com/speechly/speech-recognition-polyfill#integrating-with-react-speech-recognition

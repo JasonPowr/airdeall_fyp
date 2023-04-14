@@ -1,19 +1,39 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./alertPage.css"
 import {requestCameraAccess} from "../../../components/Camera/camera";
 import {requestLocationPermission} from "../../../components/Maps/maps";
 import BottomNav from "../../../components/bottomNav/bottomNav";
 import Alerts from "../../../components/Alerts/Alerts";
+import {auth} from "../../../firebase";
+import {
+    getCameraPermissions,
+    getGeoLocationPermissions,
+    getMicPermissions
+} from "../../../components/Permissions/Permissions";
 
 function AlertsPage() {
     const [tab, setTab] = useState(0)
+    const [geoLocationPermissionsGranted, setGeoLocationPermissionsGranted] = useState(false);
+    const [cameraPermissionsGranted, setCameraPermissionsGranted] = useState(false);
+    const [microphonePermissionsGranted, setMicrophonePermissionsGranted] = useState(false);
 
-    requestCameraAccess()
-    requestLocationPermission()
+    useEffect(() => {
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                setGeoLocationPermissionsGranted(getGeoLocationPermissions())
+                setCameraPermissionsGranted(getCameraPermissions())
+                setMicrophonePermissionsGranted(getMicPermissions())
+            }
+        })
+    }, []);
+
+    if (!geoLocationPermissionsGranted || !cameraPermissionsGranted || !microphonePermissionsGranted) {
+        requestCameraAccess()
+        requestLocationPermission()
+    }
 
     return (
         <div>
-            <h1> Your Alerts </h1>
             <Alerts/>
             <BottomNav value={tab} onChange={setTab}/>
         </div>
