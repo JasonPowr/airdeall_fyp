@@ -12,7 +12,6 @@ import {
 } from "../../../components/Permissions/Permissions";
 
 function AlertsPage() {
-    const [tab, setTab] = useState(0)
     const [geoLocationPermissionsGranted, setGeoLocationPermissionsGranted] = useState(false);
     const [cameraPermissionsGranted, setCameraPermissionsGranted] = useState(false);
     const [microphonePermissionsGranted, setMicrophonePermissionsGranted] = useState(false);
@@ -35,7 +34,7 @@ function AlertsPage() {
     return (
         <div>
             <Alerts/>
-            <BottomNav value={tab} onChange={setTab}/>
+            <BottomNav value={0}/>
         </div>
     );
 }

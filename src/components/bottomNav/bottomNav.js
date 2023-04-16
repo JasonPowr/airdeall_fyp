@@ -1,25 +1,39 @@
 import React from 'react'
-import {BottomNavigation, BottomNavigationAction} from "@material-ui/core";
+import {BottomNavigation, BottomNavigationAction, makeStyles} from "@material-ui/core";
 import {Home, Info, Map, PeopleRounded} from "@material-ui/icons";
 import "./bottomNav.css"
-import {Link} from "react-router-dom";
 
-export default function BottomNav({value, onChange}) {
+import {Link as RouterLink} from 'react-router-dom';
+
+const useStyles = makeStyles({
+    bottom_nav: {
+        position: 'fixed',
+        margin: 'auto',
+        left: '0',
+        right: '0',
+        bottom: '0',
+        backgroundColor: "white",
+        opacity: "80%",
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+    },
+    icons: {
+        color: "#4d41b4",
+    },
+})
+
+export default function BottomNav({value}) {
+    const classes = useStyles();
+
     return (
-        <BottomNavigation showLabels={true} className={"bottom-nav"} value={value} onChange={(e, tab) => onChange(tab)}>
-
-            <BottomNavigationAction style={{color: "white"}} label={"Alerts"}
-                                    icon={<Home style={{color: 'white'}}/>} component={Link} to="/alerts"/>
-
-            <BottomNavigationAction style={{color: "white"}} label={"Maps"}
-                                    icon={<Map style={{color: 'white'}}/>} component={Link} to="/maps"/>
-
-            <BottomNavigationAction style={{color: "white"}} label={"Info Section"}
-                                    icon={<Info style={{color: 'white'}}/>} component={Link} to="/info"/>
-
-            <BottomNavigationAction style={{color: "white"}} label={"Profile"}
-                                    icon={<PeopleRounded style={{color: 'white'}}/>} component={Link} to="/profile"/>
-
+        <BottomNavigation showLabels value={value} className={classes.bottom_nav}>
+            <BottomNavigationAction component={RouterLink} label="Home" icon={<Home/>} to="/alerts"/>
+            <BottomNavigationAction component={RouterLink} label="Maps" icon={<Map/>} to="/maps"/>
+            <BottomNavigationAction component={RouterLink} label="Info" icon={<Info/>} to="/info"/>
+            <BottomNavigationAction component={RouterLink} label="Profile" icon={<PeopleRounded/>} to="/profile"/>
         </BottomNavigation>
-    )
+    );
 }
+
+//https://mui.com/material-ui/react-bottom-navigation/
+//https://mui.com/material-ui/guides/routing/

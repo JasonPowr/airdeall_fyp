@@ -1,15 +1,14 @@
 import "./profilePage.css"
 import BottomNav from "../../components/bottomNav/bottomNav";
-import {useState} from "react";
+import React from "react";
 import ProfileComponent from "../../components/Profile/ProfileComponent";
 
 function ProfilePage() {
-    const [tab, setTab] = useState(0)
 
     return (
         <div>
             <ProfileComponent/>
-            <BottomNav value={tab} onChange={setTab}/>
+            <BottomNav value={3}/>
         </div>
     );
 }
