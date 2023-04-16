@@ -27,7 +27,7 @@ export function getLocation() {
         navigator.geolocation.getCurrentPosition(
             async position => {
                 const location = {
-                    lat: position.coords.latitude,  //change this
+                    lat: position.coords.latitude,
                     lng: position.coords.longitude,
                 };
                 resolve(location);
@@ -39,6 +39,8 @@ export function getLocation() {
         );
     });
 }
+
+//https://www.freecodecamp.org/news/javascript-promise-tutorial-how-to-resolve-or-reject-promises-in-js/
 
 export default function Map() {
     const mapRef = useRef();

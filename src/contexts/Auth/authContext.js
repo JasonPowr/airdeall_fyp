@@ -26,6 +26,7 @@ let confirmCode = null
 
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({})
+    
     const createUser = (email, password) => {
         return createUserWithEmailAndPassword(auth, email, password)
     };

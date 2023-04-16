@@ -31,7 +31,7 @@ export function initializeFacebookSDK() {
 
 }
 
-export const loginWithFacebook = () => { //https://developers.facebook.com/docs/javascript/examples#login
+export const loginWithFacebook = () => {
     window.FB.login(function (response) {
         if (response.status === 'connected') {
             const credentials = FacebookAuthProvider.credential(response.authResponse.accessToken)
@@ -39,6 +39,8 @@ export const loginWithFacebook = () => { //https://developers.facebook.com/docs/
         }
     }, {scope: 'public_profile,email'});
 }
+
+//https://developers.facebook.com/docs/javascript/examples#login
 
 export const logoutWithFacebook = () => {
     window.FB.getLoginStatus(function (response) {

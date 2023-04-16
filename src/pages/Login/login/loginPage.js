@@ -52,7 +52,7 @@ function LoginPage() {
             ) : (
                 <div className={classes.container}>
                     <div>
-                        <img src={require("../../../assets/images/airdeall.png")} alt={""}/>
+                        <img src={require("../../../assets/Airdeall.png")} alt={""}/>
                     </div>
 
                     <div className={classes.footer}>

@@ -23,7 +23,7 @@ function RegistrationPage() {
     return (
         <div className={classes.container}>
             <div>
-                <img src={require("../../assets/images/airdeall.png")} alt={""}/>
+                <img src={require("../../assets/Airdeall.png")} alt={""}/>
             </div>
             <RegistrationForm/>
             <Link to={"/login"} className={classes.link}><p>Already a user ? Login here</p></Link>

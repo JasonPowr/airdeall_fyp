@@ -29,7 +29,7 @@ const useStyles = makeStyles({
         top: '0',
         color: 'white',
         alignContent: "center",
-        backgroundColor: '#393939',
+        background: 'linear-gradient(180deg, rgba(45,6,52,1) 0%, rgba(142,0,185,1) 100%)'
     },
 })
 

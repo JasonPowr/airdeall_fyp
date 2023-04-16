@@ -16,17 +16,24 @@ const useStyles = makeStyles({
     },
     footer: {
         position: 'absolute',
-        bottom: '5%',
+        bottom: '2%',
         width: '100%',
     },
     button: {
         marginTop: '20px',
-        backgroundColor: '#ffac4b',
+        backgroundColor: 'white',
         color: 'black',
         fontFamily: 'Raleway',
         fontSize: '15px',
         width: '222px',
         textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: '5%',
+    },
+    img: {
+        height: "180px",
+        width: "180px",
+        paddingTop: "60px"
     }
 })
 
@@ -60,18 +67,18 @@ function HomePage() {
             ) : (
                 <div className={classes.container}>
                     <div>
-                        <img src={require("../../assets/images/airdeall.png")} alt={""}/>
-                        <p style={{fontSize: '30px'}}><b> Welcome! </b></p>
+                        <img src={require("../../assets/Airdeall.png")} alt={""} className={classes.img}/>
+                        <p style={{fontSize: '30px'}}><b> Welcome to Airdeall</b></p>
                         <p>Please login or register</p>
                     </div>
 
                     <div className={classes.footer}>
-                        <Link to={"/login"}> <Button className={classes.button} variant={"contained"}
-                                                     size={"large"}><b>Login</b></Button></Link>
-                        <Link to={"/register"} className={classes.link}><p>Not a User? Register Here....</p></Link>
-                        <Link to={"/register_safePoint"} className={classes.link}><p>Would you like to register your
-                            business as a
-                            safe point? Apply here</p></Link>
+                        <Link to={"/login"} className={classes.link}> <Button className={classes.button}
+                                                                              variant={"contained"}
+                                                                              size={"large"}><b>Login</b></Button></Link>
+                        <Link to={"/register"} className={classes.link}><p>Not a User? Register Here</p></Link>
+                        <Link to={"/register_safePoint"} className={classes.link}><p>Register here as a Safe Point</p>
+                        </Link>
                     </div>
                 </div>
             )}
