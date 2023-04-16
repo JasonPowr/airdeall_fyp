@@ -4,10 +4,37 @@ import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
 import {registrationSchema} from "../../../Helpers/Validation/RegistrationValidation";
 import {ErrorDialog} from "../../../components/Popup/ErrorPopup/ErrorPopUp";
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import {updateProfileOnRegister} from "../../../model/db/DB";
 
+
+const useStyles = makeStyles({
+    container: {
+        paddingTop: '80px',
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: '100%',
+        overflow: 'auto',
+    },
+    btn: {
+        paddingBottom: '20px'
+    },
+    text: {
+        width: '70%',
+        fontSize: '15px',
+        margin: "auto",
+    },
+    img: {
+        height: "180px",
+        width: "180px",
+        paddingBottom: "50px",
+    }
+})
+
+
 export default function AccountExtraDetailsPage() {
+    const classes = useStyles();
     const {user, deleteUserAccount} = useContext(UserContext)
     const navigate = useNavigate()
     const [error, setError] = useState(null);
@@ -40,10 +67,18 @@ export default function AccountExtraDetailsPage() {
     }
 
     return (
-        <form onSubmit={handleSubmit} autoComplete={"off"}>
+        <form onSubmit={handleSubmit} autoComplete={"off"} className={classes.container}>
 
-            <p>In order for you to use certain features in Airdeall you will need to sign up using your phone number,
-                please enter your phone number below.</p>
+            <div>
+                <img className={classes.img} src={require("../../../assets/Airdeall.png")} alt={""}/>
+            </div>
+
+
+            <div className={classes.text}>
+                <p><b>In order for you to use certain features in Airdeall you will
+                    need to sign up using your phone number,
+                    please enter your phone number below.</b></p>
+            </div>
 
             <div>
                 {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
@@ -68,11 +103,16 @@ export default function AccountExtraDetailsPage() {
                     }}/>
             </div>
 
-            <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}
-                    onClick={onSubmit}><b>Register</b></Button>
+            <div className={classes.btn}>
+                <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}
+                        onClick={onSubmit}><b>Register</b></Button>
 
-            <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}
-                    onClick={handleCancel}><b>Cancel</b></Button>
+            </div>
+
+            <div>
+                <Button className={"button"} variant={"contained"} size={"large"}
+                        onClick={handleCancel}><b>Cancel</b></Button>
+            </div>
 
         </form>
     );

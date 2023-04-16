@@ -77,11 +77,11 @@ export function Settings() {
         }
     };
 
-    const handleGoogleAuth = (confirmation) => {
+    const handleGoogleAuth = async (confirmation) => {
         if (confirmation) {
             try {
                 reAuthWithGoogle()
-                handleDelete(confirmation)
+                await handleDelete(confirmation)
             } catch (e) {
                 console.log(e)
             }
