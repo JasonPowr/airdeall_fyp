@@ -24,7 +24,8 @@ const useStyles = makeStyles({
     img: {
         height: "180px",
         width: "180px",
-        paddingTop: "60px"
+        paddingTop: "60px",
+        opacity: "70%"
     }
 })
 

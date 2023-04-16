@@ -38,7 +38,7 @@ function Alerts() {
                     getUserAlertsFromDB().then(alerts => {
                         setAlerts(alerts);
                         setAlertsInStorage(alerts)
-                    });
+                    })
                 }
 
 

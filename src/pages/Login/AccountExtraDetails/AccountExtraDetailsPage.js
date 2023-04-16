@@ -29,6 +29,7 @@ const useStyles = makeStyles({
         height: "180px",
         width: "180px",
         paddingBottom: "50px",
+        opacity: "70%"
     }
 })
 

@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
 import UserContext from "../../../contexts/Auth/authContext";
@@ -7,12 +7,45 @@ import {getUserPhoneNumberFromDB} from "../../../model/db/DB";
 import {phoneConfirmValidationSchema} from "../../../Helpers/Validation/PhoneConfirmValidation";
 import {ErrorDialog} from "../../../components/Popup/ErrorPopup/ErrorPopUp";
 
+const useStyles = makeStyles({
+    container: {
+        paddingTop: '80px',
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: '100%',
+        overflow: 'auto',
+    },
+    btn: {
+        backgroundColor: 'white !important',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: '2%',
+    },
+    text: {
+        width: '70%',
+        fontSize: '15px',
+        margin: "auto",
+    },
+    img: {
+        height: "180px",
+        width: "180px",
+        paddingBottom: "50px",
+        opacity: "70%"
+    }
+})
+
 
 function ConfirmPhoneNumberPage() {
     const {sendVerificationSMS, verifyCode} = useContext(UserContext)
     const [smsSent, setSMSSent] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate()
+    const classes = useStyles();
 
     const onSubmit = async () => {
         const phoneNumber = await getUserPhoneNumberFromDB()
@@ -64,7 +97,13 @@ function ConfirmPhoneNumberPage() {
     };
 
     return (
-        <div>
+        <div className={classes.container}>
+
+            <div>
+                <img className={classes.img} src={require("../../../assets/Airdeall.png")} alt={""}/>
+            </div>
+
+
             {smsSent ? (
                 <form onSubmit={handleSubmit} autoComplete={"off"}>
                     <p>Please enter the 6 figure verification code you should have received, if no code has been
@@ -93,8 +132,14 @@ function ConfirmPhoneNumberPage() {
                             }}/>
                     </div>
 
-                    <Button onClick={sendCode}>Submit</Button>
-                    <Button onClick={handleResend}> Resend</Button>
+                    <div>
+                        <Button className={classes.btn} onClick={sendCode}><b>Submit</b></Button>
+                    </div>
+
+                    <div>
+                        <Button className={classes.btn} onClick={handleResend}><b>Resend</b></Button>
+                    </div>
+
                 </form>
             ) : (
                 <form onSubmit={handleSubmit} autoComplete={"off"}>
@@ -122,8 +167,14 @@ function ConfirmPhoneNumberPage() {
                         {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
                     </div>
 
-                    <Button id={"submitPhoneNumber"} onClick={onSubmit}> Submit</Button>
-                    <Button onClick={handleCancel}> Cancel</Button>
+                    <div>
+                        <Button className={classes.btn} id={"submitPhoneNumber"}
+                                onClick={onSubmit}><b>Submit</b></Button>
+                    </div>
+
+                    <div>
+                        <Button className={classes.btn} onClick={handleCancel}><b>Cancel</b></Button>
+                    </div>
                 </form>
             )}
         </div>

@@ -13,7 +13,6 @@ let locationUpdates;
 let history_locationUpdates = []
 let timeStart;
 let date;
-const today = new Date();
 const audio = new Audio(sound)
 
 export const FireAlertWithCountdown = ({alert}) => {
@@ -95,18 +94,12 @@ export const CancelAlert = ({alert}) => {
             cancelRecording(alertHistoryId)
         }
         const end = new Date();
-        let timeEnd;
-
-        if (end.getMinutes() > 10) {
-            timeEnd = end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds();
-        } else {
-            timeEnd = end.getHours() + ":" + '0' + end.getMinutes() + ":" + end.getSeconds();
-        }
-
+        let timeEnd = end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds();
         addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId, history_locationUpdates, timeEnd)).then(r => {
             history_locationUpdates = null
+            timeStart = null
+            timeEnd = null
         })
-        timeEnd = null
         alert.isActive = false
     }
 }
@@ -235,14 +228,8 @@ function generateIdFoHistory() {
 }
 
 function setTime() {
-    timeStart = null
-    date = null
-
-    if ((today.getMonth() + 1) < 10) {
-        date = (today.getDate()) + '-0' + (today.getMonth() + 1) + '-' + today.getFullYear();
-    } else {
-        date = (today.getDate()) + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
-    }
+    const today = new Date();
+    date = (today.getDate()) + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
     timeStart = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 }
 
