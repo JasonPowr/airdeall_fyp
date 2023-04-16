@@ -10,11 +10,23 @@ import {
     getGeoLocationPermissions,
     getMicPermissions
 } from "../../../components/Permissions/Permissions";
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    container: {
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: '91.5%',
+        overflow: 'auto',
+    },
+})
 
 function AlertsPage() {
     const [geoLocationPermissionsGranted, setGeoLocationPermissionsGranted] = useState(false);
     const [cameraPermissionsGranted, setCameraPermissionsGranted] = useState(false);
     const [microphonePermissionsGranted, setMicrophonePermissionsGranted] = useState(false);
+    const classes = useStyles();
 
     useEffect(() => {
         auth.onAuthStateChanged(user => {
@@ -32,7 +44,7 @@ function AlertsPage() {
     }
 
     return (
-        <div>
+        <div className={classes.container}>
             <Alerts/>
             <BottomNav value={0}/>
         </div>

@@ -7,9 +7,36 @@ import AlertCard from "../Cards/AlertCard/AlertCard";
 import {AlertDialog} from "../Popup/AlertPopUp/alertPopup";
 import UserContext from "../../contexts/Auth/authContext";
 import {HandleVoiceActivationOnLoad, stopTranscribing} from "../SpeechRecognition/SpeechRecognition";
-import {Button} from "@material-ui/core";
-import {Link} from "react-router-dom";
+import {makeStyles} from "@material-ui/core";
+import {useNavigate} from "react-router-dom";
 import {getStoredAlerts, setAlertsInStorage} from "../../model/local/localStorage";
+import {AddAlert, AlarmOff} from "@material-ui/icons";
+
+const useStyles = makeStyles({
+    popUp_container: {
+        alignContent: "center",
+        alignItems: "center",
+        margin: "auto",
+        left: "0",
+        right: "0",
+    },
+    noAlerts: {
+        paddingTop: '100px',
+    },
+    listening: {
+        position: 'fixed',
+        bottom: '100px',
+        right: '20px'
+    },
+    header: {
+        paddingBottom: '25px',
+    },
+    add_alert: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+    }
+})
 
 function Alerts() {
     const {user} = useContext(UserContext)
@@ -25,6 +52,8 @@ function Alerts() {
 
     const [emailVerified, setEmailVerified] = useState(null);
     const [phoneVerified, setPhoneVerified] = useState(null);
+    const navigate = useNavigate()
+    const classes = useStyles();
 
     useEffect(() => {
         auth.onAuthStateChanged(user => {
@@ -33,14 +62,13 @@ function Alerts() {
                 if (getStoredAlerts()) {
                     const alerts = JSON.parse(getStoredAlerts());
                     setAlerts(alerts);
-                    console.log(alerts)
                 } else {
                     getUserAlertsFromDB().then(alerts => {
                         setAlerts(alerts);
+                        console.log("alerts")
                         setAlertsInStorage(alerts)
                     })
                 }
-
 
                 if (user.emailVerified) {
                     setEmailVerified(true);
@@ -115,27 +143,35 @@ function Alerts() {
         return false
     };
 
+    function handleCreate() {
+        navigate("/create_alert")
+    }
+
     return (
-        <div style={{overflow: "auto", height: "90%"}}>
+        <div>
             {(alerts && (emailVerified !== null) && (phoneVerified !== null)) ? (
                 <div>
-                    <div>
-                        <h1> Your Alerts </h1>
-                        <ListeningButton
-                            isListening={isListening}
-                            setIsListening={setIsListening}/>
+                    <div className={classes.header}>
+                        <h1><b><u>Your Alerts</u></b></h1>
 
-                        <Link to={"/create_alert"}><Button>Create Alert</Button></Link>
-                    </div>
+                        <div className={classes.add_alert} onClick={handleCreate}>
+                            <p>Create Alert</p>
+                            <AddAlert fontSize={"large"} style={{color: "white"}}/>
+                        </div>
 
-                    <div>
-                        {(user && !emailVerified) &&
-                            <WarningPopUp message={"Email is not verified"} onCloseClick={handleCloseEmailError}
-                                          context={"email"}/>}
+                        <div className={classes.popUp_container}>
 
-                        {(user && !phoneVerified) &&
-                            <WarningPopUp message={"Phone is not verified"} onCloseClick={handleClosePhoneError}
-                                          context={"phone"}/>}
+                            {(user && !emailVerified) &&
+                                <WarningPopUp message={"Email is not verified"} onCloseClick={handleCloseEmailError}
+                                              context={"email"}/>}
+
+                            {(user && !phoneVerified) &&
+                                <WarningPopUp message={"Phone is not verified"} onCloseClick={handleClosePhoneError}
+                                              context={"phone"}/>}
+
+                        </div>
+
+
                     </div>
 
                     {(isAlertActive || isAlertInCountdown) && (
@@ -156,8 +192,17 @@ function Alerts() {
                                            setAlertInCountdown={setIsAlertInCountdown}/>)}
                         </div>
                     ) : (
-                        <div> No alerts Found</div>
+                        <div className={classes.noAlerts}>
+                            <AlarmOff fontSize={"large"}/>
+                            <p>No Alerts Found</p>
+                        </div>
                     )}
+
+                    <div className={classes.listening}>
+                        <ListeningButton
+                            isListening={isListening}
+                            setIsListening={setIsListening}/>
+                    </div>
 
                 </div>
 

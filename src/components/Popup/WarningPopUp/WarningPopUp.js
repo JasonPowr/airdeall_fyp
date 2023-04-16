@@ -2,15 +2,25 @@ import * as React from 'react';
 import {useContext, useState} from 'react';
 import {Alert, Collapse, IconButton} from "@mui/material";
 import {Close, Email, Phone} from "@material-ui/icons";
-import styles from "./Warning.module.css"
 import UserContext from "../../../contexts/Auth/authContext";
 import {useNavigate} from "react-router-dom";
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    popup: {
+        maxWidth: '600px',
+        width: '90%',
+        margin: "auto",
+    }
+})
 
 export function WarningPopUp({message, onCloseClick, context}) {
     const navigate = useNavigate()
     const [open, setOpen] = useState(true);
     const [emailSent, setEmailSent] = useState(false);
     const {sendVerifyEmailAddress} = useContext(UserContext)
+    const classes = useStyles();
+
     const handleClose = () => {
         setOpen(onCloseClick)
     }
@@ -29,7 +39,7 @@ export function WarningPopUp({message, onCloseClick, context}) {
     }
 
     return (
-        <Collapse in={open} className={styles.popup}>
+        <Collapse in={open} className={classes.popup}>
             <Alert
                 severity="warning"
                 action={
