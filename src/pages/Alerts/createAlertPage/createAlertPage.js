@@ -1,20 +1,27 @@
 import CreateAlertForm from "../../../components/Forms/createForm/createAlertForm";
-import "./createAlertPage.module.css"
-import {ArrowBack} from "@material-ui/icons";
-import {useNavigate} from "react-router-dom";
-import styles from './createAlertPage.module.css';
+import {makeStyles} from "@material-ui/core";
+import BottomNav from "../../../components/bottomNav/bottomNav";
+import React from "react";
+
+const useStyles = makeStyles({
+    container: {
+        paddingTop: '25px',
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: '87.75%',
+        overflow: 'auto',
+    },
+})
 
 export default function CreateAlertPage() {
-    const navigate = useNavigate()
-
-    function handleBack() {
-        navigate("/alerts");
-    }
+    const classes = useStyles();
 
     return (
-        <div className={styles.createAlertPageStyle}>
-            <ArrowBack onClick={handleBack} fontSize={"large"}/>
+        <div className={classes.container}>
+            <h2>Alert Customization</h2>
             <CreateAlertForm/>
+            <BottomNav value={0}/>
         </div>
     );
 }

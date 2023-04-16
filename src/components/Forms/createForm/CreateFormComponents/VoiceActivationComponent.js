@@ -1,6 +1,26 @@
 import React from 'react';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    outer_sms: {
+        display: "flex",
+        alignContent: "center",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    border: {
+        border: "3px solid white",
+        paddingTop: "25px",
+        paddingBottom: "25px",
+        borderRadius: "30px",
+        width: "90%",
+        maxWidth: "600px",
+        margin: "auto",
+    }
+})
+
 
 function VoiceActivationComponent({
                                       microphonePermissionsGranted,
@@ -11,20 +31,24 @@ function VoiceActivationComponent({
                                       touched,
                                       handleBlur
                                   }) {
+    const classes = useStyles();
     return (
         <div>
             {microphonePermissionsGranted ? (
                 <div>
-                    <p>Voice Activation</p>
 
-                    <Switch
-                        onChange={handleChange}
-                        id={"voiceActivation.isEnabled"}
-                        defaultChecked={editAlert ? editAlert.voiceActivation.isEnabled : false}
-                    />
+                    <div className={classes.outer_sms}>
+                        <p>Voice Activation Options</p>
+
+                        <Switch
+                            onChange={handleChange}
+                            id={"voiceActivation.isEnabled"}
+                            defaultChecked={editAlert ? editAlert.voiceActivation.isEnabled : false}
+                        />
+                    </div>
 
                     {values.voiceActivation.isEnabled && (
-                        <div>
+                        <div className={classes.border}>
                             <p>Activate Alert with Countdown</p>
 
                             <Switch
@@ -33,8 +57,6 @@ function VoiceActivationComponent({
                                 disabled={values.voiceActivation.voiceActivationForAlertWithoutCountDown}
                                 defaultChecked={editAlert ? editAlert.voiceActivation.voiceActivationForAlertWithCountDown : false}
                             />
-
-                            <p>Or</p>
 
                             <p>Activate Alert without Countdown</p>
 
@@ -74,10 +96,8 @@ function VoiceActivationComponent({
                     )}
                 </div>
             ) : (
-                <div>
-                    <p> You need to give access to Microphone </p>
-                    <p>Voice Activation</p>
-
+                <div className={classes.outer_sms}>
+                    <p>Microphone is not enabled</p>
                     <Switch
                         onChange={handleChange}
                         id={"voiceActivation.isEnabled"}

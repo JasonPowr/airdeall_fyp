@@ -1,11 +1,13 @@
 import React from 'react';
 import {TextField} from "@material-ui/core";
 
+
 function AlertDetails({errors, touched, values, handleChange, handleBlur}) {
 
     return (
         <div>
             <TextField
+                style={{marginRight: '20px'}}
                 error={!!(errors.title && touched.title)}
                 label={errors.title && touched.title ? "Invalid Name" : "Alert Name"}
                 helperText={errors.title && touched.title ? errors.title : " "}
@@ -22,6 +24,7 @@ function AlertDetails({errors, touched, values, handleChange, handleBlur}) {
                 }}/>
 
             <TextField
+                style={{marginRight: '20px'}}
                 error={!!(errors.description && touched.description)}
                 label={errors.description && touched.description ? "Invalid Description" : "Alert Description"}
                 helperText={errors.description && touched.description ? errors.alertDesc : " "}

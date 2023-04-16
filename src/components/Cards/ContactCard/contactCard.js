@@ -21,7 +21,7 @@ export default function ContactCard({contact}) {
                     <Typography fontSize={15}>{contact.name}</Typography>
                 }
                             subheader={
-                                <Typography fontSize={15}>{contact.phone}</Typography>
+                                <Typography fontSize={15}>{contact.tel[0]}</Typography>
                             }
                 />
             </Card>

@@ -1,8 +1,38 @@
 import React, {useEffect, useState} from 'react';
 import {Switch} from "@mui/material";
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import TrustedContactPicker from "../../../Contacts/contacts";
 import ContactCard from "../../../Cards/ContactCard/contactCard";
+
+
+const useStyles = makeStyles({
+    outer_sms: {
+        display: "flex",
+        alignContent: "center",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    button: {
+        marginTop: '5px',
+        backgroundColor: 'white',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '250px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: '10px',
+    },
+    border: {
+        border: "3px solid white",
+        paddingTop: "25px",
+        paddingBottom: "25px",
+        borderRadius: "30px",
+        width: "90%",
+        maxWidth: "600px",
+        margin: "auto",
+    }
+})
 
 function SMSComponent({
                           isPhoneLinked,
@@ -15,6 +45,7 @@ function SMSComponent({
                           geoLocationPermissionsGranted
                       }) {
     const [trustedContacts_, setTrustedContacts_] = useState([]);
+    const classes = useStyles();
 
     useEffect(() => {
         if (editAlert) {
@@ -70,13 +101,16 @@ function SMSComponent({
 
     return (
         <div>
-            <p>SMS message</p>
-
             {isPhoneLinked ? (
-                <Switch
-                    onChange={handleChange}
-                    id={"smsMessage"}
-                    defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>) : (
+                <div className={classes.outer_sms}>
+                    <p>Send SMS message</p>
+                    <Switch
+                        onChange={handleChange}
+                        id={"smsMessage"}
+                        defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>
+
+                </div>) : (
+
                 <div>
                     <p>You must verify you phone number before using SMS</p>
                     <Switch
@@ -85,92 +119,77 @@ function SMSComponent({
                         disabled={true}
                         defaultChecked={editAlert ? editAlert.sms.sendSMS : false}/>
                 </div>
+
             )}
 
             {values.smsMessage && (
-                <div>
+                <div className={classes.border}>
+                    <div>
+                        <div>
+                            <TextField
+                                error={!!(errors.messageBody && touched.messageBody)}
+                                label={errors.messageBody && touched.messageBody ? "Invalid Message Body" : "Message Body"}
+                                helperText={errors.messageBody && touched.messageBody ? errors.messageBody : " "}
+                                value={values.messageBody}
+                                variant="filled"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={"textField"}
+                                id={"messageBody"}
+                                placeholder={"Alert Message"}
+                                InputProps={{
+                                    disableUnderline: true,
+                                    inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
+                                }}/>
+                        </div>
 
-                    {editAlert ? (
-                        <Button className={"button"} onClick={handleTrustedContacts} variant={"contained"}
-                                size={"large"}><b> Update Trusted Contacts</b></Button>
-                    ) : (
-                        <Button className={"button"} onClick={handleTrustedContacts} variant={"contained"}
-                                size={"large"}><b> Set Trusted Contacts</b></Button>
+                        {editAlert ? (
+                            <Button className={classes.button} onClick={handleTrustedContacts} variant={"contained"}
+                                    size={"large"}><b> Update Trusted Contacts</b></Button>
+                        ) : (
+                            <Button className={classes.button} onClick={handleTrustedContacts} variant={"contained"}
+                                    size={"large"}><b> Set Trusted Contacts</b></Button>
 
-                    )}
+                        )}
 
-                    {trustedContacts_.length > 0 && (trustedContacts_.map((contact, index) => <ContactCard key={index}
-                                                                                                           contact={contact}/>))}
+                        {trustedContacts_.length > 0 && (trustedContacts_.map((contact, index) => <ContactCard
+                            key={index}
+                            contact={contact}/>))}
 
-                    <TextField
-                        error={!!(errors.messageBody && touched.messageBody)}
-                        label={errors.messageBody && touched.messageBody ? "Invalid Message Body" : "Message Body"}
-                        helperText={errors.messageBody && touched.messageBody ? errors.messageBody : " "}
-                        value={values.messageBody}
-                        variant="filled"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        className={"textField"}
-                        id={"messageBody"}
-                        placeholder={"Alert Message"}
-                        InputProps={{
-                            disableUnderline: true,
-                            inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                        }}/>
+                    </div>
 
                     {geoLocationPermissionsGranted ? (
                         <div>
-                            <p>locationInfo</p>
-                            <Switch
-                                onChange={handleChange}
-                                id={"locationInfo"}
-                                defaultChecked={editAlert ? editAlert.sms.locationInfo : false}
-                            />
+                            <div className={classes.outer_sms}>
+                                <p>Include location Information</p>
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"locationInfo"}
+                                    defaultChecked={editAlert ? editAlert.sms.locationInfo : false}
+                                />
+                            </div>
 
-                            <p>recurringLocationInfo</p>
-                            <Switch
-                                onChange={handleChange}
-                                id={"recurringLocationInfo"}
-                                defaultChecked={editAlert ? editAlert.sms.recurringLocationInfo : false}
-                            />
+                            <div className={classes.outer_sms}>
+                                <p>Location Updates</p>
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"recurringLocationInfo"}
+                                    defaultChecked={editAlert ? editAlert.sms.recurringLocationInfo : false}
+                                />
+                            </div>
 
-                            <p>Proximity Alert</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"proximitySMS"}
-                                defaultChecked={editAlert ? editAlert.sms.proximitySMS : false}
-                            />
+                            <div className={classes.outer_sms}>
+                                <p>Proximity SMS</p>
+                                <Switch
+                                    onChange={handleChange}
+                                    id={"proximitySMS"}
+                                    defaultChecked={editAlert ? editAlert.sms.proximitySMS : false}
+                                />
+                            </div>
                         </div>
                     ) : (
-                        <div>
-                            <p>You need to allow us to access you location</p>
-
-                            <p>locationInfo</p>
-                            <Switch
-                                onChange={handleChange}
-                                id={"locationInfo"}
-                                disabled={true}
-                                defaultChecked={editAlert ? editAlert.locationInfo : false}
-                            />
-
-                            <p>recurringLocationInfo</p>
-                            <Switch
-                                onChange={handleChange}
-                                id={"recurringLocationInfo"}
-                                disabled={true}
-                                defaultChecked={editAlert ? editAlert.recurringLocationInfo : false}
-                            />
-
-                            <p>Proximity Alert</p>
-
-                            <Switch
-                                onChange={handleChange}
-                                id={"proximitySMS"}
-                                disabled={true}
-                                defaultChecked={editAlert ? editAlert.proximitySMS : false}
-                            />
-                        </div>)}
+                        <p>Location is not enabled</p>
+                    )}
                 </div>
             )}
         </div>

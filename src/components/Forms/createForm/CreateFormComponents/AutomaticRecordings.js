@@ -1,5 +1,16 @@
 import React from 'react';
 import {Switch} from "@mui/material";
+import {makeStyles} from "@material-ui/core";
+
+
+const useStyles = makeStyles({
+    outer_sms: {
+        display: "flex",
+        alignContent: "center",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+})
 
 function AutomaticRecordings({
                                  cameraPermissionsGranted,
@@ -8,10 +19,11 @@ function AutomaticRecordings({
                                  editAlert,
                                  values
                              }) {
+    const classes = useStyles();
     return (
         <div>
             {cameraPermissionsGranted && microphonePermissionsGranted ? (
-                <div>
+                <div className={classes.outer_sms}>
                     <p>Automatic recording</p>
                     <Switch
                         onChange={handleChange}
@@ -20,9 +32,8 @@ function AutomaticRecordings({
                     />
                 </div>
             ) : (
-                <div>
-                    <p>You need to give access to camera</p>
-                    <p>Automatic recording</p>
+                <div className={classes.outer_sms}>
+                    <p>No Camera Access</p>
                     <Switch
                         onChange={handleChange}
                         id={"automaticRecording"}

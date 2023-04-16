@@ -1,4 +1,4 @@
-import {Button} from "@material-ui/core";
+import {Button, makeStyles} from "@material-ui/core";
 import {useNavigate} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
 import {useFormik} from "formik";
@@ -20,7 +20,26 @@ import SMSComponent from "./CreateFormComponents/SMSComponent";
 import AlertDetailsComponent from "./CreateFormComponents/AlertDetailsComponent";
 import {addAlertToLocalStorage, updateAlertInLocalStorage} from "../../../model/local/localStorage";
 
+
+const useStyles = makeStyles({
+    container: {
+        maxWidth: "320px",
+        margin: "auto",
+    },
+    button: {
+        marginTop: '20px',
+        backgroundColor: 'white !important',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+    },
+})
+
 export default function CreateAlertForm({editAlert}) {
+    const classes = useStyles();
     const navigate = useNavigate()
     const [error, setError] = useState(null);
     const {user} = useContext(UserContext)
@@ -220,74 +239,87 @@ export default function CreateAlertForm({editAlert}) {
                         handleBlur={handleBlur}
                     />
 
-                    <SMSComponent
-                        isPhoneLinked={isPhoneLinked}
-                        handleChange={handleChange}
-                        editAlert={editAlert}
-                        errors={errors}
-                        touched={touched}
-                        handleBlur={handleBlur}
-                        values={values}
-                        geoLocationPermissionsGranted={geoLocationPermissionsGranted}
-                    />
+                    <div className={classes.container}>
 
-                    <IncludeOnPublicMap
-                        geoLocationPermissionsGranted={geoLocationPermissionsGranted}
-                        editAlert={editAlert}
-                        handleChange={handleChange}
-                    />
+                        <SMSComponent
+                            isPhoneLinked={isPhoneLinked}
+                            handleChange={handleChange}
+                            editAlert={editAlert}
+                            errors={errors}
+                            touched={touched}
+                            handleBlur={handleBlur}
+                            values={values}
+                            geoLocationPermissionsGranted={geoLocationPermissionsGranted}
+                        />
 
-                    <SoundComponent
-                        handleChange={handleChange}
-                        editAlert={editAlert}/>
+                        <IncludeOnPublicMap
+                            geoLocationPermissionsGranted={geoLocationPermissionsGranted}
+                            editAlert={editAlert}
+                            handleChange={handleChange}
+                        />
 
-                    <FlashlightComponent
-                        cameraPermissionsGranted={cameraPermissionsGranted}
-                        editAlert={editAlert}
-                        handleChange={handleChange}
-                    />
+                        <SoundComponent
+                            handleChange={handleChange}
+                            editAlert={editAlert}/>
 
-                    <AutomaticRecordings
-                        cameraPermissionsGranted={cameraPermissionsGranted}
-                        microphonePermissionsGranted={microphonePermissionsGranted}
-                        handleChange={handleChange}
-                        editAlert={editAlert}
-                        values={values}
-                    />
+                        <FlashlightComponent
+                            cameraPermissionsGranted={cameraPermissionsGranted}
+                            editAlert={editAlert}
+                            handleChange={handleChange}
+                        />
 
-                    <SocialMediaIntegration
-                        socialMediaIntegrationEnabled={values.socialMediaIntegration.isEnabled}
-                        handleChange={handleChange}
-                        values={values}
-                        errors={errors}
-                        touched={touched}
-                        editAlert={editAlert}
-                        handleBlur={handleBlur}
-                        isFacebookLinked={isFacebookLinked}
-                        handleFacebookLink={handleFacebookLink}
-                    />
+                        <AutomaticRecordings
+                            cameraPermissionsGranted={cameraPermissionsGranted}
+                            microphonePermissionsGranted={microphonePermissionsGranted}
+                            handleChange={handleChange}
+                            editAlert={editAlert}
+                            values={values}
+                        />
 
-                    <VoiceActivationComponent
-                        microphonePermissionsGranted={microphonePermissionsGranted}
-                        handleChange={handleChange}
-                        editAlert={editAlert}
-                        values={values}
-                        errors={errors}
-                        touched={touched}
-                        handleBlur={handleBlur}
-                    />
+                        <SocialMediaIntegration
+                            socialMediaIntegrationEnabled={values.socialMediaIntegration.isEnabled}
+                            handleChange={handleChange}
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            editAlert={editAlert}
+                            handleBlur={handleBlur}
+                            isFacebookLinked={isFacebookLinked}
+                            handleFacebookLink={handleFacebookLink}
+                        />
 
-                    {editAlert ?
-                        <Button className={"button"} onClick={handleUpdate} variant={"contained"}
-                                size={"large"}><b>Update Alert</b></Button> :
-                        <Button className={"button"} type={"submit"} variant={"contained"}
-                                size={"large"}><b>Create Alert</b></Button>
-                    }
+                        <VoiceActivationComponent
+                            microphonePermissionsGranted={microphonePermissionsGranted}
+                            handleChange={handleChange}
+                            editAlert={editAlert}
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            handleBlur={handleBlur}
+                        />
 
-                    {editAlert ?
 
-                        <Button onClick={handleCancelUpdate}> Cancel </Button> :
-                        <Button onClick={handleCancelCreate}> Cancel </Button>}
+                        <div>
+                            {editAlert ?
+                                <Button className={classes.button} onClick={handleUpdate} variant={"contained"}
+                                        size={"large"}><b>Update Alert</b></Button> :
+                                <Button className={classes.button} type={"submit"} variant={"contained"}
+                                        size={"large"}><b>Create Alert</b></Button>
+                            }
+
+                        </div>
+
+                        <div>
+                            {editAlert ?
+
+                                <Button style={{marginBottom: "15px"}} className={classes.button}
+                                        onClick={handleCancelUpdate}> <b>Cancel</b>
+                                </Button> :
+                                <Button style={{marginBottom: "15px"}} className={classes.button}
+                                        onClick={handleCancelCreate}><b> Cancel</b>
+                                </Button>}
+                        </div>
+                    </div>
                 </form>
             ) : (
                 <div>Loading ...</div>
