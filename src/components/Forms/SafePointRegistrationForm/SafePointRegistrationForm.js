@@ -1,14 +1,30 @@
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import {useFormik} from "formik";
 import {safePointRegistrationSchema} from "../../../Helpers/Validation/SafepointRegistrationFormValidation";
 import React, {useState} from 'react';
 import FileUploadCard from "../../Cards/FIleUploadCard/fileUploadCard";
 import {v4 as uuidv4} from "uuid";
 import {submitSafepointApplication, uploadProofOfSafePoint} from "../../../model/db/DB";
+import {Link} from "react-router-dom";
+
+const useStyles = makeStyles({
+    container: {
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: '100%',
+        overflow: 'auto',
+    },
+    link: {
+        textDecoration: 'none',
+        color: 'white'
+    },
+})
 
 export default function SafePointRegistrationForm({setIsSubmitted}) {
     const [file, setFile] = useState(null);
     const [fileError, setFileError] = useState("You have to provide proof");
+    const classes = useStyles();
 
     const onSubmit = async () => {
         if (file === null) {
@@ -56,7 +72,11 @@ export default function SafePointRegistrationForm({setIsSubmitted}) {
     })
 
     return (
-        <form onSubmit={handleSubmit} autoComplete={"off"}>
+        <form onSubmit={handleSubmit} autoComplete={"off"} className={classes.container}>
+
+            <h4> Please fill out the form below....</h4>
+
+
             <TextField
                 error={!!(errors.businessName && touched.businessName)}
                 label={errors.businessName && touched.businessName ? "Invalid Name" : "Registered Business Name"}
@@ -121,30 +141,12 @@ export default function SafePointRegistrationForm({setIsSubmitted}) {
                     inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
                 }}/>
 
-            <FileUploadCard setFile={setFile}/>
-
-            <TextField
-                error={!!(errors.reasonForApplying && touched.reasonForApplying)}
-                label={errors.reasonForApplying && touched.reasonForApplying ? "Invalid Reason" : "Please enter you reason for applying"}
-                helperText={errors.reasonForApplying && touched.reasonForApplying ? errors.reasonForApplying : " "}
-                value={values.reasonForApplying}
-                variant="filled"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={"textField"}
-                id={"reasonForApplying"}
-                placeholder={"Please enter you reason for applying"}
-                InputProps={{
-                    disableUnderline: true,
-                    inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
-                }}/>
-
             <TextField
                 error={!!(errors.checkInPhrase && touched.checkInPhrase)}
-                label={errors.checkInPhrase && touched.checkInPhrase ? "Invalid Phrase" : "Please Enter a phrase you would set if a person was to try and check in at your safepoint"}
+                label={errors.checkInPhrase && touched.checkInPhrase ? "Invalid Phrase" : "Safe Point Password Phrase"}
                 helperText={errors.checkInPhrase && touched.checkInPhrase ? errors.checkInPhrase : " "}
                 value={values.checkInPhrase}
-                variant="filled"
+                variant={"filled"}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 className={"textField"}
@@ -219,8 +221,26 @@ export default function SafePointRegistrationForm({setIsSubmitted}) {
                     inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
                 }}/>
 
+            <TextField
+                error={!!(errors.reasonForApplying && touched.reasonForApplying)}
+                label={errors.reasonForApplying && touched.reasonForApplying ? "Invalid Reason" : "Please enter you reason for applying"}
+                helperText={errors.reasonForApplying && touched.reasonForApplying ? errors.reasonForApplying : " "}
+                value={values.reasonForApplying}
+                multiline={true}
+                minRows={8}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={"textField"}
+                id={"reasonForApplying"}
+                placeholder={"Please enter you reason for applying"}
+                InputProps={{
+                    disableUnderline: true,
+                    inputProps: {style: {backgroundColor: 'white', borderRadius: '10px'}}
+                }}/>
 
-            <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}><b>Apply</b></Button>
+            <FileUploadCard setFile={setFile}/>
+            <Button type={"submit"} variant={"contained"} size={"large"}><b>Apply</b></Button>
+            <Link to={"/"} className={classes.link}><p>Cancel</p></Link>
         </form>
     );
 }

@@ -1,4 +1,4 @@
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import UserContext from "../../../contexts/Auth/authContext";
 import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
@@ -8,10 +8,20 @@ import {updateProfileOnRegister} from "../../../model/db/DB";
 import {useContext, useState} from "react";
 import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 
+
+const useStyles = makeStyles({
+    img: {
+        height: "180px",
+        width: "180px",
+        paddingTop: "60px"
+    }
+})
+
 export default function RegistrationForm() {
     const {createUser} = useContext(UserContext)
     const navigate = useNavigate()
     const [error, setError] = useState(null);
+    const classes = useStyles();
 
     const onSubmit = async () => {
         try {

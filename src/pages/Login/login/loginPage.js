@@ -4,7 +4,7 @@ import LoginForm from "../../../components/Forms/loginForm/loginForm";
 import {useContext, useEffect, useState} from "react";
 import PasswordResetForm from "../../../components/Forms/PasswordResetForm/passwordResetForm";
 import UserContext from "../../../contexts/Auth/authContext";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 const useStyles = makeStyles({
     container: {
@@ -21,6 +21,11 @@ const useStyles = makeStyles({
         bottom: '5%',
         width: '100%',
     },
+    img: {
+        height: "180px",
+        width: "180px",
+        paddingTop: "60px"
+    }
 })
 
 function LoginPage() {
@@ -52,7 +57,7 @@ function LoginPage() {
             ) : (
                 <div className={classes.container}>
                     <div>
-                        <img src={require("../../../assets/Airdeall.png")} alt={""}/>
+                        <img className={classes.img} src={require("../../../assets/Airdeall.png")} alt={""}/>
                     </div>
 
                     <div className={classes.footer}>
@@ -66,7 +71,6 @@ function LoginPage() {
                                 <LoginForm onClick={showForm}/>
                             </div>
                         )}
-                        <Link to={"/"} className={classes.link}><p>Cancel</p></Link>
                     </div>
                 </div>
             )}

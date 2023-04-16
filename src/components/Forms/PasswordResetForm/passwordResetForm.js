@@ -1,13 +1,28 @@
 import {useFormik} from "formik";
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import {passwordResetValidationSchema} from "../../../Helpers/Validation/PasswordResetValidation";
 import {useContext, useState} from "react";
 import UserContext from "../../../contexts/Auth/authContext";
 import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
 
+const useStyles = makeStyles({
+    button: {
+        marginTop: '20px',
+        backgroundColor: 'white',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: '5%',
+    },
+})
+
 export default function PasswordResetForm({onClick}) {
     const {sendResetEmail} = useContext(UserContext)
     const [error, setError] = useState(null);
+    const classes = useStyles();
     const onSubmit = async () => {
         try {
             await sendResetEmail(values.email);
@@ -42,6 +57,7 @@ export default function PasswordResetForm({onClick}) {
                     {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
                 </div>
 
+                <h1>Password Reset</h1>
                 <p>Please enter your email address below</p>
 
                 <div>
@@ -63,9 +79,8 @@ export default function PasswordResetForm({onClick}) {
                         }}/>
                 </div>
 
-                <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}><b>Send
-                    Password Reset
-                    Email</b></Button>
+                <Button className={classes.button} type={"submit"} variant={"contained"}
+                        size={"large"}><b>Submit</b></Button>
 
                 <p onClick={handleCancel}>Cancel</p>
 

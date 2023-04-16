@@ -8,7 +8,6 @@ const useStyles = makeStyles({
         textAlign: 'center',
         display: 'block',
         fontFamily: "Raleway",
-
         height: '100%',
         overflow: 'auto',
     },
@@ -16,6 +15,12 @@ const useStyles = makeStyles({
         textDecoration: 'none',
         color: 'white'
     },
+    img: {
+        height: "180px",
+        width: "180px",
+        paddingTop: "60px",
+        paddingBottom: "50px",
+    }
 })
 
 function RegistrationPage() {
@@ -23,7 +28,7 @@ function RegistrationPage() {
     return (
         <div className={classes.container}>
             <div>
-                <img src={require("../../assets/Airdeall.png")} alt={""}/>
+                <img className={classes.img} src={require("../../assets/Airdeall.png")} alt={""}/>
             </div>
             <RegistrationForm/>
             <Link to={"/login"} className={classes.link}><p>Already a user ? Login here</p></Link>

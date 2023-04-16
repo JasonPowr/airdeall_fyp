@@ -1,4 +1,4 @@
-import {Button, TextField} from "@material-ui/core";
+import {Button, makeStyles, TextField} from "@material-ui/core";
 import UserContext from "../../../contexts/Auth/authContext";
 import {Link, useNavigate} from "react-router-dom";
 import {loginSchema} from "../../../Helpers/Validation/LoginValidation";
@@ -6,11 +6,37 @@ import {useFormik} from "formik";
 import "./loginForm.css"
 import {useContext, useState} from "react";
 import {ErrorDialog} from "../../Popup/ErrorPopup/ErrorPopUp";
+import GoogleButton from 'react-google-button'
+
+
+const useStyles = makeStyles({
+    googleBtn: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    link: {
+        textDecoration: 'none',
+        color: 'white'
+    },
+    button: {
+        marginTop: '20px',
+        backgroundColor: 'white',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: '5%',
+    },
+})
 
 export default function LoginForm({onClick}) {
     const {logIn, loginWithGoogle} = useContext(UserContext)
     const navigate = useNavigate()
     const [error, setError] = useState(null);
+    const classes = useStyles();
 
     const onSubmit = async () => {
         try {
@@ -50,17 +76,7 @@ export default function LoginForm({onClick}) {
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
 
-            <div>
-                {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
-            </div>
-
-            <p>Continue with </p>
-
-            <div>
-                <Button onClick={handleGoogleAuth}>Google</Button>
-            </div>
-
-            <p> Or </p>
+            {error && <ErrorDialog message={error} onCloseClick={handleCloseError}/>}
 
             <div>
                 <TextField
@@ -100,9 +116,16 @@ export default function LoginForm({onClick}) {
                     }}/>
             </div>
 
-            <Button className={"button"} type={"submit"} variant={"contained"} size={"large"}><b>Login</b></Button>
+            <Button className={classes.button} type={"submit"} variant={"contained"}
+                    size={"large"}><b>Login</b></Button>
             <p onClick={handlePasswordResetClick}>Forgot Password ?</p>
-            <Link to={"/register"}><p>Not a User? Register Here....</p></Link>
+            <Link to={"/register"} className={classes.link}><p>Not a User? Register Here</p></Link>
+
+            <div className={classes.googleBtn}>
+                <GoogleButton onClick={handleGoogleAuth}/>
+            </div>
+
         </form>
     );
 }
+//https://www.npmjs.com/package/react-google-button

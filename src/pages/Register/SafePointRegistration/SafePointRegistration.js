@@ -1,12 +1,23 @@
 import SafePointRegistrationForm from "../../../components/Forms/SafePointRegistrationForm/SafePointRegistrationForm";
 import {Link} from "react-router-dom";
 import {useState} from "react";
-import "./SafePointReg.css"
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    container: {
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: '100%',
+        overflow: 'auto',
+    },
+})
 
 function SafePointRegistrationPage() {
+    const classes = useStyles();
     const [submitted, setIsSubmitted] = useState(false)
     return (
-        <div className={"safePoint-reg"}>
+        <div className={classes.container}>
             {submitted ? (
                 <div>
                     <p>Submitted</p>
@@ -14,11 +25,8 @@ function SafePointRegistrationPage() {
                 </div>
 
             ) : (
-
-                <div>
-                    <h4> Please fill out the form below....</h4>
+                <div className={classes.container}>
                     <SafePointRegistrationForm setIsSubmitted={setIsSubmitted}/>
-                    <Link to={"/"}><p>Cancel</p></Link>
                 </div>
             )}
 
