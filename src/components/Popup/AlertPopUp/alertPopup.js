@@ -5,12 +5,22 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import {Box, CircularProgress, DialogTitle, Typography} from "@mui/material";
 import {CancelAlert} from "../../Alerts/activateAlert";
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    activeAlertPopup: {
+        alignContent: "center",
+        justifyContent: "center",
+        textAlign: "center"
+    },
+})
 
 export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCountdown, setAlertInCountdown}) {
     let time = 0;
     let [timer, setTimer] = useState(0);
     let countdownTimer = useRef(null);
     let countdownTimeout = useRef(null);
+    const classes = useStyles();
 
     function startCountdown() {
 
@@ -41,10 +51,11 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
         startCountdown()
         return (
             <Dialog
+                className={classes.activeAlertPopup}
                 open={isAlertInCountdown}
             >
                 <DialogTitle>
-                    {"Alert In Countdown"}
+                    {alert && alert.title} is in Countdown
                 </DialogTitle>
 
                 <Box>
@@ -52,7 +63,6 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
                     <Typography
                         variant="caption"
                         component="div"
-                        color="text.secondary"
                     >{timer}s</Typography>
                 </Box>
 
@@ -68,7 +78,7 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
         return (
             <Dialog open={isAlertActive}>
                 <DialogTitle>
-                    {"Alert Activated"}
+                    {alert && alert.title} is Active
                 </DialogTitle>
 
                 <DialogActions>
