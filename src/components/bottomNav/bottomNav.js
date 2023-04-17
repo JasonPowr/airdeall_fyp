@@ -1,8 +1,6 @@
 import React from 'react'
 import {BottomNavigation, BottomNavigationAction, makeStyles} from "@material-ui/core";
 import {Home, Info, Map, PeopleRounded} from "@material-ui/icons";
-import "./bottomNav.css"
-
 import {Link as RouterLink} from 'react-router-dom';
 
 const useStyles = makeStyles({
@@ -16,6 +14,8 @@ const useStyles = makeStyles({
         opacity: "80%",
         borderTopLeftRadius: '20px',
         borderTopRightRadius: '20px',
+        height: "10%",
+        maxHeight: "75px",
     },
     icons: {
         color: "#4d41b4",
@@ -27,10 +27,12 @@ export default function BottomNav({value}) {
 
     return (
         <BottomNavigation showLabels value={value} className={classes.bottom_nav}>
-            <BottomNavigationAction component={RouterLink} label="Home" icon={<Home/>} to="/alerts"/>
-            <BottomNavigationAction component={RouterLink} label="Maps" icon={<Map/>} to="/maps"/>
-            <BottomNavigationAction component={RouterLink} label="Info" icon={<Info/>} to="/info"/>
-            <BottomNavigationAction component={RouterLink} label="Profile" icon={<PeopleRounded/>} to="/profile"/>
+            <BottomNavigationAction component={RouterLink} label="Home" icon={<Home fontSize={"medium"}/>}
+                                    to="/alerts"/>
+            <BottomNavigationAction component={RouterLink} label="Maps" icon={<Map fontSize={"medium"}/>} to="/maps"/>
+            <BottomNavigationAction component={RouterLink} label="Info" icon={<Info fontSize={"medium"}/>} to="/info"/>
+            <BottomNavigationAction component={RouterLink} label="Profile" icon={<PeopleRounded fontSize={"medium"}/>}
+                                    to="/profile"/>
         </BottomNavigation>
     );
 }

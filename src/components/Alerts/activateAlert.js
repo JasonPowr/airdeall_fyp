@@ -2,7 +2,7 @@ import sound from "../../assets/sounds/alarm1.mp3"
 import {startRecording, stopRecording, toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
 import {getLocation} from "../Maps/maps";
 import {auth, db} from "../../firebase";
-import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
+import {deleteDoc, doc, setDoc} from "firebase/firestore";
 import {v4 as uuidv4} from "uuid";
 import {createPost} from "../Socials/facebook/facebook";
 import {addAlertHistory} from "../../model/db/DB";
@@ -78,9 +78,12 @@ export const CancelAlert = ({alert}) => {
     if (alert.isInCountdown) {
         clearTimeout(alertCountdown);
     } else {
+
         alert.isInCountdown = false
         clearTimeout(locationUpdates)
+
         const alertHistoryId = generateIdFoHistory()
+
         if (alert.flashlight) {
             clearInterval(flashlightTrigger)
         }
@@ -93,6 +96,7 @@ export const CancelAlert = ({alert}) => {
         if (alert.automaticRecording) {
             cancelRecording(alertHistoryId)
         }
+
         const end = new Date();
         let timeEnd = end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds();
         addAlertHistory(alert.id, generateAlertHistory(alert, alertHistoryId, history_locationUpdates, timeEnd)).then(r => {
@@ -115,14 +119,14 @@ const validateNumber = (phoneNumber) => {
 
 const sendSMS = async (messageBody, contact_1, contact_2, contact_3) => {
     if (contact_1 !== false) {
-        const contact1 = await validateNumber(contact_1.phone);
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
-        const requestOptions = {
-            method: 'GET',
-            mode: 'no-cors'
-        };
-        fetch(url, requestOptions)
-            .catch(error => console.error(error));
+        // const contact1 = await validateNumber(contact_1.phone);
+        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
+        // const requestOptions = {
+        //     method: 'GET',
+        //     mode: 'no-cors'
+        // };
+        // fetch(url, requestOptions)
+        //     .catch(error => console.error(error));
     }
 
     if (contact_2 !== false) {
@@ -162,17 +166,17 @@ const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locati
     await sendSMS(messageBody, contact_1, contact_2, contact_3)
 
     if (proximitySMS) {
-        const userLocation = await getLocation()
-        const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
-
-        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
-            `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
-        const requestOptions = {
-            method: 'GET',
-            mode: 'no-cors'
-        };
-        fetch(url, requestOptions)
-            .catch(error => console.error(error));
+        // const userLocation = await getLocation()
+        // const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
+        //
+        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
+        //     `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
+        // const requestOptions = {
+        //     method: 'GET',
+        //     mode: 'no-cors'
+        // };
+        // fetch(url, requestOptions)
+        //     .catch(error => console.error(error));
     }
 
     if (recurringLocationInfo) {
@@ -180,7 +184,7 @@ const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locati
             const location = await getLocation()
             history_locationUpdates.push(location)
             messageBody = ` Location Update: https://maps.google.com/?q=${location.lat},${location.lng}`
-            await sendSMS(messageBody, contact_1, contact_2, contact_3)
+            // await sendSMS(messageBody, contact_1, contact_2, contact_3)
         }, 30000);
     }
 

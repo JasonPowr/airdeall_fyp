@@ -1,15 +1,52 @@
-import "./alertViewPage.css"
 import BottomNav from "../../../components/bottomNav/bottomNav";
 import {useLocation, useNavigate} from "react-router-dom";
 import {deleteAlert, getAlertById, getAllAlertHistory} from "../../../model/db/DB";
 import React, {useEffect, useState} from "react";
 import {auth} from "../../../firebase";
-import {ArrowBack, Delete, Edit, Sort} from "@material-ui/icons";
+import {ArrowDownward, ArrowUpward, Delete, Edit} from "@material-ui/icons";
 import ContactCard from "../../../components/Cards/ContactCard/contactCard";
 import AlertHistoryCard from "../../../components/Cards/AlertHistoryCard/AlertHistoryCard";
 import {Stack, Typography} from "@mui/material";
 import ConfirmationPopup from "../../../components/Popup/DeleteConfirmationPopup/ConfirmationPopup";
 import {deleteAlertFromLocalStorage} from "../../../model/local/localStorage";
+import {Button, makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    container: {
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        overflow: "auto",
+        height: "92.60%",
+    },
+    alertInfo: {
+        marginTop: "30px",
+        margin: "auto",
+        fontSize: "25px",
+        width: "90%",
+        maxWidth: "700px",
+        borderRadius: "20px",
+        height: "100px"
+    },
+    button: {
+        backgroundColor: 'white !important',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: "20px",
+        marginRight: "20px",
+    },
+    historyHeaders: {
+        display: "flex",
+        justifyContent: "space-evenly",
+        margin: "auto",
+        paddingBottom: "20px",
+        maxWidth: "350px"
+    }
+})
 
 function AlertViewPage() {
     const location = useLocation();
@@ -18,6 +55,7 @@ function AlertViewPage() {
     const [alertHistory, setAlertHistory] = useState([])
     const [contacts, setContacts] = useState(null)
     const [openDeleteAlertConfirmation, setOpenDeleteAlertConfirmation] = useState(false);
+    const classes = useStyles();
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -61,10 +99,6 @@ function AlertViewPage() {
         navigate(`/${alert.id}/edit_alert`, {state: {alertId: alert.id}});
     }
 
-    function handleBack() {
-        navigate("/alerts");
-    }
-
     if (alert == null) return <div>
         <div>Loading...</div>
         <div><BottomNav/></div>
@@ -103,17 +137,11 @@ function AlertViewPage() {
     }
 
     return (
-        <div className={"alert_view-page"}>
-            <header>
-                <ArrowBack onClick={handleBack} fontSize={"large"}/>
-            </header>
+        <div className={classes.container}>
 
-
-            <div className={"alertInfo"}>
-                <h3>Title</h3>
-                <p>{alert.title}</p>
-                <h3>Description</h3>
-                <p>{alert.description}</p>
+            <div className={classes.alertInfo}>
+                <p><b>{alert.title}</b></p>
+                <p><b>{alert.description}</b></p>
             </div>
 
             <div>
@@ -129,25 +157,25 @@ function AlertViewPage() {
                 )}
             </div>
 
-            <div className={"crud"}>
-                <Delete onClick={handleDelete} fontSize={"inherit"}></Delete>
-                <Edit onClick={handleEdit} fontSize={"inherit"}></Edit>
-            </div>
 
-            <div className={"alertHistory"}>
-                <p>Alert History</p>
-
+            <div>
                 {alertHistory.length > 0 ? (
                     <div>
-                        <Stack onClick={sortListByMostRecent} direction="row" alignItems="center" gap={1}>
-                            <Sort/>
-                            <Typography variant="body1">Most Recent</Typography>
-                        </Stack>
+                        <h3><u>Alert History</u></h3>
 
-                        <Stack onClick={sortListByLeastRecent} direction="row" alignItems="center" gap={1}>
-                            <Sort/>
-                            <Typography variant="body1">Least Recent</Typography>
-                        </Stack>
+                        <div className={classes.historyHeaders}>
+
+                            <Stack onClick={sortListByMostRecent} direction="row" alignItems="center" gap={1}>
+                                <ArrowUpward/>
+                                <Typography variant="body1">Most Recent</Typography>
+                            </Stack>
+
+                            <Stack onClick={sortListByLeastRecent} direction="row" alignItems="center" gap={1}>
+                                <ArrowDownward/>
+                                <Typography variant="body1">Least Recent</Typography>
+                            </Stack>
+
+                        </div>
 
                         {alertHistory.map((index) =>
                             <AlertHistoryCard key={index.alertHistory.id} alertHistory={index.alertHistory}
@@ -168,7 +196,12 @@ function AlertViewPage() {
                                    context={"delete this Alert"}/>
             )}
 
-            <div><BottomNav/></div>
+            <div>
+                <Button className={classes.button} onClick={handleDelete} fontSize={"large"}> <Delete/></Button>
+                <Button className={classes.button} onClick={handleEdit} fontSize={"large"}> <Edit/></Button>
+            </div>
+
+            <div><BottomNav value={0}/></div>
         </div>
     );
 }
