@@ -1,11 +1,32 @@
 import {useContext, useEffect, useState} from "react";
 import {auth} from "../../firebase";
-import {Button} from "@material-ui/core";
+import {Button, makeStyles} from "@material-ui/core";
 import UserContext from "../../contexts/Auth/authContext";
 import {loginWithFacebook, logoutWithFacebook} from "../Socials/facebook/facebook";
 import EnterPasswordPopup from "../Popup/EnterPasswordPopup/EnterPasswordPopup";
 import ConfirmationPopup from "../Popup/DeleteConfirmationPopup/ConfirmationPopup";
 import {deleteUserData} from "../../model/db/DB";
+import {FacebookLoginButton} from "react-social-login-buttons";
+
+const useStyles = makeStyles({
+    facebook_Btn: {
+        width: "80%",
+        maxWidth: "400px",
+        paddingTop: "20px",
+        margin: "auto"
+    },
+    button: {
+        marginTop: '20px',
+        backgroundColor: 'white !important',
+        color: 'black',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        marginBottom: '2%',
+    },
+})
 
 export function Settings() {
     const [user, setUser] = useState(null);
@@ -16,6 +37,7 @@ export function Settings() {
         deleteUserAccount
     } = useContext(UserContext)
     const [isFacebookLinked, setIsFacebookLinked] = useState(false);
+    const classes = useStyles();
 
     const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
     const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
@@ -102,12 +124,18 @@ export function Settings() {
         <div>
             {user && (
                 <div>
-                    {isFacebookLinked ? (
-                        <Button onClick={handleFacebookUnlink}>Unlink Facebook Account</Button>
-                    ) : (
-                        <Button onClick={handleFacebookLink}>Link Facebook Account</Button>
-                    )}
-                    <Button onClick={handleDeleteUser}>Delete Account</Button>
+
+                    <div className={classes.facebook_Btn}>
+                        {isFacebookLinked ? (
+                            <FacebookLoginButton onClick={handleFacebookUnlink}>Unlink Facebook
+                                Account</FacebookLoginButton>
+                        ) : (
+                            <FacebookLoginButton onClick={handleFacebookLink}>Link Facebook
+                                Account</FacebookLoginButton>
+                        )}
+                    </div>
+
+                    <Button className={classes.button} onClick={handleDeleteUser}><b>Delete Account</b></Button>
 
                     {openPasswordDialog && (
                         <EnterPasswordPopup

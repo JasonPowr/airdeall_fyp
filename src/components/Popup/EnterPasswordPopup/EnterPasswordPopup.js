@@ -5,7 +5,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import {useFormik} from "formik";
 
 export default function EnterPasswordPopup({openPasswordDialog, setOpenPasswordDialog, handleReturnedPassword}) {
@@ -27,7 +26,6 @@ export default function EnterPasswordPopup({openPasswordDialog, setOpenPasswordD
     return (
         <div>
             <Dialog open={openPasswordDialog} onClose={handleClose}>
-                <DialogTitle>Delete Account</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Please confirm your password to continue

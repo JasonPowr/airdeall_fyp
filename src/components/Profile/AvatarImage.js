@@ -17,7 +17,7 @@ export function AvatarImage({size}) {
     return (
         <div>
             {user && (
-                <div>
+                <div style={{paddingTop: "10px"}}>
                     <Avatar
                         name={user.displayName}
                         src={user.photoURL}
