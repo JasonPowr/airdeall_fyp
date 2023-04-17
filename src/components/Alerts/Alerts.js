@@ -7,7 +7,7 @@ import AlertCard from "../Cards/AlertCard/AlertCard";
 import {AlertDialog} from "../Popup/AlertPopUp/alertPopup";
 import UserContext from "../../contexts/Auth/authContext";
 import {HandleVoiceActivationOnLoad, stopTranscribing} from "../SpeechRecognition/SpeechRecognition";
-import {makeStyles} from "@material-ui/core";
+import {Button, makeStyles} from "@material-ui/core";
 import {useNavigate} from "react-router-dom";
 import {getStoredAlerts, setAlertsInStorage} from "../../model/local/localStorage";
 import {AddAlert, AlarmOff} from "@material-ui/icons";
@@ -155,8 +155,10 @@ function Alerts() {
                         <h1><b><u>Your Alerts</u></b></h1>
 
                         <div className={classes.add_alert} onClick={handleCreate}>
-                            <p>Create Alert</p>
-                            <AddAlert fontSize={"large"} style={{color: "white"}}/>
+                            <Button style={{color: "white"}}>
+                                <p>Create Alert</p>
+                                <AddAlert fontSize={"large"} style={{color: "white"}}/>
+                            </Button>
                         </div>
 
                         <div className={classes.popUp_container}>

@@ -1,4 +1,4 @@
-import {ArrowBack, Check} from "@material-ui/icons";
+import {ArrowBack, Check, LocationOff, VideocamOff} from "@material-ui/icons";
 import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {auth} from "../../../firebase";
@@ -7,6 +7,42 @@ import VideoCard from "../../../components/Cards/VideoCard/VideoCard";
 import SubmitAlertIncidentToMap from "../../../components/Forms/SubmitAlertIncidentToMapForm/SubmitAlertIncidentToMap";
 import {Fab} from "@mui/material";
 import {useLoadScript} from "@react-google-maps/api";
+import {makeStyles} from "@material-ui/core";
+import BottomNav from "../../../components/bottomNav/bottomNav";
+
+const useStyles = makeStyles({
+    container: {
+        paddingTop: "20px",
+        textAlign: 'center',
+        display: 'block',
+        fontFamily: "Raleway",
+        height: "90%",
+        overflow: "auto",
+        justifyContent: "space-evenly"
+    },
+    arrowBack: {
+        position: 'fixed',
+        left: "20px",
+        top: "20px",
+    },
+    map: {
+        width: "90%",
+        maxWidth: "400px",
+    },
+    video_div: {
+        marginTop: "80px",
+        marginBottom: "80px"
+    },
+    location_div: {
+        margin: "auto"
+    },
+    submit_form: {
+        paddingTop: "50px",
+        alignContent: "center",
+        paddingBottom: "50px",
+    }
+
+})
 
 export default function AlertHistoryViewPage() {
     const location = useLocation();
@@ -22,6 +58,7 @@ export default function AlertHistoryViewPage() {
     const [showRecurring, setShowRecurring] = useState(false)
     const [recurringAlertLocations, setRecurringAlertLocations] = useState()
     const [encodedPath, setEncodedPath] = useState(null);
+    const classes = useStyles();
 
     useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -103,23 +140,22 @@ export default function AlertHistoryViewPage() {
     }
 
     return (
-        <div className={"createAlertPage"}>
-            <header>
-                <ArrowBack onClick={handleBack} fontSize={"large"}/>
-            </header>
+        <div className={classes.container}>
             {alertHistory != null ? (
-
                 <div>
+
+                    <div className={classes.arrowBack}>
+                        <ArrowBack fontSize={"large"} onClick={handleBack}/>
+                    </div>
+
                     <h3>Time & Date</h3>
 
                     <p>Start Time :{alertHistory.timeStart}</p>
                     <p>End Time :{alertHistory.timeEnd}</p>
 
-                    <div>
-                        <h3>Recordings</h3>
+                    <div className={classes.video_div}>
                         {alertHistory.alert.automaticRecording ? (
                             <div>
-                                <p>Videos</p>
                                 {video != null ? (
                                     <VideoCard video={video}/>
                                 ) : (
@@ -128,59 +164,70 @@ export default function AlertHistoryViewPage() {
                             </div>
                         ) : (
                             <div>
+                                <h3>Alert Recording</h3>
+                                <VideocamOff/>
                                 <p>Video Recording Not Enabled</p>
                             </div>
 
                         )}
                     </div>
 
-                    <div>
+                    <div className={classes.location_div}>
                         <h3>Location Information</h3>
                         {(alertHistory.alert.includeOnPublicMap || alertHistory.alert.sms.locationInfo || alertHistory.alert.sms.recurringLocationInfo) ? (
                             <div>
+
                                 <div>
+
                                     {(alertHistory.alert.sms.recurringLocationInfo && showRecurring && encodedPath && recurringAlertLocations) && (
                                         <img
+                                            className={classes.map}
                                             src={`https://maps.googleapis.com/maps/api/staticmap?size=400x400&markers=color:red|${recurringAlertLocations[0]}&markers=color:red|${recurringAlertLocations[recurringAlertLocations.length - 1]}&center=${alertLocation}&zoom=12&path=weight:12%7Ccolor:red%7Cenc:${encodedPath}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
                                             alt={"alertLocation"}
                                         />
                                     )}
+
                                 </div>
 
                                 <div>
                                     {((alertHistory.alert.includeOnPublicMap || alertHistory.alert.sms.locationInfo) && !showRecurring) && (
                                         <div>
-                                            {isSubmitted ? (
-                                                <Fab
-                                                    aria-label="save"
-                                                    color="primary"
-                                                >
-                                                    <Check/>
-                                                </Fab>
-                                            ) : (
-                                                <div>
+                                            <div>
+                                                {alertLocation && (
+                                                    <img
+                                                        className={classes.map}
+                                                        src={`https://maps.googleapis.com/maps/api/staticmap?center=${alertLocation}&zoom=13&size=400x400&markers=color:red|${alertLocation}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                                                        alt={"alertLocation"}
+                                                    />
+                                                )}
+                                            </div>
 
-                                                    {alertLocation && (
-                                                        <img
-                                                            src={`https://maps.googleapis.com/maps/api/staticmap?center=${alertLocation}&zoom=13&size=400x400&markers=color:red|${alertLocation}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                                                            alt={"alertLocation"}
-                                                        />
-                                                    )}
-
-                                                    <SubmitAlertIncidentToMap alert={alertHistory.alert}
-                                                                              setIsSubmitted={setIsSubmitted}
-                                                                              alertHistory={alertHistory}
-                                                                              incidentReport={incidentReport}
-                                                                              setIncidentReport={setIncidentReport}/>
-                                                </div>
-                                            )}
+                                            <div className={classes.submit_form}>
+                                                {isSubmitted ? (
+                                                    <Fab
+                                                        aria-label="save"
+                                                        color="primary"
+                                                    >
+                                                        <Check/>
+                                                    </Fab>
+                                                ) : (
+                                                    <div>
+                                                        <SubmitAlertIncidentToMap alert={alertHistory.alert}
+                                                                                  setIsSubmitted={setIsSubmitted}
+                                                                                  alertHistory={alertHistory}
+                                                                                  incidentReport={incidentReport}
+                                                                                  setIncidentReport={setIncidentReport}/>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         ) : (
                             <div>
-                                Location Information Not Enabled
+                                <LocationOff/>
+                                <p>Location Information Not Enabled</p>
                             </div>
                         )}
                     </div>
@@ -188,6 +235,7 @@ export default function AlertHistoryViewPage() {
             ) : (
                 <p>Loading ....</p>
             )}
+            <BottomNav value={0}/>
         </div>
     );
 }

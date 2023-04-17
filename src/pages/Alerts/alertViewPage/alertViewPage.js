@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {deleteAlert, getAlertById, getAllAlertHistory} from "../../../model/db/DB";
 import React, {useEffect, useState} from "react";
 import {auth} from "../../../firebase";
-import {ArrowDownward, ArrowUpward, Delete, Edit} from "@material-ui/icons";
+import {ArrowDownward, ArrowUpward, Delete, Edit, NoSim} from "@material-ui/icons";
 import ContactCard from "../../../components/Cards/ContactCard/contactCard";
 import AlertHistoryCard from "../../../components/Cards/AlertHistoryCard/AlertHistoryCard";
 import {Stack, Typography} from "@mui/material";
@@ -38,6 +38,7 @@ const useStyles = makeStyles({
         textDecoration: 'none',
         marginBottom: "20px",
         marginRight: "20px",
+        marginLeft: "20px"
     },
     historyHeaders: {
         display: "flex",
@@ -45,6 +46,10 @@ const useStyles = makeStyles({
         margin: "auto",
         paddingBottom: "20px",
         maxWidth: "350px"
+    },
+    btn_div: {
+        justifyContent: "space-evenly",
+        margin: "auto",
     }
 })
 
@@ -153,7 +158,10 @@ function AlertViewPage() {
                         ))}
                     </div>
                 ) : (
-                    <div>SMS is not configured for this alert</div>
+                    <div>
+                        <NoSim/>
+                        <p>SMS is not configured for this alert</p>
+                    </div>
                 )}
             </div>
 
@@ -166,13 +174,17 @@ function AlertViewPage() {
                         <div className={classes.historyHeaders}>
 
                             <Stack onClick={sortListByMostRecent} direction="row" alignItems="center" gap={1}>
-                                <ArrowUpward/>
-                                <Typography variant="body1">Most Recent</Typography>
+                                <Button style={{color: "white"}}>
+                                    <ArrowUpward/>
+                                    <Typography variant="body1">Most Recent</Typography>
+                                </Button>
                             </Stack>
 
                             <Stack onClick={sortListByLeastRecent} direction="row" alignItems="center" gap={1}>
-                                <ArrowDownward/>
-                                <Typography variant="body1">Least Recent</Typography>
+                                <Button style={{color: "white"}}>
+                                    <ArrowDownward/>
+                                    <Typography variant="body1">Least Recent</Typography>
+                                </Button>
                             </Stack>
 
                         </div>
@@ -196,7 +208,7 @@ function AlertViewPage() {
                                    context={"delete this Alert"}/>
             )}
 
-            <div>
+            <div className={classes.btn_div}>
                 <Button className={classes.button} onClick={handleDelete} fontSize={"large"}> <Delete/></Button>
                 <Button className={classes.button} onClick={handleEdit} fontSize={"large"}> <Edit/></Button>
             </div>

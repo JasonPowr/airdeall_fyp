@@ -1,13 +1,34 @@
 import React from "react";
-import {TextField} from "@material-ui/core";
+import {makeStyles, TextField} from "@material-ui/core";
 import {useFormik} from "formik";
 import Button from "@mui/material/Button";
 import {incidentReportSchema} from "../../../Helpers/Validation/incidentReportSchema";
 import {addPublicAlert, deleteIncidentReport, updateAlertHistory, updateIncidentReport} from "../../../model/db/DB";
 
+
+const useStyles = makeStyles({
+    button: {
+        marginTop: '20px',
+        backgroundColor: 'white !important',
+        color: 'black !important',
+        fontFamily: 'Raleway',
+        fontSize: '15px',
+        width: '222px',
+        textAlign: 'center',
+        textDecoration: 'none',
+    },
+    btn_div: {
+        paddingTop: "20px",
+        margin: "auto",
+        paddingBottom: "20px",
+    }
+})
+
 function SubmitAlertIncidentToMap({alert, alertHistory, setIsSubmitted, incidentReport, setIncidentReport}) {
+    const classes = useStyles();
 
     const onSubmit = async () => {
+
         let publicAlert = {
             timeStart: alertHistory.timeStart,
             timeEnd: alertHistory.timeEnd,
@@ -61,12 +82,11 @@ function SubmitAlertIncidentToMap({alert, alertHistory, setIsSubmitted, incident
 
     return (
         <form onSubmit={handleSubmit} autoComplete={"off"}>
-            <h4> Would You like to submit this incident to the map</h4>
+            <h1 style={{fontSize: "15px", width: "80%", margin: "auto"}}> Would You like to submit this incident
+                to the map</h1>
 
             <TextField
                 error={!!(errors.incidentReport && touched.incidentReport)}
-                label={errors.incidentReport && touched.incidentReport ? "Invalid Entry" : "Incident Report"}
-                helperText={errors.incidentReport && touched.incidentReport ? errors.incidentReport : " "}
                 value={values.incidentReport}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -83,11 +103,23 @@ function SubmitAlertIncidentToMap({alert, alertHistory, setIsSubmitted, incident
 
             {incidentReport ? (
                 <div>
-                    <Button onClick={handleEdit} variant={"contained"} size={"large"}><b>Edit</b></Button>
-                    <Button onClick={handleDelete} variant={"contained"} size={"large"}><b>Delete</b></Button>
+                    <div className={classes.btn_div}>
+                        <Button className={classes.button} onClick={handleEdit} variant={"contained"}
+                                size={"large"}><b>Edit</b></Button>
+
+                    </div>
+                    <div>
+                        <Button style={{marginBottom: "20px"}} className={classes.button} onClick={handleDelete}
+                                variant={"contained"}
+                                size={"large"}><b>Delete</b></Button>
+                    </div>
                 </div>
             ) : (
-                <div><Button type={"submit"} variant={"contained"} size={"large"}><b>Submit</b></Button></div>
+                <div className={classes.btn_div}>
+                    <Button className={classes.button} type={"submit"}
+                            variant={"contained"}
+                            size={"large"}><b>Submit</b></Button>
+                </div>
             )}
         </form>
     )

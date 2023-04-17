@@ -33,6 +33,7 @@ function LoginPage() {
     const [showPasswordReset, setShowPasswordReset] = useState(false);
     const navigate = useNavigate()
     const {user} = useContext(UserContext)
+    const classes = useStyles();
 
     function showForm(showForm) {
         setShowPasswordReset(showForm)
@@ -50,7 +51,6 @@ function LoginPage() {
         }
     }, [user]);
 
-    const classes = useStyles();
     return (
         <div>
             {user ? (
