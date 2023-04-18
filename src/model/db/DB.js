@@ -214,7 +214,6 @@ export async function deleteVideoFromAlert(alertHistoryId) {
     const alertRecordingRef = ref(storage, `${auth.currentUser.uid}/alertRecordings/${alertHistoryId}`);
 
     await deleteObject(alertRecordingRef).then(() => {
-        console.log("Video Deleted")
     }).catch((error) => {
         console.log(error)
     });
@@ -274,7 +273,6 @@ export function uploadProofOfSafePoint(file, safePointApplicationId) {
     const storageRef = ref(storage, `/safePointReg/${safePointApplicationId}`);
 
     uploadBytes(storageRef, file).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
     });
 }
 

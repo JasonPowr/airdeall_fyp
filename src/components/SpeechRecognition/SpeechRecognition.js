@@ -12,7 +12,6 @@ export const startTranscribing = () => {
         speechRecognition = new SpeechlySpeechRecognition();
         speechRecognition.start();
         isTranscribing = true
-        console.log("start")
 
         return isTranscribing
     } else {
@@ -21,7 +20,6 @@ export const startTranscribing = () => {
 }
 
 export const stopTranscribing = () => {
-    console.log("stop")
     if (isTranscribing) {
         speechRecognition.stop();
     }

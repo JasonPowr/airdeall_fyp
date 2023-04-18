@@ -8,7 +8,6 @@ export function AvatarImage({size}) {
     useEffect(() => {
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log(user)
                 setUser(user)
             }
         })
