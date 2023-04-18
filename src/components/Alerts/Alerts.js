@@ -11,6 +11,7 @@ import {Button, makeStyles} from "@material-ui/core";
 import {useNavigate} from "react-router-dom";
 import {getStoredAlerts, setAlertsInStorage} from "../../model/local/localStorage";
 import {AddAlert, AlarmOff} from "@material-ui/icons";
+import Loading from "../Loading/Loading";
 
 const useStyles = makeStyles({
     popUp_container: {
@@ -209,9 +210,7 @@ function Alerts() {
                 </div>
 
             ) : (
-                <div>
-                    Loading....
-                </div>
+                <Loading/>
             )}
         </div>
     );

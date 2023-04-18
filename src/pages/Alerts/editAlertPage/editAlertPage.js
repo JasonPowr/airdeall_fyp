@@ -5,6 +5,7 @@ import {auth} from "../../../firebase";
 import {getAlertById} from "../../../model/db/DB";
 import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core";
+import Loading from "../../../components/Loading/Loading";
 
 const useStyles = makeStyles({
     container: {
@@ -37,7 +38,7 @@ export default function EditAlertPage() {
     if (alert === null) {
         return (
             <div>
-                <div>Loading...</div>
+                <Loading/>
                 <BottomNav></BottomNav>
             </div>
         )

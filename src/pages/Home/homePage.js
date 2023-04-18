@@ -3,6 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import "@fontsource/raleway";
 import {useContext, useEffect, useState} from "react";
 import UserContext from "../../contexts/Auth/authContext";
+import Loading from "../../components/Loading/Loading";
 
 const useStyles = makeStyles({
     container: {
@@ -61,10 +62,8 @@ function HomePage() {
 
     return (
         <div>
-            {isUserLoading ? (
-                <div>Loading ...</div>
-            ) : isAuthenticated ? (
-                <div>Loading ...</div>
+            {(isUserLoading || isAuthenticated) ? (
+                <Loading/>
             ) : (
                 <div className={classes.container}>
                     <div>

@@ -283,5 +283,20 @@ export async function submitSafepointApplication(safePointApplication) {
     await setDoc(alertRef, safePointApplication, {merge: true});
 }
 
+export async function getAllSafePoints() {
+    const querySnapshot = await getDocs(collection(db, "registeredSafepoints"));
+    const safePoints = [];
+    querySnapshot.forEach((doc) => {
+        safePoints.push({
+            id: doc.id,
+            name: doc.data().name,
+            owner_name: doc.data().OwnerName,
+            location: new GeoPoint(doc.data().Location._lat, doc.data().Location._long),
+            phrase: doc.data().phrase
+        })
+    });
+    return safePoints
+}
+
 
 

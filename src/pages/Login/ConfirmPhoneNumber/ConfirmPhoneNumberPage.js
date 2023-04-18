@@ -105,7 +105,7 @@ function ConfirmPhoneNumberPage() {
 
 
             {smsSent ? (
-                <form onSubmit={handleSubmit} autoComplete={"off"}>
+                <form onSubmit={handleSubmit} autoComplete={"off"} className={classes.container}>
                     <p>Please enter the 6 figure verification code you should have received, if no code has been
                         received you can try to resend the code.</p>
 

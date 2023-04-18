@@ -7,6 +7,7 @@ import {AvatarImage} from "./AvatarImage";
 import {ProfileInfo} from "./ProfileInfo";
 import {Settings} from "./Settings";
 import ConfirmationPopup from "../Popup/DeleteConfirmationPopup/ConfirmationPopup";
+import Loading from "../Loading/Loading";
 
 const useStyles = makeStyles({
     info_div: {
@@ -79,7 +80,7 @@ export default function ProfileComponent() {
                 </div>
             ) : (
                 <div>
-                    <>Loading ...</>
+                    <Loading/>
                 </div>
             )}
         </div>

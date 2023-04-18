@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react"
 import "./map.css"
 import {Circle, DirectionsRenderer, GoogleMap, HeatmapLayer, InfoWindow, Marker} from "@react-google-maps/api";
-import {getActiveAlerts, getAllPublicIncidents, updateLocationInDb} from "../../model/db/DB";
+import {getActiveAlerts, getAllPublicIncidents, getAllSafePoints, updateLocationInDb} from "../../model/db/DB";
 import {auth} from "../../firebase";
 import * as geolib from "geolib";
 import {Cancel, Directions} from "@material-ui/icons";
@@ -51,6 +51,7 @@ export default function Map() {
     const [infoWindowContent, setInfoWindowContent] = useState([])
     const [userLocation, setUserLocation] = useState(null);
     const [places, setPlaces] = useState(null);
+    const [safePoints, setSafePoints] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false)
     const [isInProximity, setIsInProximity] = useState(false)
     const [directionsResponse, setDirectionsResponse] = useState(null);
@@ -68,9 +69,13 @@ export default function Map() {
             setActiveAlerts(alert);
         });
 
-        getAllPublicIncidents().then((r) => {
-            setPublicIncidents(r);
+        getAllPublicIncidents().then((publicIncidents) => {
+            setPublicIncidents(publicIncidents);
         });
+
+        getAllSafePoints().then((safePoints) => {
+            setSafePoints(safePoints)
+        })
 
     }, []);
 
@@ -416,6 +421,68 @@ export default function Map() {
                                             </div>
                                         )
                                     }
+                                )}
+                            </div>
+                        )}
+
+                        {safePoints && (
+                            <div>
+                                {safePoints.map((safePoint, index) =>
+                                    <Marker
+                                        icon={{
+                                            url: (require('../../assets/images/mapImages/safePoint.png')),
+                                            scaledSize: new window.google.maps.Size(30, 30),
+                                        }}
+                                        key={index}
+                                        position={{lat: safePoint.location._lat, lng: safePoint.location._long}}
+                                        onClick={() => {
+                                            mapRef.current.panTo({
+                                                lat: safePoint.location._lat,
+                                                lng: safePoint.location._long
+                                            })
+                                            setInfoWindowContent(safePoint)
+                                            showInfoWindow(true)
+                                        }}
+                                    >
+
+                                        {(infoWindow && (infoWindowContent === safePoint)) && (
+                                            <InfoWindow
+                                                options={{
+                                                    position: {
+                                                        lat: infoWindowContent.location._lat,
+                                                        lng: infoWindowContent.location._long
+                                                    },
+                                                }}
+                                                onCloseClick={() => {
+                                                    showInfoWindow(false)
+                                                }}
+                                            >
+
+                                                <div className={"map-infoWindow"}>
+                                                    <h3>{safePoint.name}</h3>
+                                                    <div>
+                                                        <div className={"directions-div"} onClick={() => {
+                                                            handleDirections(userLocation, safePoint.location._lat, safePoint.location._long).then(r => {
+                                                            })
+                                                        }}>
+                                                            <Directions fontSize={"medium"}/>
+                                                            <p>Get Directions</p>
+                                                        </div>
+
+                                                        <div className={"directions-div"} onClick={() => {
+                                                            setDirectionsResponse(null)
+                                                            showInfoWindow(false)
+                                                        }}>
+                                                            <Cancel fontSize={"medium"}/>
+                                                            <p>Cancel</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </InfoWindow>
+                                        )}
+                                    </Marker>
                                 )}
                             </div>
                         )}

@@ -19,6 +19,7 @@ import IncludeOnPublicMap from "./CreateFormComponents/IncludeOnPublicMap";
 import SMSComponent from "./CreateFormComponents/SMSComponent";
 import AlertDetailsComponent from "./CreateFormComponents/AlertDetailsComponent";
 import {addAlertToLocalStorage, updateAlertInLocalStorage} from "../../../model/local/localStorage";
+import Loading from "../../Loading/Loading";
 
 
 const useStyles = makeStyles({
@@ -322,7 +323,7 @@ export default function CreateAlertForm({editAlert}) {
                     </div>
                 </form>
             ) : (
-                <div>Loading ...</div>
+                <Loading/>
             )}
         </div>
     );

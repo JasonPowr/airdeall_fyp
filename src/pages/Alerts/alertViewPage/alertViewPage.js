@@ -104,10 +104,7 @@ function AlertViewPage() {
         navigate(`/${alert.id}/edit_alert`, {state: {alertId: alert.id}});
     }
 
-    if (alert == null) return <div>
-        <div>Loading...</div>
-        <div><BottomNav/></div>
-    </div>
+    if (alert == null) return <div></div>
 
     function sortListByMostRecent() {
         const sortedAlertHistory = [...alertHistory].sort((a, b) => {

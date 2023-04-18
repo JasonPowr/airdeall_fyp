@@ -5,6 +5,7 @@ import {useContext, useEffect, useState} from "react";
 import PasswordResetForm from "../../../components/Forms/PasswordResetForm/passwordResetForm";
 import UserContext from "../../../contexts/Auth/authContext";
 import {useNavigate} from "react-router-dom";
+import Loading from "../../../components/Loading/Loading";
 
 const useStyles = makeStyles({
     container: {
@@ -54,7 +55,7 @@ function LoginPage() {
     return (
         <div>
             {user ? (
-                <div>Loading ....</div>
+                <Loading/>
             ) : (
                 <div className={classes.container}>
                     <div>

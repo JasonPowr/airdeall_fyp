@@ -1,12 +1,14 @@
 import Card from '@mui/material/Card';
-import {CardContent, CardHeader, IconButton} from "@mui/material";
+import {CardContent, CardHeader, IconButton, Snackbar} from "@mui/material";
 import "./AlertCard.css"
 import {Settings, VolumeUp} from "@material-ui/icons";
 import {useNavigate} from "react-router-dom";
 import {Button} from "@material-ui/core";
 import {FireAlertWithCountdown, FireAlertWithoutCountdown} from "../../Alerts/activateAlert";
+import {useState} from "react";
 
 export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAlertInCountdown}) {
+    const [showActivationPhrase, setShowActivationPhrase] = useState(false)
     const navigate = useNavigate()
 
     function handleInfoClickButton() {
@@ -14,7 +16,7 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
     }
 
     function handleDisplayActivationPhrase() {
-        console.log(alert.voiceActivation.voiceActivationPhrase)
+        setShowActivationPhrase(true)
     }
 
     function handleActivateNowClick() {
@@ -45,6 +47,10 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
         }
     }
 
+    function handleClose() {
+        setShowActivationPhrase(false)
+    }
+
     return (
         <Card className={"cards"}>
             <CardHeader
@@ -60,6 +66,17 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
                                 <IconButton onClick={handleDisplayActivationPhrase}>
                                     <VolumeUp/>
                                 </IconButton>
+
+                                {showActivationPhrase && (
+                                    <Snackbar
+                                        open={showActivationPhrase}
+                                        autoHideDuration={2000}
+                                        onClose={handleClose}
+                                        message={`Voice Activation Phrase: ${alert.voiceActivation.voiceActivationPhrase}`}
+
+                                    />
+                                )}
+
                             </div>
                         )}
                     </div>
@@ -69,6 +86,10 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
                 <Button type={"button"} onClick={handleActivateNowClick} size="medium">Activate Now</Button>
                 <Button type={"button"} onClick={handleActivateClick} size="medium">Activate</Button>
             </CardContent>
+
+
         </Card>
     )
 }
+
+//https://mui.com/material-ui/react-snackbar/

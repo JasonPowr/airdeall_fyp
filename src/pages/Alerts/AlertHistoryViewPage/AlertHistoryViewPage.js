@@ -9,6 +9,7 @@ import {Fab} from "@mui/material";
 import {useLoadScript} from "@react-google-maps/api";
 import {makeStyles} from "@material-ui/core";
 import BottomNav from "../../../components/bottomNav/bottomNav";
+import Loading from "../../../components/Loading/Loading";
 
 const useStyles = makeStyles({
     container: {
@@ -159,7 +160,7 @@ export default function AlertHistoryViewPage() {
                                 {video != null ? (
                                     <VideoCard video={video}/>
                                 ) : (
-                                    <p>Loading....</p>
+                                    <Loading/>
                                 )}
                             </div>
                         ) : (
@@ -233,7 +234,7 @@ export default function AlertHistoryViewPage() {
                     </div>
                 </div>
             ) : (
-                <p>Loading ....</p>
+                <></>
             )}
             <BottomNav value={0}/>
         </div>
