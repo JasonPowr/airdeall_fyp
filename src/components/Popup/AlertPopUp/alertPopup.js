@@ -99,9 +99,11 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
                             {alert && alert.title} is Active
                         </DialogTitle>
 
-                        <Typography fontSize={15} paddingBottom={2}>
-                            <b>Closest Safe Points</b>
-                        </Typography>
+                        {(safePointsInProximityForCard.length > 0) && (
+                            <Typography fontSize={15} paddingBottom={2}>
+                                <b>Closest Safe Points</b>
+                            </Typography>
+                        )}
 
                         {safePointsInProximityForCard.map((safePoint, index) => (
                             <SafePointCard key={index} safePoint={safePoint}/>))}
