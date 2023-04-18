@@ -12,6 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {getStoredAlerts, setAlertsInStorage} from "../../model/local/localStorage";
 import {AddAlert, AlarmOff} from "@material-ui/icons";
 import Loading from "../Loading/Loading";
+import BottomNav from "../bottomNav/bottomNav";
 
 const useStyles = makeStyles({
     popUp_container: {
@@ -206,9 +207,8 @@ function Alerts() {
                             isListening={isListening}
                             setIsListening={setIsListening}/>
                     </div>
-
+                    <BottomNav value={0}/>
                 </div>
-
             ) : (
                 <Loading/>
             )}

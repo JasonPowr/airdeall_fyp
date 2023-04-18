@@ -60,7 +60,6 @@ export default function AlertCard({alert, isAlertActive, setIsAlertActive, setAl
                         <IconButton onClick={handleInfoClickButton}>
                             <Settings/>
                         </IconButton>
-
                         {alert.voiceActivation.isEnabled && (
                             <div>
                                 <IconButton onClick={handleDisplayActivationPhrase}>

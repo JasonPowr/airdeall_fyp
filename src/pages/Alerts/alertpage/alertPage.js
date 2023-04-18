@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import "./alertPage.css"
 import {requestCameraAccess} from "../../../components/Camera/camera";
 import {requestLocationPermission} from "../../../components/Maps/maps";
-import BottomNav from "../../../components/bottomNav/bottomNav";
 import Alerts from "../../../components/Alerts/Alerts";
 import {auth} from "../../../firebase";
 import {
@@ -46,7 +45,6 @@ function AlertsPage() {
     return (
         <div className={classes.container}>
             <Alerts/>
-            <BottomNav value={0}/>
         </div>
     );
 }

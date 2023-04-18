@@ -42,6 +42,23 @@ export function getLocation() {
 
 //https://www.freecodecamp.org/news/javascript-promise-tutorial-how-to-resolve-or-reject-promises-in-js/
 
+export async function getClosestSafePoints() {
+    let safePointsInVicinity = []
+    let safePoints = await getAllSafePoints()
+    let userLocation = await getLocation()
+
+    safePoints.map((safePoint) => {
+        const safePointLocation = {lat: safePoint.location._lat, lng: safePoint.location._long}
+        const distance = geolib.getDistance(userLocation, safePointLocation);
+        if (distance <= 2000) {
+            safePointsInVicinity.push(safePoint)
+        }
+    })
+
+    return safePointsInVicinity
+}
+
+
 export default function Map() {
     const mapRef = useRef();
     const [activeAlerts, setActiveAlerts] = useState(null);

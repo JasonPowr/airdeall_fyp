@@ -1,11 +1,13 @@
 import * as React from 'react';
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import {Box, CircularProgress, DialogTitle, Typography} from "@mui/material";
 import {CancelAlert} from "../../Alerts/activateAlert";
 import {makeStyles} from "@material-ui/core";
+import {getClosestSafePoints} from "../../Maps/maps";
+import SafePointCard from "../../Cards/SafePointCards/SafePointCards";
 
 const useStyles = makeStyles({
     activeAlertPopup: {
@@ -20,7 +22,18 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
     let [timer, setTimer] = useState(0);
     let countdownTimer = useRef(null);
     let countdownTimeout = useRef(null);
+    const [safePointsInProximityForCard, setSafePointsInProximityForCard] = useState(null)
     const classes = useStyles();
+
+    useEffect(() => {
+
+        if (isAlertActive) {
+            getClosestSafePoints().then((resp) => {
+                setSafePointsInProximityForCard(resp)
+            })
+        }
+
+    }, [isAlertActive])
 
     function startCountdown() {
 
@@ -76,19 +89,32 @@ export function AlertDialog({alert, isAlertActive, setIsAlertActive, isAlertInCo
 
     if (isAlertActive) {
         return (
-            <Dialog open={isAlertActive}>
-                <DialogTitle>
-                    {alert && alert.title} is Active
-                </DialogTitle>
+            <div>
+                {safePointsInProximityForCard && (
+                    <Dialog
+                        className={classes.activeAlertPopup}
+                        open={isAlertActive}>
 
-                <DialogActions>
-                    <Button onClick={handleCancel}>Cancel Alert</Button>
-                </DialogActions>
+                        <DialogTitle>
+                            {alert && alert.title} is Active
+                        </DialogTitle>
 
-            </Dialog>
+                        <Typography fontSize={15} paddingBottom={2}>
+                            <b>Closest Safe Points</b>
+                        </Typography>
+
+                        {safePointsInProximityForCard.map((safePoint, index) => (
+                            <SafePointCard key={index} safePoint={safePoint}/>))}
+
+                        <DialogActions>
+                            <Button onClick={handleCancel}>Cancel Alert</Button>
+                        </DialogActions>
+
+                    </Dialog>
+                )}
+            </div>
         )
     }
-
 }
 
 //https://stackoverflow.com/questions/57137094/implementing-a-countdown-timer-in-react-with-hooks
