@@ -1,6 +1,6 @@
 import React from 'react'
 import {BottomNavigation, BottomNavigationAction, makeStyles} from "@material-ui/core";
-import {Home, Info, Map, PeopleRounded} from "@material-ui/icons";
+import {Feedback, Home, Map, PeopleRounded} from "@material-ui/icons";
 import {Link as RouterLink} from 'react-router-dom';
 
 const useStyles = makeStyles({
@@ -30,7 +30,8 @@ export default function BottomNav({value}) {
             <BottomNavigationAction component={RouterLink} label="Home" icon={<Home fontSize={"medium"}/>}
                                     to="/alerts"/>
             <BottomNavigationAction component={RouterLink} label="Maps" icon={<Map fontSize={"medium"}/>} to="/maps"/>
-            <BottomNavigationAction component={RouterLink} label="Info" icon={<Info fontSize={"medium"}/>} to="/info"/>
+            <BottomNavigationAction component={RouterLink} label="Feed" icon={<Feedback fontSize={"medium"}/>}
+                                    to="/feed"/>
             <BottomNavigationAction component={RouterLink} label="Profile" icon={<PeopleRounded fontSize={"medium"}/>}
                                     to="/profile"/>
         </BottomNavigation>

@@ -18,7 +18,8 @@ import ConfirmPhoneNumberPage from "./pages/Login/ConfirmPhoneNumber/ConfirmPhon
 import {initializeFacebookSDK} from "./components/Socials/facebook/facebook";
 import AccountExtraDetailsPage from "./pages/Login/AccountExtraDetails/AccountExtraDetailsPage";
 import SafePointRegistrationPage from "./pages/Register/SafePointRegistration/SafePointRegistration";
-import InfoPage from "./pages/Info/Infopage";
+import Feed from "./pages/Feed/feed";
+import EditPost from "./pages/Feed/editPost";
 
 const useStyles = makeStyles({
     app: {
@@ -48,10 +49,11 @@ function App() {
                         <Route path="/alerts" element={<ProtectedRoutes> <AlertsPage/></ProtectedRoutes>}/>
                         <Route path="/create_alert" element={<ProtectedRoutes> <CreateAlertPage/></ProtectedRoutes>}/>
                         <Route path="/maps" element={<ProtectedRoutes> <MapsPage/></ProtectedRoutes>}/>
-                        <Route path="/info" element={<ProtectedRoutes> <InfoPage/></ProtectedRoutes>}/>
+                        <Route path="/feed" element={<ProtectedRoutes> <Feed/></ProtectedRoutes>}/>
                         <Route path="/profile" element={<ProtectedRoutes> <ProfilePage/></ProtectedRoutes>}/>
                         <Route path="/:id/alert_view" element={<ProtectedRoutes> <AlertViewPage/></ProtectedRoutes>}/>
                         <Route path="/:id/edit_alert" element={<ProtectedRoutes> <EditAlertPage/></ProtectedRoutes>}/>
+                        <Route path="/:id/edit_post" element={<ProtectedRoutes> <EditPost/></ProtectedRoutes>}/>
                         <Route path="/:id/alert_view/:id/history_view"
                                element={<ProtectedRoutes> <AlertHistoryViewPage/></ProtectedRoutes>}/>
                         <Route path="/confirmNumber"

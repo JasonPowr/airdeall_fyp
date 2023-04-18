@@ -296,5 +296,43 @@ export async function getAllSafePoints() {
     return safePoints
 }
 
+export async function createUserPost(post) {
+    const postsRef = doc(db, 'publicPosts', post.id);
+    await setDoc(postsRef, post, {merge: false});
+}
+
+export async function getAllPosts() {
+    const querySnapshot = await getDocs(collection(db, 'publicPosts'));
+    const posts = [];
+    querySnapshot.forEach((doc) => {
+        posts.push({
+            id: doc.data().id,
+            uid: doc.data().uid,
+            content: doc.data().content,
+            time: doc.data().time,
+            date: doc.data().date,
+            userName: doc.data().userName
+        })
+    });
+    return posts
+}
+
+export async function deletePost(postId) {
+    await deleteDoc(doc(db, 'publicPosts', postId));
+}
+
+export async function getPostById(postId) {
+    let foundPost;
+    const docRef = doc(db, 'publicPosts', postId);
+    const foundDoc = await getDoc(docRef);
+    foundPost = foundDoc.data()
+    return foundPost
+}
+
+export async function editPostInDB(post) {
+    const postRef = doc(db, 'publicPosts', post.id);
+    await setDoc(postRef, post, {merge: false});
+}
+
 
 
