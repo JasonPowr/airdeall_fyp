@@ -12,6 +12,7 @@ export const startTranscribing = () => {
         speechRecognition = new SpeechlySpeechRecognition();
         speechRecognition.start();
         isTranscribing = true
+        console.log("start")
 
         return isTranscribing
     } else {
@@ -20,6 +21,7 @@ export const startTranscribing = () => {
 }
 
 export const stopTranscribing = () => {
+    console.log("stop")
     if (isTranscribing) {
         speechRecognition.stop();
     }
@@ -27,11 +29,13 @@ export const stopTranscribing = () => {
 
 export function HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown) {
     const alertsWithVoiceActivationEnabled = []
-    alerts.map((index) => {
-        if (index.alert.voiceActivation.isEnabled) {
-            alertsWithVoiceActivationEnabled.push(index.alert)
-        }
-    })
+    if (alerts) {
+        alerts.map((index) => {
+            if (index.alert.voiceActivation.isEnabled) {
+                alertsWithVoiceActivationEnabled.push(index.alert)
+            }
+        })
+    }
 
 
     if (alertsWithVoiceActivationEnabled.length > 0) {

@@ -44,6 +44,7 @@ function Alerts() {
     const {user} = useContext(UserContext)
     const [alerts, setAlerts] = useState(null);
     const [activeAlert, setActiveAlert] = useState(null);
+    const [isVoiceActivatedAlert, setIsVoiceActivatedAlert] = useState(false);
 
     const [isAlertActive, setIsAlertActive] = useState(false);
     const [isAlertInCountdown, setIsAlertInCountdown] = useState(false);
@@ -67,7 +68,6 @@ function Alerts() {
                 } else {
                     getUserAlertsFromDB().then(alerts => {
                         setAlerts(alerts);
-                        console.log("alerts")
                         setAlertsInStorage(alerts)
                     })
                 }
@@ -87,43 +87,42 @@ function Alerts() {
         })
     }, []);
 
-    function listen(onLoad) {
-        if (onLoad) {
-            setIsListening(true)
-            HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown)
-            transScriptTimeoutRef.current = setTimeout(() => {
+    useEffect(() => {
+        if (alerts) {
+
+            alerts.map((index) => {
+                if (index.alert.voiceActivation.isEnabled) {
+                    setIsVoiceActivatedAlert(true)
+                }
+            })
+
+            if ((hasListenedOnLoad === null) && isVoiceActivatedAlert) {
+                listen()
+            } else {
                 setIsListening(false)
-                clearTimeout(transScriptTimeoutRef.current)
                 stopTranscribing()
-                sessionStorage.setItem('listenOnLoad', true);
-            }, 10000)
-        } else {
-            setIsListening(true)
-            HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown)
-            transScriptTimeoutRef.current = setTimeout(() => {
-                setIsListening(false)
                 clearTimeout(transScriptTimeoutRef.current)
-                stopTranscribing()
-            }, 10000)
+            }
+
+            if (isListening && isVoiceActivatedAlert && (hasListenedOnLoad === "true")) {
+                listen()
+            }
         }
+
+    }, [hasListenedOnLoad, isListening, isVoiceActivatedAlert, alerts]);
+
+
+    function listen() {
+        setIsListening(true)
+        HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlertInCountdown)
+        transScriptTimeoutRef.current = setTimeout(() => {
+            sessionStorage.setItem('listenOnLoad', true);
+            setIsListening(false)
+            stopTranscribing()
+            clearTimeout(transScriptTimeoutRef.current)
+        }, 10000)
     }
 
-    useEffect(() => {
-        if (!hasListenedOnLoad && ((alerts !== null) && alerts.length > 0)) {
-            listen(true);
-        }
-
-        if (isListening && hasListenedOnLoad) {
-            listen(false);
-        }
-
-        if (!isListening && hasListenedOnLoad) {
-            setIsListening(false)
-            clearTimeout(transScriptTimeoutRef.current)
-            stopTranscribing()
-        }
-
-    }, [alerts, isListening]);
 
     useEffect(() => {
         if (isAlertActive || isAlertInCountdown) {
