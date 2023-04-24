@@ -527,4 +527,4 @@ export default function Map() {
 //https://udarax.me/technology/how-to-draw-directions-between-2-points-in-the-google-maps-using-react-js/
 //https://developers.google.com/maps/documentation/javascript/reference/directions#DirectionsRequest
 //https://linuxhint.com/remove-first-and-last-element-in-array-javascript/#:~:text=For%20removing%20the%20first%20and,which%20needs%20to%20be%20removed.
-//https://stackoverflow.com/questions/12507925/how-to-remove-only-a-and-b-markers-in-a-route-but-not-waypoint-marker
+//https://stackoverflow.com/questions/12 507925/how-to-remove-only-a-and-b-markers-in-a-route-but-not-waypoint-marker

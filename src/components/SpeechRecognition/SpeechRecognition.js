@@ -35,7 +35,6 @@ export function HandleVoiceActivationOnLoad(alerts, setIsAlertActive, setIsAlert
         })
     }
 
-
     if (alertsWithVoiceActivationEnabled.length > 0) {
         startTranscribing();
         speechRecognition.onresult = ({results}) => {

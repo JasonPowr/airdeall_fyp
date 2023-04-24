@@ -60,6 +60,7 @@ export async function startRecording() {
 
 export function stopRecording(alertId) {
     mediaRecorder.stop()
+    
     mediaRecorder.ondataavailable = function (e) {
         chunks.push(e.data);
     }

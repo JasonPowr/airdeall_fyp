@@ -1,13 +1,11 @@
 import {FacebookAuthProvider, getAuth, linkWithCredential} from "firebase/auth";
+import {getLocation} from "../../Maps/maps";
 
 //https://stackoverflow.com/questions/40466492/how-to-fix-error-fb-is-not-defined-no-undef-on-create-react-app-project
 //https://developers.facebook.com/docs/facebook-login/web/accesstokens
 //https://stackoverflow.com/questions/40466492/how-to-fix-error-fb-is-not-defined-no-undef-on-create-react-app-project
 //https://developers.facebook.com/docs/javascript/quickstart
-
-export let facebookIsLinked = false
 const auth = getAuth();
-const facebookProvider = new FacebookAuthProvider()
 
 export function initializeFacebookSDK() {
     window.fbAsyncInit = function () {
@@ -50,10 +48,11 @@ export const logoutWithFacebook = () => {
     });
 }
 //https://developers.facebook.com/docs/reference/javascript/FB.logout/
-export const createPost = () => {
+export const createPost = async () => {
+    const location = await getLocation()
     window.FB.ui({
         method: 'feed',
-        link: 'https://www.google.com/maps',
+        link: `https://maps.google.com/?q=${location.lat},${location.lng}`,
     }, function (response) {
     });
 }

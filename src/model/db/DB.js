@@ -81,8 +81,8 @@ export async function getActiveAlerts() {
     const activeAlerts = [];
     querySnapshot.forEach((doc) => {
         activeAlerts.push({
-            lat: doc.data().location.alertLocation._lat,
-            lng: doc.data().location.alertLocation._long
+            lat: doc.data().location.lat,
+            lng: doc.data().location.lng
         })
     });
     return activeAlerts

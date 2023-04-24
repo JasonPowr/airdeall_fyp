@@ -2,7 +2,7 @@ import sound from "../../assets/sounds/alarm1.mp3"
 import {startRecording, stopRecording, toggleFlashlightOff, toggleFlashlightOn} from "../Camera/camera";
 import {getLocation} from "../Maps/maps";
 import {auth, db} from "../../firebase";
-import {deleteDoc, doc, setDoc} from "firebase/firestore";
+import {deleteDoc, doc, GeoPoint, setDoc} from "firebase/firestore";
 import {v4 as uuidv4} from "uuid";
 import {createPost} from "../Socials/facebook/facebook";
 import {addAlertHistory} from "../../model/db/DB";
@@ -22,7 +22,7 @@ export const FireAlertWithCountdown = ({alert}) => {
         setTime()
         history_locationUpdates = []
         if (alert.sms) {
-            await configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1, alert.sms.contacts.contact_2, alert.sms.contacts.contact_3, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
+            await configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1, alert.sms.contacts.contact_2, alert.sms.contacts.contact_3, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.sms.proximitySMS)
         }
 
         if (alert.alarm) {
@@ -54,7 +54,7 @@ export const FireAlertWithoutCountdown = ({alert}) => {
     history_locationUpdates = []
     setTime()
     if (alert.sms) {
-        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1, alert.sms.contacts.contact_2, alert.sms.contacts.contact_3, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.proximitySMS)
+        configureSMS(alert.sms.message.body, alert.sms.contacts.contact_1, alert.sms.contacts.contact_2, alert.sms.contacts.contact_3, alert.sms.locationInfo, alert.sms.recurringLocationInfo, alert.sms.proximitySMS)
     }
     if (alert.alarm) {
         soundAlarm()
@@ -119,64 +119,65 @@ const validateNumber = (phoneNumber) => {
 
 const sendSMS = async (messageBody, contact_1, contact_2, contact_3) => {
     if (contact_1 !== false) {
-        // const contact1 = await validateNumber(contact_1.phone);
-        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
-        // const requestOptions = {
-        //     method: 'GET',
-        //     mode: 'no-cors'
-        // };
-        // fetch(url, requestOptions)
-        //     .catch(error => console.error(error));
+        const contact1 = await validateNumber(contact_1.phone);
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_1 + `${messageBody}&variable2=${contact1}`;
+        const requestOptions = {
+            method: 'GET',
+            mode: 'no-cors'
+        };
+        fetch(url, requestOptions)
+            .catch(error => console.error(error));
     }
 
     if (contact_2 !== false) {
         const contact2 = await validateNumber(contact_2.phone);
-        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`;
-        // const requestOptions = {
-        //     method: 'GET',
-        //     mode: 'no-cors'
-        // };
-        // fetch(url, requestOptions)
-        //     .catch(error => console.error(error));
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_2 + `${messageBody}&variable2=${contact2}`;
+        const requestOptions = {
+            method: 'GET',
+            mode: 'no-cors'
+        };
+        fetch(url, requestOptions)
+            .catch(error => console.error(error));
     }
 
     if (contact_3 !== false) {
         const contact3 = await validateNumber(contact_3.phone);
-        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`;
-        // const requestOptions = {
-        //     method: 'GET',
-        //     mode: 'no-cors'
-        // };
-        // fetch(url, requestOptions)
-        //     .catch(error => console.error(error));
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_SMS_CONTACT_3 + `${messageBody}&variable2=${contact3}`;
+        const requestOptions = {
+            method: 'GET',
+            mode: 'no-cors'
+        };
+        fetch(url, requestOptions)
+            .catch(error => console.error(error));
     }
 }
 const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locationInfo, recurringLocationInfo, proximitySMS) => {
 
-    if (messageBody === " ") {
-        messageBody = "Default Alert Message"
+    if (messageBody === "") {
+        messageBody = "An alert has been Activated from Airdeall"
     }
 
     if (locationInfo) {
         const location = await getLocation()
         history_locationUpdates.push(location)
-        messageBody = messageBody + ` Alert Fired at this location: https://maps.google.com/?q=${location.lat},${location.lng}`
+        messageBody = messageBody + ` Alert Fired at this location: 
+        https://maps.google.com/?q=${location.lat},${location.lng}`
     }
 
     await sendSMS(messageBody, contact_1, contact_2, contact_3)
 
     if (proximitySMS) {
-        // const userLocation = await getLocation()
-        // const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
-        //
-        // const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
-        //     `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
-        // const requestOptions = {
-        //     method: 'GET',
-        //     mode: 'no-cors'
-        // };
-        // fetch(url, requestOptions)
-        //     .catch(error => console.error(error));
+        const userLocation = await getLocation()
+        const userLocationGeoPoint = new GeoPoint(userLocation.lat, userLocation.lng)
+
+        const url = process.env.REACT_APP_FIREBASE_FUNCTION_SEND_PROXIMITY_ALERT +
+            `${userLocationGeoPoint.latitude}&variable2=${userLocationGeoPoint.longitude}&variable3=2000`;
+        const requestOptions = {
+            method: 'GET',
+            mode: 'no-cors'
+        };
+        fetch(url, requestOptions)
+            .catch(error => console.error(error));
     }
 
     if (recurringLocationInfo) {
@@ -184,7 +185,7 @@ const configureSMS = async (messageBody, contact_1, contact_2, contact_3, locati
             const location = await getLocation()
             history_locationUpdates.push(location)
             messageBody = ` Location Update: https://maps.google.com/?q=${location.lat},${location.lng}`
-            // await sendSMS(messageBody, contact_1, contact_2, contact_3)
+            await sendSMS(messageBody, contact_1, contact_2, contact_3)
         }, 30000);
     }
 
